@@ -1,5 +1,5 @@
 ---
-bio: I am a Ph.D. candidate in Political Science at the University of Utah and a National Institute of Justice LEADS scholar. I study policing and criminal       justice policy. I am particularly interested in public perceptions of police use-of-force and the criminal justice system, investigative techniques in sexual assault cases, and crime deterrence policy.
+bio: I am a Ph.D. candidate in Political Science at the University of Utah and a National Institute of Justice LEADS scholar. I study policing and criminal justice policy. I am particularly interested in public perceptions of police use-of-force and the criminal justice system, investigative techniques in sexual assault cases, and crime deterrence policy.
 education:
   courses:
   - course: PhD Candidate in Political Science
@@ -45,8 +45,8 @@ superuser: true
 title: Scott M. Mourtgos
 ---
 
-I am a Ph.D. candidate in Political Science at the University of Utah and a National Institute of Justice LEADS scholar. I study policing and criminal       justice policy. I am particularly interested in public perceptions of police use-of-force and the criminal justice system, investigative techniques in sexual assault cases, and crime deterrence policy. 
+I am a Ph.D. candidate in Political Science at the University of Utah and a National Institute of Justice LEADS scholar. I study policing and criminal justice policy. I am particularly interested in public perceptions of police use-of-force and the criminal justice system, investigative techniques in sexual assault cases, and crime deterrence policy. 
 
-My current CV can be found in the menu above, or the direct link below. Please use the Google Scholar, ResearchGate, or CV options (the icons under my picture will take you directly there!) to find links to publications and other materials. I am always happy to providee a       full-text copy of any research as well, just email me. Thanks for dropping by!
+My current CV can be found at the link below. Please use the Google Scholar, ResearchGate, or CV options to find links to publications and other materials. I am always happy to providee a full-text copy of any research as well, just email me. Thanks for dropping by!
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "media/Mourtgos_CV.pdf" "newtab" >}}CV{{< /staticref >}}.

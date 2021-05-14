@@ -38,9 +38,6 @@ social:
 - icon: github
   icon_pack: fab
   link: https://github.com/smourtgos
-# - icon: linkedin
-  icon_pack: fab
-  link: https://www.linkedin.com/
 superuser: true
 title: Scott M. Mourtgos
 ---

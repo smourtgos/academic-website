@@ -1,0 +1,80 @@
+---
+title: 'Fleeing Police: Evaluating and Forecasting Police Turnover'
+author: Scott M. Mourtgos
+date: '2020-12-16'
+slug: fleeing-police-evaluating-and-forecasting-police-turnover
+categories:
+  - police
+  - bayesian
+tags:
+  - police
+  - bayesian
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-12-16T15:09:23-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+
+
+<div id="key-findings" class="section level1">
+<h1>Key Findings</h1>
+<ul>
+<li>A significant increase in officer resignations occurred mid-2020, well beyond what the previous 5-year trend can explain. A similar rise in retirements was not indicated.</li>
+<li>A causal impact analysis suggests that the increase in resignations was caused by the circumstances experienced locally following the death of George Floyd at the end of May 2020.</li>
+<li>The analysis suggests that the number of experienced resignations is 388% (an absolute value of 23 resignations) greater than what would have been expected without the events surrounding George Floyd’s death in mid-2020.</li>
+<li>Probabilistic forecasts for 1- and 2-year periods indicate continued increases in resignations from the studied department.</li>
+<li>The level of resignations experienced, along with the probabilistic forecasts for future resignations described below, pose a tremendous problem for the studied police department and the city it is located in over the next several years.</li>
+</ul>
+<p><em>Please note: These are preliminary results that have not been subjected to peer-review. This is a white paper prepared for the agency where the analysis took place. A manuscript is under development for purposes of peer-review.</em></p>
+<div id="report" class="section level2">
+<h2>Report</h2>
+<p>Following the death of George Floyd while in police custody on May 25th, 2020, the studied city (City) experienced a number of riots as well as hundreds of protests in the ensuing months. Moreover, there has been sustained attention to the profession of policing, both locally and nationally. While there has been much genuine debate about police reform, a large portion of the rhetoric surrounding policing during this period has been exceptionally negative. This, it is argued, has led to increased police resignations across the country. Specific to the City, a cursory examination of the resignation and retirement data from its police department (Department) indicates the same problem locally. Ultimately, though, this is an empirical question. In this report, turnover data for both resignations and retirements are examined over a 5-year timespan. Specifically, the question of whether or not resignations and retirements have significantly changed at the Department in the post-Floyd period is tested. Further, it is tested whether the events experienced locally following Floyd’s death can be attributed as the causal mechanism behind any observed changes. Finally, 1- and 2-year probabilistic resignation forecasts are estimated.</p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>Monthly data were obtained for resignations and retirements ranging from January 2016 through November 2020, resulting in 59 data points. While resignations are assumed to be a result of the post-Floyd environment, that assumption cannot so easily be made with retirements. That is, some retirements that occurred following George Floyd’s death may very well have been ‘natural.’ The post-Floyd environment may have also prompted them. Accordingly, resignations and retirements are examined separately.</p>
+</div>
+<div id="method" class="section level2">
+<h2>Method</h2>
+<p>Bayesian Structural Time Series (BSTS) modeling is used for the analysis. BSTS models are ideal because they are flexible and modular. Further, they allow the investigator to determine whether short- or long-term predictions are more important, whether the data contain seasonal effects, and whether and how regressors are included. Further, by working in a Bayesian framework, investigators are better able to acknowledge and incorporate uncertainty into statistical models, as well as discuss outcomes in terms of probabilities.</p>
+</div>
+<div id="bsts-models-for-resignations-and-retirements" class="section level2">
+<h2>BSTS Models for Resignations and Retirements</h2>
+<p>First, a BSTS model was estimated with the resignation data. The model is pictured below.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>One can see an already existing positive trend in resignations since 2016, but there is noticeably seasonality ‘noise’ in the data. Once we strip the seasonal noise from the model, one can more clearly see the remaining trend and accompanying significant spike in resignations mid-2020.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Next, a model is estimated with the retirement data. This time, there does not appear to be a positive trend, but seasonal noise is more pronounced.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Again, stripping the seasonal noise from the model allows one to see a small increasing trend in retirements since 2016, but no spike mid-2020 similar to what was found in the resignation data.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="impact-of-2020" class="section level2">
+<h2>Impact of 2020</h2>
+<p>When the trend plots of both the resignation and retirement models are examined, it is apparent that an increase in retirements is not associated with the happenings of 2020. However, the opposite is true with resignations. This is important because the retirement data can be used across the five years as a synthetic control series to determine the post-Floyd environment’s causal effect on resignations. The results of this analysis are pictured below.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>The panel labeled “original” shows the data and the counterfactual prediction for the post-treatment period. The counterfactual prediction is the horizontal dashed line, with a corresponding 89% credible interval surrounding it. The solid line represents the observed data. The panel labeled “pointwise” represents the pointwise causal effect, as estimated by the model. That is, it shows the difference between observed data and counterfactual predictions. The panel labeled “cumulative” visualizes the intervention post-treatment’s cumulative effect by summing the second panel’s pointwise contributions. The dashed vertical line represents the intervention date.</p>
+<p>During the post-Floyd period, resignations had an average monthly value of approximately 4.83. By contrast, in the absence of an intervention, an average of 0.99 resignations per month would be expected. Subtracting this prediction from the observed data yields an estimate of the intervention’s causal effect on resignations. This effect is 3.84. Summing up the individual data points during the post-Floyd period, the resignations had an overall value of 29.00. By contrast, had the intervention not taken place, a sum of 5.94 would be expected. In relative terms, resignations showed an increase of 388%.</p>
+<p>Based on the model and the data used, the effect observed during the post-Floyd period is unlikely to be due to random chance (less than .01%).</p>
+</div>
+<div id="forecasts" class="section level2">
+<h2>Forecasts</h2>
+<p>Of practical importance is the forecasting of continuing resignations. Forecasts are not destiny. They are based on the data observed for the past five years. With that in mind, the 1-year and 2-year forecasts are concerning from an organizational and public safety perspective.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The 1-year forecast is pictured above. The blue line represents the number of resignations the forecast model predicts. The dashed lines represent 89% credible intervals. The 1-year forecast indicates continuing increases in resignations. Noteworthy is the credible interval allowing for greater increases than decreases in resignations. According to the model, it is more probable that the Department will experience increasing resignations over the next year than decreasing resignations.</p>
+<p>The 2-year forecast is pictured below. Again, the blue line represents the number of resignations the forecast model predicts, with the dashed lines representing 89% credible intervals. The 2-year forecast similarly indicates continuing increases in resignations, again with the credible interval assigning greater probability to increases in resignations rather than decreases.</p>
+<p><img src="/post/Fleeing Police/2020-12-16-fleeing-police-evaluating-and-forecasting-police-turnover.en_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The above analysis indicates that resignations from the Department were positively associated with events following George Floyd’s death in mid-2020; retirements were not. A causal impact analysis suggests that the post-Floyd period was responsible for a 388% increase in resignations compared to a synthetic counterfactual. Finally, a probabilistic forecast for 1-year and 2-year periods indicates a continuing trend of resignations into the future.</p>
+<p>The total number of resignations (29) in the six months examined accounts for approximately 5% of the department’s entire sworn staff. A concern with these numbers is an understatement. It takes almost a full year to train new officers and have them ‘road-ready.’ During that year of training, other officers will continue to leave (ostensibly at an increasing rate, according to the estimated forecasts). With this in mind, even if it is assumed that enough recruits can be recruited to fill vacancies as they occur (a tenuous assumption at best, given recent recruitment history at the studied location), it will take years to return the police department to its full strength. This is a pressing problem that the studied City and Department will need to grapple with. Based on the above analysis, all else being equal, if retention is not improved, the Department will likely continue to experience a net loss in staffing.</p>
+</div>
+</div>

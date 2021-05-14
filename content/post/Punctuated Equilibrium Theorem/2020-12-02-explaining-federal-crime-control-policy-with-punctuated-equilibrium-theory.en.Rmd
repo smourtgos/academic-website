@@ -1,0 +1,127 @@
+---
+title: Explaining Federal Crime Control Policy with Punctuated Equilibrium Theory
+author: Scott M. Mourtgos
+date: '2020-12-02'
+slug: explaining-federal-crime-control-policy-with-punctuated-equilibrium-theory
+categories:
+  - criminal justice policy
+  - punctuated equilibrium
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-12-02T21:36:00-07:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+Historically, efforts to reduce crime have been regarded as the responsibility of state and local governments. The late-1960s saw a dramatic [shift](https://www.jstor.org/stable/10.5749/j.ctttscjn) in this attitude with the passage of the 1968 Omnibus Crime Control and Safe Streets Act. Not only did the Omnibus Act mark federal entry into crime control policy, but it also resulted in a significant shift in the use of federal money for state and local crime control efforts. Federal criminal justice assistance funds to state and local governments swelled from nonexistent to [millions of dollars](https://www.comparativeagendas.net/) by the mid-1970s. 
+
+If crime rates could explain the observed increase in federal crime legislation and spending, then one would expect continued elevated levels for both throughout the remainder of the 20th century. By 1980, the violent crime rate in the United States had risen by over 250%, [peaking](https://www.basicbooks.com/titles/john-pfaff/locked-in/9780465096916/) in 1991 at nearly 400% of its 1960 level. However, federal monetary assistance did not remain at elevated levels immediately following the 1970s – there was no significant increase until 1994. What helps explain this short, punctuated increase in federal attention to crime control from the mid-1960s through the mid-1970s? Further, what can explain other short, punctuated increases in federal attention to crime control, even after violent crime decreased to historically low levels from the mid-1990s forward? 
+
+In this post, I suggest Punctuated Equilibrium Theory (PET) may hold some answers to the questions posed above. I first outline the central tenants of PET. I then conduct a condensed analysis in the area of federal crime control policy using PET. I do this by examining federal crime control legislation data and federal criminal justice assistance funding data from the [Comparative Agendas Project](https://www.comparativeagendas.net/).
+
+## Punctuated Equilibrium Theory
+
+As described by [Baumgartner et al.](https://www.taylorfrancis.com/books/e/9780429494284), "[PET] seeks to explain a simple observation: although generally marked by stability and incrementalism, political processes occasionally produce large-scale departures from the past." That is, PET recognizes that national political systems are conservative by nature and favor the status quo. Separation of powers and other policymaking institutional rules and norms all but guarantee slow, incremental policy change unless inertial forces overpower this bias toward the status quo. The irony of this policymaking process, however, is that when enough pressure develops to overcome resistance, policy change [occurs](https://onlinelibrary.wiley.com/doi/pdf/10.1111/psj.12089?casa_token=KoajdApt9hQAAAAA%3Anpclh0Zg38eAQ5vMG8KkVR2Owll-7KCbzzNJYHx-NAUUp5U3Ku9VimnLwlIP6PEc5X51bR3SzTNhafM) in lurches or 'punctuations.' Policy punctuations can be [precipitated](https://www.taylorfrancis.com/books/e/9780429494284) by a sudden, powerful event that cannot be ignored, or by relatively minor events that accumulate over longer periods. 
+
+The above process is driven by the fact that human cognition only allows for serial processing, rather than parallel processing. Much like humans, political systems, such as Congress and the Presidency, cannot simultaneously consider all of the issues that present themselves. Thus, policy subsystems exist to allow the political system to engage in parallel processing. Thousands of issues can be considered simultaneously within policy subsystems that are staffed by policy experts. These closed subsystems of experts, along with limited institutional attention and accepted policy framing (i.e., crime control as a 'local' problem), maintain stability in the system, characterized by incremental change. In PET, this is referred to as 'negative feedback.' However, issues cannot reside within policy subsystems forever. 'Positive feedback' ensues when an attention-demanding event occurs (or enough minor events accumulate over a more extended period), an issue receives increased attention from multiple venues, and people/groups outside of the subsystem mobilize. When this positive feedback occurs, macropolitical forces (i.e., Congress and/or the Presidency) intervene, and their influence creates non-incremental, punctuated policy change. Indeed, as [Baumgartner et al.](https://www.taylorfrancis.com/books/e/9780429494284) state, "Macropolitics is the politics of punctuation."
+
+While scholars have had much success in finding the above described punctuated policy changes in various settings (e.g., incarceration rates, election results, legislative actions, environmental policy, education, etc.), the dominant testing ground for PET has been in the field of public [budgeting](https://onlinelibrary.wiley.com/doi/pdf/10.1111/psj.12114?casa_token=I0oAjkzVbV0AAAAA:acmKEiFhkGxPDruOk6_QI3sAqmqT8h93tXsc1V0tiXCrcJzG4m3by6CvSeghHn98q78qrYwUINqV9Oc). [Baumgartner et al.](https://www.taylorfrancis.com/books/e/9780429494284) provide several examples of the PET phenomenon in public budgeting. These analyses indicate leptokurtic distributions, similar to the distribution generated below (Figure 1).
+
+```{r}
+data<-c(rnorm(10000,0,.3),rnorm(10000,0,3))
+hist(data, breaks = 250, main = "Figure 1")
+```
+
+In leptokurtic distributions, there are a great number of small changes centering around zero. But there are also long tails, indicating that radical departures do occur, albeit with much less frequency. This distribution is consistent with PET. While the central peak of change is centered around zero, and minor, incremental policy changes are what are typically experienced, there are much more abrupt and radical policy changes lurking in the tails of the distribution that, while occurring much less often, do [transpire](https://onlinelibrary.wiley.com/doi/pdf/10.1111/psj.12138?casa_token=0tT_6OongowAAAAA:b3S_aj7xvxgLGY-uekpbaEHJ5vRqiEHA1oiJyR2iHRAiB5Yz1q0GeZVGieKA35FYvmgxlWlW1MNuUQU).
+
+## PET and Federal Crime Control Policy
+
+As stated previously, historically, crime control has been regarded as the responsibility of state and local governments. Federal efforts have rarely been a means of crime control in the United States. The late-1960s saw a dramatic [shift](https://www.jstor.org/stable/10.5749/j.ctttscjn) in this attitude with passage of the 1968 Omnibus Crime Control and Safe Streets Act. Interestingly, it is often believed that the federal government's entry into crime control policy was unprecipitated, based only upon the staggering increase in crime experienced in the United States in the 1960s. Indeed, there was marked civil unrest in many cities, along with an alarming escalation in the country's violent crime rate.
+
+Yet, the political pressures for addressing the public policy problem of crime had been building for some time. Crime in the United States increased every year from the mid-1950s onwards, which attracted commentary in the media. However, the problem was often [played down](https://press.uchicago.edu/ucp/books/book/chicago/C/bo4092002.html) by politicians and crime policy experts. Furthermore, the issue of crime continued to be framed as a 'local' problem. Despite this 'negative feedback,' several factors finally pushed the issue of crime onto the macropolitical policy agenda. Press coverage of crime stories increased, the proportion of Americans reporting that crime was the most important problem facing the nation increased, and major urban disorders and riots swept across many American cities. Moreover, Richard Nixon began successfully framing the crime problem during his [presidential campaign](https://www.cambridge.org/core/books/incarceration-nation/9ABCAFF7C3E47BCC7F32D800DF3EDF09) as a 'war on drugs,' calling for increased federal intervention. As a result, [congressional hearings](https://www.jstor.org/stable/10.5749/j.ctttscjn) were held on crime and justice, elevating the subject of crime to the macropolitical agenda. In other words, stasis was the norm for federal crime policy before the 1968 Omnibus Act. This stasis, and the punctuation of the late 1960s federal crime legislation, can clearly be seen when plotting federal bills addressing crime control (Figure 2).
+
+```{r}
+Figure_df<-data.frame("Year" = c(1947,1948,1949,1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,
+                                 1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,
+                                 1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,
+                                 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016),
+                       "Congressional_Bills" = c(0,0,0,0,2,1,3,0,1,0,2,1,2,2,7,0,2,1,9,91,122,8,30,5,32,35,58,15,28,24,17,1,14,1,20,10,
+                                                 18,5,10,1,16,1,14,10,22,11,18,9,17,13,12,5,18,13,12,2,9,8,17,4,35,15,15,6,4,11,13,9,12,3))
+
+library(ggplot2)
+library(cowplot)
+library(grid)
+library(ggplotify)
+
+Figure_1<-ggplot(Figure_df, aes(Year))+
+  geom_line (aes(y=Congressional_Bills), color = "black")+
+  geom_point(aes(y=Congressional_Bills))+
+  theme_light()+
+labs(title = "Figure 2",
+     subtitle = "Crime Control Agenda within the United States Congress",
+     x="Year",
+     y="Number of Crime Control Related Bills")+
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        plot.subtitle = element_text(hjust = 0.5, size = 14))
+
+p1<-as.grob(~hist(Figure_df$Congressional_Bills, breaks = 25, xaxt = "n", yaxt = "n", main="Leptokurtic Distribution", xlab = "Legislation Count", ylab = "Frequency"))
+
+Figure_1 + annotation_custom(grob = p1, xmin = 1990, xmax = 2010, 
+                       ymin = 40, ymax = 115)
+```
+
+Leading up to the late 1960s there is a clear status quo of little to no proposed federal crime legislation. Following the sociopolitical circumstances described above, there is a clear punctuation in the late 1960s, followed by another lesser punctuation in the early 1970s (largely amendments to the 1968 Omnibus Act). Following the 1970s, while proposed federal crime legislation remains higher than pre-1960s levels, it returns to a fairly stable level.
+
+To further test whether Figure 2 aligns with PET's logic, one can examine if the distribution of federal crime legislation is leptokurtic. If PET is a plausible explanation for federal crime legislation, the distribution should reflect limited (or the absence of) occurrences of federal crime legislation, with large-scale legislative efforts lurking in the long tails of the distribution. Whether a distribution is leptokurtic or not is determined by measuring its kurtosis. Kurtosis is the average of the standardized data raised to the fourth power, with a high kurtosis measure indicating a sharper peak and longer, fatter tails (refer back to Figure 1). Typically, a distribution is considered leptokurtic when its kurtosis measure is greater than 3. The federal crime legislation distribution's kurtosis is 18.39, thus indicating high kurtosis and a leptokurtic distribution (see Figure 2 inset).
+
+A similar punctuated pattern, along with additional punctuations, can be seen in the more-often studied public budgeting arena. Figure 3 displays the amount of federal funding dispersed to state and local governments for criminal justice assistance. One can observe stasis leading up to the punctuation of the 1968 Omnibus Act. This is followed by a stable incrementalism until the enactment of the 1994 Violent Crime Control and Law Enforcement Act. The 1994 crime bill was in response to the staggering level of violent crime in the United States leading up to its passage. Recall that violent crime peaked in the United States in 1991 at nearly 400% of its 1960 level. It appears that criminal justice assistance budgeting was returning to its previous stable incrementalism following the 1994 crime bill until the punctuation of 9/11 occurred, resulting in a large increase in criminal justice assistance funding. Following 9/11, budgeting again appears to be returning to its previous stability until the punctuation of the Great Recession, which prompted the passage of the American Recovery and Reinvestment Act of 2009. This Act included [large amounts](https://www.ojp.gov/sites/g/files/xyckuh241/files/archives/pressreleases/2009/doj090217.htm) of grant funding to state and local law enforcement entities. Budgeting again begins to return to its previous stability until a rise in funding occurs due to the punctuation of Ferguson Missouri in 2014, which resulted in increased funding for police reform. The kurtosis measure for the federal criminal justice assistance funding distribution is 4.44. Thus, while the distribution is not as intensely leptokurtic as the legislative distribution, it is still in line with PET (see Figure 3 inset).
+
+```{r}
+Figure2_df<-data.frame("Year" = c(1947,1948,1949,1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960,1961,1962,1963,1964,1965,1966,
+                                 1967,1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,
+                                 1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,
+                                 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017),
+                      "CJA_Budget" = c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3174,2930,2502,2184,1765,1639,1144,353,
+                                       274,257,389,386,454,842,513,662,1167,1243,1240,1397,1230,3512,5487,6160,6793,6794,4605,6414,
+                                       7010,8190,12215,4544,4068,4102,3556,7863,4560,3646,3166,2801,2979,4492,6511.251125,10445.97823))
+
+Figure_2<-ggplot(Figure2_df, aes(Year))+
+  geom_line (aes(y=CJA_Budget), color = "black")+
+  geom_point(aes(y=CJA_Budget))+
+  annotate(geom = "text", x=1973, y=3600, label="1968 Crime Bill Amendments")+
+  annotate(geom = "text", x=1995, y=6000, label="1994 Crime Bill", hjust=1)+
+  annotate(geom = "text", x=2003, y=10000, label="Post-9/11 Funding", hjust=1)+
+  annotate(geom = "text", x=2017, y=11200, label="Post-Ferguson\nFunding", hjust=.8)+
+  theme_light()+
+  labs(title = "Figure 3",
+       subtitle = "Federal Criminal Justice Assistance Funding",
+       x="Year",
+       y="Budget")+
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        plot.subtitle = element_text(hjust = 0.5, size = 14))
+
+p2<-as.grob(~hist(Figure2_df$CJA_Budget, breaks = 25, xaxt = "n", yaxt = "n", main="Leptokurtic Distribution", xlab = "Budget", ylab = "Frequency"))
+
+Figure_2 + annotation_custom(grob = p2, xmin = 1945, xmax = 1970, 
+                             ymin = 5000, ymax = 11000)
+```
+
+In sum, while incrementalism is the norm for federal crime control policy, punctuating events, although unlikely, do occur and can result in increased macropolitical actions whether legislative (Figure 2) or budgetary (Figure 3). PET allows for these unpredictable exogenous events, which can result in 'lurching' policy changes.
+
+# A Look to the Future
+
+While PET helps explain the above-listed short, punctuated increases in federal attention to crime control, it will be interesting to see what occurs following the recent 'defund the police' movement. The death of George Floyd on May 25th, 2020, much like the death of Michael Brown in Ferguson, Missouri in 2014, may be a punctuating event. While the punctuating event in Ferguson, Missouri, resulted in an increase in federal criminal justice assistance spending, one result of Floyd's death has been a call to defund police departments across the United States. It is interesting to note the difference in framing between these two events. After the death of Michael Brown, the framing was primarily 'communities need improved policing.' This frame was underscored by [President Obama's Task Force on 21st Century Policing](https://cops.usdoj.gov/pdf/taskforce/taskforce_finalreport.pdf) the following year, which included enhanced federal funding support for sub-federal law enforcement agencies. 
+
+In contrast, in the months following the death of George Floyd, the framing of police-related policy has often been 'communities need less policing' (i.e., [defund the police](https://www.cnn.com/2020/06/06/us/what-is-defund-police-trnd/index.html)). Will the punctuating event of George Floyd's death result in increased spending for police reform as the events in Ferguson Missouri did? Or will the opposite, with a different framing, occur: a decrease in federal criminal justice assistance funding (i.e., defunding)? Only time will provide the answer to these questions, but the answers will pose an interesting interrogation of PET. 

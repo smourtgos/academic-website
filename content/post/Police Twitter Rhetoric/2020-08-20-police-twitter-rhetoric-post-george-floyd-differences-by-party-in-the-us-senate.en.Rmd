@@ -1,0 +1,355 @@
+---
+title: 'Police Twitter Rhetoric post George Floyd: Differences by Party in the US
+  Senate'
+author: Scott M. Mourtgos
+date: '2020-08-20'
+slug: police-twitter-rhetoric-post-george-floyd-differences-by-party-in-the-us-senate
+categories:
+  - police
+  - political parties
+  - text mining
+tags:
+  - text mining
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-08-20T12:04:16-06:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+Following the death of George Floyd while in police custody on May 25th 2020, protests and riots spread across the United States. Over the following months, politicians weighed in on Floyd's death, policing, and ideas regarding police reform. As recently shown in a [post](https://pgshky.rbind.io/post/sentiment-analysis-mps/) examining English MP's online rhetoric, natural language processing (NLP) and text mining provide an opportunity to better evaluate the statements being made by political leaders. While speeches from the Senate Chamber are available for analysis, Twitter provides a different avenue of political communication, providing a more direct view of political leaders' 'every-day' opinions and thoughts.
+
+With increased political polarization, it is especially interesting to gauge differences in the rhetorical response to Floyd's death across political parties. In this post, I analyze the political rhetoric of all US senators on Twitter in the two months directly following Floyd's death. As discussed below, there are distinct differences between the Republican and Democrat response.
+
+## Preparing the Data for the Analysis
+
+The [rtweet](https://docs.ropensci.org/rtweet/) package provides a simple way to pull tweets from the Twitter API. Additional packages listed below are also required.
+
+```{r}
+library(rtweet)
+library(vader)
+library(tidyverse)
+library(tidytext)
+library(tidyr)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(readxl)
+library(igraph)
+library(ggraph)
+```
+
+First, twitter handles for each US senator must be gathered. Luckily, a comprehensive list of all Twitter handles for members of the 116th Congress are available [here](https://www.sbh4all.org/wp-content/uploads/2019/04/116th-Congress-Twitter-Handles.pdf). The accuracy of this list was cross-referenced [here](https://en.wikipedia.org/wiki/List_of_current_United_States_senators) and corrections were made where necessary. Party affiliation was added to the database for comparison purposes between the Democrat and Republican parties. Two senators (Angus and Sanders) are officially listed as Independents, but were designated as Democrats for this analysis.
+
+With the necessary data in hand, we load the dataframe into R and remove the "@" symbol from the list of handles.
+
+```{r}
+X116th_Congress_Twitter_Handles <- read_excel("~/Documents/Projects/Twitter-Senators/116th-Congress-Twitter-Handles.xlsx")
+
+senate <- X116th_Congress_Twitter_Handles
+
+handles <-
+  senate %>% select(Twitter_Handle, Party, State) %>% 
+  mutate(Handle_stripped = tolower(str_remove_all(Twitter_Handle, "@")))
+```
+
+Next, we pass the senator handles through the get_timelines() command, where we pull a maximum of 1000 tweets per senator. The output of get_timelines() contains a number of different fields that we are not interested in for this analysis. For example, we are not interested in what senators retweet, but rather the tweets they create themselves. Accordingly, we select only a few relevant fields from the output.
+
+```{r eval=FALSE}
+#We save the get_timelines() output and then reload to save on future processing time
+tmls <- get_timelines(handles$Handle_stripped, n = 1000) %>% 
+  select(name, created_at, screen_name, text)
+
+write.csv(tmls, ("~/Documents/Projects/Twitter-Senators/tmls.csv"))
+```
+```{r}
+tmls <- read.csv("~/Documents/Projects/Twitter-Senators/tmls.csv", header = TRUE)
+tmls$created_at <- as.POSIXct(tmls$created_at)
+```
+
+We also only want tweets for the two months directly following Floyd's death, so we use a date filter to restrict the dataset to tweets written between May 25th 2020 and July 25th 2020. Finally, tweets are messy data sources and need extensive tidying before we can use them for NLP analysis. Accordingly, we remove URLs, mentions, line breaks, special characters or emojis, ampersands, and any unnecessary blank space. We then join the dataset back onto our original table to attach the party and other desired information for each senator.
+
+```{r}
+url_regex <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+
+tmls_new <- 
+  tmls %>% 
+  dplyr::filter(created_at > '2020-05-24' & created_at < '2020-07-26') %>%
+  mutate(text = str_remove_all(text, url_regex),
+         text = str_remove_all(text, "#\\S+"),
+         text = str_remove_all(text, "@\\S+"),
+         text = str_remove_all(text, "\\n"),
+         text = str_remove_all(text, '[\U{1f100}-\U{9f9FF}]'),
+         text = str_remove_all(text, '&amp;'),
+         text = str_remove_all(text, pattern = ' - '),
+         text = str_remove_all(text, pattern = '[\u{2000}-\u{3000}]'),
+         text = str_remove_all(text, pattern = '[^\x01-\x7F]'),
+         text = str_squish(text),
+         screen_name = tolower(screen_name)) %>% 
+  left_join(handles, by = c('screen_name' = 'Handle_stripped')) %>%
+  select(name, Party, State, created_at, text)
+
+tmls_new$created_at <- as.POSIXct(tmls_new$created_at)
+```
+
+Next, since we are specifically interested in tweets having to do with policing, we select only those tweets that mention police and relevant variants of that word. We accomplish this by first constructing a variable that contains the words we are interested in, then applying the grep() function to create a dataframe with tweets containing at least one of the specific policing phrases.
+
+```{r}
+police_var <- c("police","cop","cops","law enforcement","policing")
+police_df <- tmls_new[grep(police_var, tmls_new$text),]
+```
+
+We can see how often tweets contain these words across the examined time period by plotting senators' tweets grouped by party. As seen below, Democrat senators have more police-related tweets than Republican senators directly following Floyd's death.
+
+```{r echo=FALSE}
+
+ggplot(police_df, aes(x = created_at, fill = Party)) +
+  geom_histogram(position = "identity", bins = 20, show.legend = FALSE) +
+  facet_wrap(~Party, ncol = 1)
+```
+
+In the final steps of preprocessing we tokenize the words within the tweets and remove stopwords. Tokenizing is the process of identifying and separating each word from other words so that they are in a format that a machine can understand. Stopwords are extremely common words (e.g., "the", "of", "to"). Due to their high frequency of use they are not useful for analysis, and are typically removed in text mining.
+
+```{r}
+police_words <- police_df %>%
+  unnest_tokens(word, text) %>% 
+  count(Party, word, sort = TRUE)
+
+tidy_police <- anti_join(police_words, stop_words, 
+                         by = "word")
+```
+
+## Distributions, Frequencies, and Odds Ratios
+
+To begin our analysis, we first calculate the number of times each word was used by a Republican or Democrat senator. 
+
+```{r}
+total_tidy_police <- tidy_police %>% 
+  group_by(Party) %>% 
+  summarize(total = sum(n))
+
+tidy_police <- left_join(tidy_police, total_tidy_police)
+```
+We then plot the distributions by party. What we observe are distributions that are typical in language. These long-tailed language distributions are referred to as Zipf's law: the frequency with which a word appears is inversely proportional to its rank.
+
+```{r echo=FALSE}
+ggplot(tidy_police, aes(n/total, fill = Party)) +
+  geom_histogram(show.legend = FALSE) +
+  xlim(NA, 0.0009) +
+  facet_wrap(~Party, ncol = 2, scales = "free_y")
+```
+
+We next want to examine party differences between the frequency of word-use. That is, we want to see which words are being used frequently by both parties, and which words are being used with differing frequencies between parties. To do this, we first group by party and count how many times each senator used each word. Then we calculate a frequency for each senator and word.
+
+```{r}
+tidy_police_frequency <- tidy_police %>% 
+  group_by(Party) %>% 
+  count(word, sort = TRUE) %>% 
+  left_join(tidy_police %>% 
+              group_by(Party) %>% 
+              summarise(total = n())) %>%
+  mutate(freq = n/total)
+
+#We use spread() from tidyr to shape a dataframe that allows us to plot frequencies on the x- and y-axes of a plot.
+tidy_police_frequency <- tidy_police_frequency %>% 
+  select(Party, word, freq) %>% 
+  spread(Party, freq) %>%
+  arrange(D, R)
+```
+
+We now plot our word frequencies, grouped by party. Words near the red line are used with equal frequency by Republicans and Democrats, while words away from the line are used more by one party compared to the other.
+
+```{r echo=FALSE}
+library(ggplot2)
+ggplot(tidy_police_frequency, aes(D, R)) +
+  geom_jitter(alpha = 0.1, size = 2.5, width = 0.25, height = 0.25) +
+  geom_text(aes(label = word), check_overlap = TRUE, vjust = .3) +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_abline(color = "red")
+```
+
+From the above plot we can see that Democrats use words such as "racism", "black", and "excessive" much more frequently than Republicans. While Republicans use words such as "safe", "security", and "crime" much more frequently than Democrats.
+
+We can get an even clearer picture of the words used most frequently by each party by finding which words are more or less likely to come from each senator’s account using the log odds ratio. We then plot the top 15 most distinctive words from each party's twitter statements.
+
+```{r}
+police_ratios <- tidy_police %>%
+  count(word, Party) %>%
+  group_by(word) %>%
+  filter(sum(n) >= 10) %>%     #We evaluate words only used more than 10 times.
+  ungroup() %>%
+  spread(Party, n, fill = 0) %>%
+  mutate_if(is.numeric, list(~(. + 1) / (sum(.) + 1))) %>%
+  mutate(logratio = log(D / R)) %>%
+  arrange(desc(logratio))
+
+police_ratios %>% 
+  arrange(abs(logratio))
+```
+```{r echo=FALSE}
+police_ratios %>%
+  group_by(logratio < 0) %>%
+  top_n(15, abs(logratio)) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, logratio)) %>%
+  ggplot(aes(word, logratio, fill = logratio < 0)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  ylab("log odds ratio (R/D)") +
+  scale_fill_discrete(name = "", labels = c("D", "R"))
+```
+
+## Bigrams
+
+So far, we have been evaluating each party's rhetoric regarding policing using single words. However, we can also tokenize senators' tweets into consecutive words, called n-grams. By seeing how word X is followed by word Y, we can gain better insight into the meaning within senators' tweets.
+
+### Bigram Network
+
+First, we tokenize our tweets into bigrams and create a network of bigrams before grouping by political party.
+
+```{r}
+#Extract bigrams
+police_bigrams <- 
+  police_df %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+
+#Separate the words in the bigrams for network analysis
+police_bigrams_separated <- police_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+
+#Remove stopwords
+police_bigrams_filtered <- police_bigrams_separated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word)
+
+#Calculate a bigram count
+police_bigram_counts <- police_bigrams_filtered %>% 
+  count(word1, word2, sort = TRUE)
+
+#Filter for only bigram combinations that occur greater than 10 times.
+police_bigram_graph <- police_bigram_counts %>%
+  filter(n > 10) %>%
+  graph_from_data_frame()
+```
+```{r echo=FALSE}
+set.seed(58)
+
+a <- grid::arrow(type = "closed", length = unit(.15, "inches"))
+
+ggraph(police_bigram_graph, layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color = "lightblue", size = 5) +
+  geom_node_text(aes(label = name), vjust = 1.1, hjust = 1.1) +
+  theme_void()
+```
+
+In the above bigram network, the arrows indicate the directionality of a bigram. The darker the color of the connecting arrow, the more common the bigram. Many of the policing reform discussions that have been publicized in the past few months are apparent in the senators' tweets, with nodes surrounding police accountability, reform, brutality, and violence; political parties; the Justice in Policing Act; race; qualified immunity; and systemic racism.
+
+### TF-IDF
+
+A bigram can be treated as a term in a document in the same way that we treat individual words. If we were to plot the bigram distribution, we would see Zipf's law taking effect, just as we did with individual words. To better understand the more important bigrams in each party's rhetoric, we can use the term frequency-inverse document frequency (tf-idf) statistic. This statistic allows us to decrease the weight given to commonly used bigrams and increase the weight given to bigrams not used as frequently, and are thus more important. We accomplish this by calculating the tf-idf statistic for each bigram, and grouping by political party.
+
+```{r}
+#First, we rejoin stopword filtered bigrams
+police_bigrams_united <- police_bigrams_filtered %>%
+  unite(bigram, word1, word2, sep = " ")
+
+police_bigram_tf_idf <- police_bigrams_united %>%
+  count(Party, bigram) %>%
+  bind_tf_idf(bigram, Party, n) %>%
+  arrange(desc(tf_idf))
+```
+```{r echo=FALSE}
+police_bigram_tf_idf %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(bigram = factor(bigram, levels = rev(unique(bigram)))) %>% 
+  group_by(Party) %>% 
+  top_n(20) %>% 
+  ungroup() %>%
+  ggplot(aes(bigram, tf_idf, fill = Party)) +
+  geom_col(show.legend = FALSE) +
+  labs(x = NULL, y = "tf-idf") +
+  facet_wrap(~Party, ncol = 2, scales = "free") +
+  coord_flip()
+```
+
+By examining bigrams between parties with tf-idf weighting, we gain a better understanding of each party's rhetoric. Democrats most frequently reference ideas regarding the Justice in Policing Act, police accountability, systemic racism, police violence, and George Floyd. And while Republicans frequently mention ideas surrounding police reform, they also frequently reference ideas regarding radicals, mobs, and the police defunding movement.
+
+## Sentiment Analysis
+
+Finally, we can examine differences between the two parties with sentiment analysis. When individuals read text, they use their understanding of the emotional intent of words to infer whether a section of text has a positive or negative valence. We can use text mining sentiment analysis tools to extract the emotional content of senators' tweets. We use the VADER package, since the sentiment scoring rules it uses were established from social media blogs.
+
+```{r}
+#First, we create an error catcher to return NA for a tweet that VADER cannot process.
+vader_compound <- function(x) {
+  y <- tryCatch(tail(get_vader(x),5)[1], error = function(e) NA)
+  return(y)
+}
+
+#VADER calculates sentiment scores.
+vader_scores <-
+  police_df %>% 
+  mutate(vader_scores = as.numeric(sapply(text, vader_compound )))
+```
+
+Now we can calculate the 10 most positive senators on Twitter, when talking about policing.
+
+```{r}
+vader_mps <-
+  vader_scores %>%
+  group_by(name, Party) %>%
+  summarise(mean_score  = mean(vader_scores, na.rm = TRUE), .groups = 'drop') %>%
+  top_n(10, mean_score) %>%
+  arrange(desc(mean_score))
+
+vader_mps
+```
+Interestingly, the top 9 most positive senators, when tweeting about policing, are Republicans. We can compare sentiment across parties to see if this observation holds true across all senators.
+
+```{r}
+vader_temp <- vader_scores %>% dplyr::filter(Party %in% c('D', 'R'))
+```
+```{r echo=FALSE}
+ggplot(vader_temp) + 
+  geom_boxplot(aes(x=Party, y = vader_scores)) +
+  ylab('VADER score') +
+  ggtitle('VADER scores for senator tweets across the primary US political parties')
+```
+
+As can be seen above, across all senators, Democrats express more negative sentiment toward policing than Republicans.
+
+Finally, we can see how party sentiment scores developed across the two months following Floyd's death while in police custody.
+
+```{r}
+vader_time <- 
+  vader_temp %>% 
+  mutate(Date = as.Date(created_at)) %>% 
+  group_by(Party, Date) %>% 
+  summarise(mean_score = mean(vader_scores, na.rm = TRUE))
+```
+```{r echo=FALSE}
+ggplot(vader_time, aes(x = Date, y = mean_score, group = Party, colour = Party)) +
+  geom_line(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  ylab('VADER score') +
+  ggtitle('Average VADER score by day, by party')
+```
+
+When examining sentiment by party across time, a more nuanced story emerges. Immediately following Floyd's death, Republican senators spoke about policing in much more positive terms than Democrat senators. However, across time, Republican senators' sentiment became more and more negative, until ultimately at the end of June 2020, aligning with negative Democrat senator sentiment.
+
+## Takeaways
+
+This analysis has shown distinct differences between Republican and Democrat senators' rhetorical response to policing in the months following George Floyd's death. In an increasingly polarized political environment, perhaps this isn't too surprising. Regardless, as demonstrated here, we can see that text mining methods allow us to better understand political leader rhetoric surrounding the issues of policing in the US.

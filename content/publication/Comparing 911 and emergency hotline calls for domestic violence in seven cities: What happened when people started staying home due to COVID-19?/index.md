@@ -18,7 +18,7 @@ image:
   caption: ""
   focal_point: ""
   preview_only: no
-title: "Comparing 911 and emergency hotlines calls for domestic violence in seven cities: What happened when people started staying home due to COVID-19?"
+title: "Comparing 911 and emergency hotline calls for domestic violence in seven cities: What happened when people started staying home due to COVID-19?"
 publication: "Criminology & Public Policy"
 doi: https://doi.org/10.1111/1745-9133.12564
 url_code: ""

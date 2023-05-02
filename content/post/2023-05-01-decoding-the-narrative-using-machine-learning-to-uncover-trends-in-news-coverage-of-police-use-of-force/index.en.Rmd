@@ -50,7 +50,6 @@ library(scales)
 library(bsts)
 library(BoomSpikeSlab)
 library(rstanarm)
-library(shinystan)
 library(patchwork)
 library(scales)
 

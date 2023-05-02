@@ -54,7 +54,7 @@ library(shinystan)
 library(patchwork)
 library(scales)
 
-load("~/Initial_TM_Post.RData")
+load(file="Initial_TM_Post.RData")
 ```
 
 > “We shall assume that what each man [believes] is based not on direct and certain knowledge, but on pictures…given to him.” - Lippmann, 1922

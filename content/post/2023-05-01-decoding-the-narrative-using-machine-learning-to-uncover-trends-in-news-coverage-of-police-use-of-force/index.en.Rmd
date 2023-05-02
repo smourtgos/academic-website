@@ -1,7 +1,7 @@
 ---
 title: 'Decoding the Narrative: Using Machine Learning to Uncover Trends in News Coverage
   of Police Use of Force'
-author: Package Build
+author: Scott M. Mourtgos
 date: '2023-05-01'
 slug: decoding-the-narrative-using-machine-learning-to-uncover-trends-in-news-coverage-of-police-use-of-force
 categories:
@@ -25,6 +25,7 @@ image:
   preview_only: no
 projects: []
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, results = FALSE)
 

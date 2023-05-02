@@ -274,7 +274,7 @@ The table below provides the minimum and maximum values seen across the studied 
 
 |         | Minimum | Maximum | Change |
 |---------|:-------:|:-------:|:------:|
-| POLHITOK | 23.12% | 25.66%  | +12.54% |
+| POLHITOK | 23.12% | 35.66%  | +12.54% |
 | POLESCAP | 21.92% | 41.83% | +19.91% |
 | POLATTAK | 5.7% | 19.13% | +13.43% |
 

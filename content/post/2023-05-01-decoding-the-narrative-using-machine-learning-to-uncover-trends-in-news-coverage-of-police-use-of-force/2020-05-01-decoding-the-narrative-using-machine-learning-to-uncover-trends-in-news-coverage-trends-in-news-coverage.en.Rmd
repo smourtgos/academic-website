@@ -278,7 +278,7 @@ The table below provides the minimum and maximum values seen across the studied 
 
 The figure below plots all three disaggregated measures alongside the public opinion measure validated through Confirmatory Factor Analysis for comparison purposes. The public opinion measure is what is used in the next analysis.
 
-![](/Users/smourtgos/Documents/Dissertation/Outputs/Combined_Qs_and_Measure.jpg)
+![](/Users/smourtgos/Documents/GitHub/academic-website/content/post/2023-05-01-decoding-the-narrative-using-machine-learning-to-uncover-trends-in-news-coverage-of-police-use-of-force/Combined_Qs_and_Measure.jpg)
 
 Finally, we regress the topics onto the public opinion measure. **Recall, the public opinion measure is _disapproval_ of legally reasonable police use-of-force.** Thus, a positive coefficient indicates that a narrative increases public disapproval of legally reasonable use-of-force. A negative coefficient indicates that a narrative decreases disapproval of legally reasonable use-of-force.
 

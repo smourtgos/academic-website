@@ -62,7 +62,6 @@ While the news story suggested that there were three common threads, the STM ana
 
 ```{r}
 library(stm)
-library(stmprinter)
 library(tidytext)
 library(tm)
 library(dplyr)

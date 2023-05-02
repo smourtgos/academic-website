@@ -28,28 +28,6 @@ projects: []
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, results = FALSE)
-
-library(tidyverse)
-library(tibbletime)
-library(ggplot2)
-library(ggthemes)
-library(dplyr)
-library(tidytext)
-library(tm)
-library(udpipe)
-library(parallel)
-library(caret)
-library(forcats)
-library(cowplot)
-library(stm)
-library(scales)
-library(bsts)
-library(BoomSpikeSlab)
-library(rstanarm)
-library(patchwork)
-library(scales)
-
-load(file="Initial_TM_Post.RData")
 ```
 
 > “We shall assume that what each man [believes] is based not on direct and certain knowledge, but on pictures…given to him.” - Lippmann, 1922
@@ -71,6 +49,28 @@ The corpus was further narrowed by restricting the analysis to headlines. Headli
 When the corpus is narrowed in the manner described above, I am left with 29,035 headlines consisting of 331,593 words, spanning 1990 to 2021. The mean word count per headline is 11.42, with a standard deviation of 7.33.
 
 ```{r}
+
+load(file="/Users/smourtgos/Documents/Dissertation/Website Posts/Initial Topic Modeling and Public Opinion/Initial_TM_Post.RData")
+
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+library(tidytext)
+library(tm)
+library(udpipe)
+library(parallel)
+library(caret)
+library(forcats)
+library(cowplot)
+library(stm)
+library(scales)
+library(bsts)
+library(BoomSpikeSlab)
+library(rstanarm)
+library(patchwork)
+library(scales)
+
+
 test %>%
   ggplot() +
   aes(x = wordsincomment) +

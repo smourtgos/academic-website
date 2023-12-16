@@ -4,7 +4,7 @@ education:
   courses:
   - course: PhD Candidate in Political Science
     institution: University of Utah
-    year: Expected 2022
+    year: 2024
   - course: MA in Forensic Psychology
     institution: University of North Dakota
     year: 2016

@@ -25,6 +25,6 @@ main:
   - name: Contact
     url: '#contact'
     weight: 50
-  - name: CV
+  - name: '<i class="fa fa-file-pdf-o"></i> CV'
     url: '/media/Mourtgos_CV.pdf'
     weight: 60

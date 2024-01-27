@@ -22,9 +22,9 @@ main:
 #  - name: Courses
 #    url: courses/
 #    weight: 60
-  - name: Contact
-    url: '#contact'
-    weight: 50
+#  - name: Contact
+#    url: '#contact'
+#    weight: 50
   - name: 📄 CV
     url: '/media/Mourtgos_CV.pdf'
-    weight: 60
+    weight: 50

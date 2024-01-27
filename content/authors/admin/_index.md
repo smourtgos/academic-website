@@ -48,5 +48,5 @@ His public-facing communication has appeared in multiple written, radio, and pod
 
 {{< icon name="download" pack="fas" >}} Download his {{< staticref "media/Mourtgos_CV.pdf" "newtab" >}}CV{{< /staticref >}}.
 
-For inquiries, please contact me at <i class="fas fa-envelope"></i> [smourtgos@gmail.com](mailto:smourtgos@gmail.com).
+For inquiries, please contact Scott at <i class="fas fa-envelope"></i> [smourtgos@gmail.com](mailto:smourtgos@gmail.com).
 

@@ -25,3 +25,6 @@ main:
   - name: Contact
     url: '#contact'
     weight: 50
+  - name: CV
+    url: '/media/Mourtgos_CV.pdf'
+    weight: 60

@@ -19,19 +19,16 @@ interests:
 - Bayesian Statistics
 - Text Analytics
 organizations:
-- name: University of Utah, Department of Political Science
-  url: https://poli-sci.utah.edu/
-role: Ph.D. Candidate
+- name: University of South Carolina, Department of Criminology and Criminal Justice
+  url: https://sc.edu/study/colleges_schools/artsandsciences/criminology_and_criminal_justice/
+role: Assistant Professor (Incoming)
 social:
-- icon: envelope
-  icon_pack: fas
-  link: /#contact
 - display:
     header: true
   icon: twitter
   icon_pack: fab
   label: Follow me on Twitter
-  link: https://twitter.com/morty_s_
+  link: https://twitter.com/smourtgos
 - icon: graduation-cap
   icon_pack: fas
   link: https://scholar.google.com/citations?user=ypvpo1gAAAAJ&hl=en
@@ -48,5 +45,5 @@ His public-facing communication has appeared in multiple written, radio, and pod
 
 {{< icon name="download" pack="fas" >}} Download his {{< staticref "media/Mourtgos_CV.pdf" "newtab" >}}CV{{< /staticref >}}.
 
-For inquiries, please contact Scott at <i class="fas fa-envelope"></i> [smourtgos@gmail.com](mailto:smourtgos@gmail.com).
+For inquiries, please contact Scott at <i class="fas fa-envelope"></i>  [smourtgos@gmail.com](mailto:smourtgos@gmail.com).
 

@@ -47,3 +47,6 @@ Scott M. Mourtgos is an incoming (Fall 2024) Assistant Professor in the Departme
 His public-facing communication has appeared in multiple written, radio, and podcast outlets. He is a past doctoral fellow of the Academy of Criminal Justice Sciences (2022), and an FBI National Academy graduate (Session 280), having served in various capacities in policing for two decades, including as a police executive.
 
 {{< icon name="download" pack="fas" >}} Download his {{< staticref "media/Mourtgos_CV.pdf" "newtab" >}}CV{{< /staticref >}}.
+
+For inquiries, please contact me at <i class="fas fa-envelope"></i> [smourtgos@gmail.com](mailto:smourtgos@gmail.com).
+

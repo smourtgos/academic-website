@@ -29,6 +29,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Publication**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[*_Policing: A Journal of Policy and Practice_*](https://academic.oup.com/policing/article-abstract/doi/10.1093/police/paae002/7609902?redirectedFrom=fulltext)
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Post-Print**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[*_CrimRxiv_*](https://www.crimrxiv.com/pub/02md8eqk/release/1)
+
 
 <div style="float: right; margin-left: 20px;">
 ```{r figure-response-times, echo=FALSE}

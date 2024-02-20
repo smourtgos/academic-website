@@ -1,20 +1,14 @@
 ---
-title: "Staffing Levels are the Most Important Factor Influencing Response Times"
-author: Scott M. Mourtgos
+title: Staffing Levels are the Most Important Factor Influencing Police Response Times
+author: Package Build
 date: '2024-02-19'
-slug: police-staffing-levels
-categories:
-  - police staffing
-  - response times
-  - Bayesian analysis
-tags:
-  - police staffing
-  - response times
-  - Bayesian analysis
+slug: police-staffing
+categories: []
+tags: []
 subtitle: ''
 summary: ''
 authors: []
-lastmod: '2021-02-05T13:11:06-07:00'
+lastmod: '2024-02-19T17:10:09-07:00'
 featured: no
 image:
   caption: ''
@@ -36,7 +30,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <div style="float: right; margin-left: 20px;">
 ```{r figure-response-times, echo=FALSE}
-knitr::include_graphics("/Users/smourtgos/Documents/GitHub/academic-website/content/post/Staffing Levels are the Most Important Factor Influencing Police Response Times/Digitial_Art Large.jpeg")
+knitr::include_graphics("Digitial_Art Large.jpeg")
 ```
 </div>
 
@@ -73,7 +67,7 @@ Our findings highlight staffing levels as a consistently significant factor affe
 When we translated the staffing coefficients into the percentage decrease in response times per additional officer, a pattern of diminishing returns emerged, particularly for high-priority calls. Adding officers does lead to faster responses, but the effect lessens for the most urgent calls, indicating a prioritization ceiling. In contrast, lower-priority calls, which can afford some delay, see more substantial improvements in response times with increased staffing. The figure below demonstrates our finding that improvements in response times for higher-priority (i.e. more serious) CFS having a lower elasticity response to increases in staffing levels.
 
 ```{r figure-example, echo=FALSE}
-knitr::include_graphics("/Users/smourtgos/Documents/GitHub/academic-website/content/post/Staffing Levels are the Most Important Factor Influencing Police Response Times/response_times_plot.jpg")
+knitr::include_graphics("response_times_plot.jpg")
 ```
 
 ### What Does it Mean

@@ -1,8 +1,8 @@
 ---
-bio: I am a Ph.D. candidate in Political Science at the University of Utah and a National Institute of Justice LEADS scholar. I study policing and criminal justice policy. I am particularly interested in public perceptions of police use-of-force and the criminal justice system, investigative techniques in sexual assault cases, and crime deterrence policy.
+bio: Scott M. Mourtgos is an incoming Assistant Professor in the Department of Criminology & Criminal Justice at the University of South Carolina and a National Institute of Justice LEADS scholar. His research focuses on policing and criminal justice policy, specifically public perceptions of police use-of-force and the criminal justice system, police personnel issues and policy, investigative techniques in sexual assault cases, and crime deterrence.
 education:
   courses:
-  - course: PhD Candidate in Political Science
+  - course: PhD Political Science
     institution: University of Utah
     year: 2024
   - course: MA in Forensic Psychology
@@ -11,6 +11,9 @@ education:
   - course: BSc in Criminal Justice
     institution: Weber State University
     year: 2004
+  - course: Graduate Certificate in Criminal Justice Education
+    institution: University of Virigina
+    year: 2021
 email: ""
 highlight_name: false
 interests:

@@ -39,7 +39,7 @@ social:
   icon_pack: fab
   link: https://github.com/smourtgos
 superuser: true
-title: Scott M. Mourtgos
+title: Scott M. Mourtgos, Ph.D.
 ---
 
 Scott M. Mourtgos is an incoming (Fall 2024) Assistant Professor in the Department of Criminology & Criminal Justice at the University of South Carolina. His applied research focuses on policing and criminal justice policy. In particular, he is interested in public perceptions of police use-of-force, crime deterrence policies, police personnel issues, and the application of Bayesian statistics in criminal justice research. He has over twenty peer-reviewed publications on these and related topics, and his work has been published in the top general interest journals of both criminal justice and public administration, including Criminology, Justice Quarterly, and Public Administration Review. He is committed to the goal of marrying police practice and high-quality scientific evidence, an aim that is supported by his appointment as a 2020 NIJ LEADS Scholar. He also serves on the Research Advisory Board for the Police Executive Research Forum (PERF), is an affiliate of the Police Staffing Observatory at Michigan State University, and serves on the editorial boards of Journal of Criminal Justice and Police Practice & Research: An International Journal.

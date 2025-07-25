@@ -5,13 +5,13 @@ date: '2025-07-25'
 slug: misperceptions-police-force
 categories: []
 tags: ['public opinion', 'police use of force', 'misperception', 'misinformation', 'geographic analysis']
-subtitle: 'A nationally representative survey reveals just how wrong Americans are—and where they’re most misinformed.'
-summary: 'New national survey data shows geographic variation in how Americans perceive police use of force, and that public estimates are vastly inflated compared to reality.'
+subtitle: "How accurate are Americans' perceptions of police use of force? A national survey uncovers important patterns in what the public believes—and how those beliefs vary by state."
+summary: 'New national survey data reveals geographic variation in how Americans perceive police use of force—and suggests that public estimates often exceed available benchmarks.'
 authors: ['Scott M. Mourtgos']
 lastmod: '2025-07-25T08:00:00-04:00'
 featured: yes
 image:
-  caption: 'Choropleth maps of misperception scores by state'
+  caption: 'Choropleth map of misperception scores by state'
   focal_point: 'center'
   preview_only: no
 projects: []
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.align =
 **Based on data from a May 2025 nationally representative survey experiment.**
 
 
-### What Do Americans Really Believe About Police Use of Forcec?
+### What Do Americans Really Believe About Police Use of Force?
 
 In May 2025, I fielded a nationally representative survey asking Americans to estimate the scale and racial disparities of police use of force in the United States. Specifically, respondents were asked:
 
@@ -41,7 +41,7 @@ In May 2025, I fielded a nationally representative survey asking Americans to es
 - **"Based on what you know, how many unarmed Black men are killed by police in the United States every year?"**
 (Response: Numeric input)
 
-Each respondent also provided their ZIP code, which allowed me to map responses to both **national** and **state-level** benchmarks on actual fatal police shootings (based on a decade’s worth of Washington Post data) as well as national estimates of use-of-force frequency from BJS data.[^1]
+Each respondent also provided geographic data, which allowed me to map responses to both **national** and **state-level** benchmarks on fatal police shootings (based on a decade’s worth of Washington Post data) as well as national estimates of use-of-force frequency from BJS data.[^1]
 
 ### From Raw Misperceptions to Meaningful Patterns
 
@@ -97,7 +97,7 @@ If misperceptions are fueling distrust, driving specific reforms, or shaping med
 
 ### Future Work
 
-These findings raise important questions for future research. While misperceptions about police use of force are widespread and highly consistent across states, we still know little about **what shapes these beliefs**. Future work should explore:
+These findings raise important questions for future research. While misperceptions about police use of force are widespread, we still know little about **what shapes these beliefs**. Future work should explore:
 
 - **Media and Information Sources**: To what extent do national media narratives drive these misperceptions? Does exposure to local crime coverage or firsthand police interactions moderate them?
 _Hopefully more on this in the near future with forthcoming work._

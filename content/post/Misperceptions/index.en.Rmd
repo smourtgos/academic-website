@@ -108,7 +108,7 @@ _Hopefully more on this in the near future with forthcoming work._
 Addressing these questions is essential to developing evidence-based strategies for fostering constructive dialogue about policing in America.
 
 
->Citation: Mourtgos, S. M. (2025). Mapping Public Misperceptions of Police Use of Force. [smourtgos.netlify.app](https://smourtgos.netlify.app/)
+>Citation: Mourtgos, S. M. (2025). Mapping Public Misperceptions of Police Use of Force. [Link](https://smourtgos.netlify.app/post/misperceptions-police-force/)
 
 [^1]: The fatal police shootings data used in this analysis come from the Washington Post’s Police Shootings Database (2015–2024). While no single dataset on police use of force in the U.S. is comprehensive or free from limitations—including this one—it provides a sufficiently consistent and well-documented benchmark for estimating relative misperceptions across states.
 Estimates for non-lethal use of force are drawn from the Bureau of Justice Statistics (BJS), which suggests that approximately 1.5% of all police-public interactions involve force. To be conservative—and to ensure that overestimation patterns aren’t artificially inflated—I use 2% as the benchmark for force estimates. This figure, however, is based entirely on self-report survey data, and unlike the other three measures (fatal gunfire, racial disparity, and unarmed deaths), there is no state-level benchmark available. As such, the use-of-force comparison is necessarily anchored to a national estimate.

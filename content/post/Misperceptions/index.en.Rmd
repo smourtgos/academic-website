@@ -9,7 +9,7 @@ subtitle: "How accurate are Americans' perceptions of police use of force? A nat
 summary: 'New national survey data reveals geographic variation in how Americans perceive police use of force—and suggests that public estimates often exceed available benchmarks.'
 authors: ['Scott M. Mourtgos']
 lastmod: '2025-07-25T08:00:00-04:00'
-featured: yes
+featured: no
 image:
   caption: 'Choropleth map of misperception scores by state'
   focal_point: 'center'

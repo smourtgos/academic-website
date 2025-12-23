@@ -1,0 +1,108 @@
+---
+title: Mapping Public Misperceptions of Police Use of Force
+author: Package Build
+date: '2025-07-25'
+slug: misperceptions-police-force
+categories: []
+tags: ['public opinion', 'police use of force', 'misperception', 'misinformation', 'geographic analysis']
+subtitle: "How accurate are Americans' perceptions of police use of force? A national survey uncovers important patterns in what the public believes—and how those beliefs vary by state."
+summary: 'New national survey data reveals geographic variation in how Americans perceive police use of force—and suggests that public estimates often exceed available benchmarks.'
+authors: ['Scott M. Mourtgos']
+lastmod: '2025-07-25T08:00:00-04:00'
+featured: no
+image:
+  caption: 'Choropleth map of misperception scores by state'
+  focal_point: 'center'
+  preview_only: no
+projects: []
+---
+
+
+
+<p><strong>Author:</strong></p>
+<ul>
+<li><a href="https://smourtgos.netlify.app/">Scott M. Mourtgos</a></li>
+</ul>
+<p><strong>Based on data from a May 2025 nationally representative survey experiment.</strong></p>
+<div id="what-do-americans-really-believe-about-police-use-of-force" class="section level3">
+<h3>What Do Americans Really Believe About Police Use of Force?</h3>
+<p>In May 2025, I fielded a nationally representative survey asking Americans to estimate the scale and racial disparities of police use of force in the United States. Specifically, respondents were asked:</p>
+<ul>
+<li><strong>“Out of all interactions with the police in the United States in a given year, what percentage (%) results in a police officer using force (physical or police weapon) against the individual?”</strong>
+(Response: 0%–100% slider)</li>
+<li><strong>“Based on what you know, how many people are killed by police gunfire in the United States every year?”</strong>
+(Response: Numeric input)</li>
+<li><strong>“Based on what you know, what percentage (%) of people killed by police every year in the United States are Black?”</strong>
+(Response: 0%–100% slider)</li>
+<li><strong>“Based on what you know, how many unarmed Black men are killed by police in the United States every year?”</strong>
+(Response: Numeric input)</li>
+</ul>
+<p>Each respondent also provided geographic data, which allowed me to map responses to both <strong>national</strong> and <strong>state-level</strong> benchmarks on fatal police shootings (based on a decade’s worth of Washington Post data) as well as national estimates of use-of-force frequency from BJS data.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+</div>
+<div id="from-raw-misperceptions-to-meaningful-patterns" class="section level3">
+<h3>From Raw Misperceptions to Meaningful Patterns</h3>
+<p>Based on past work, we know respondents are likely wrong on all four questions. But rather than treat each answer as a standalone error, I used factor analysis to identify <strong>underlying dimensions of misperception</strong>.</p>
+<div id="two-latent-misperception-factors" class="section level4">
+<h4>Two Latent Misperception Factors</h4>
+<p>Using exploratory and confirmatory factor analysis, I extracted two consistent patterns from the gaps between perception and reality:</p>
+<ul>
+<li><strong>Count Misperception</strong>: Overestimation of <em>how many</em> people are killed by police (including unarmed Black men and total gunfire deaths).</li>
+<li><strong>Rate Misperception</strong>: Overestimation of <em>how often</em> force is used and how racially disproportionate those killings are.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></li>
+</ul>
+<p>These factors allow us to compare misperceptions across geography—even if the benchmark data are imperfect (as we know they are). If official sources underreport or systematically bias use-of-force rates, these latent scores still capture <strong>relative over- or underestimation</strong> at the individual and state level.</p>
+</div>
+</div>
+<div id="what-the-nation-believes-misperceptions-vs.-national-benchmarks" class="section level3">
+<h3>What the Nation Believes: Misperceptions vs. National Benchmarks</h3>
+<p>Before looking at geography, how far off are people on average?</p>
+<ul>
+<li>Respondents <strong>overestimate the rate of police use of force</strong> by <strong>30.7 percentage points</strong>.</li>
+<li>They <strong>overestimate the number of people killed by police gunfire</strong> by nearly <strong>2,000 people</strong>.</li>
+<li>They <strong>overestimate the percentage of police killings involving Black individuals</strong> by <strong>25.5 percentage points</strong>.</li>
+<li>They <strong>overestimate the number of unarmed Black men killed</strong> each year by approximately <strong>550 people</strong>.</li>
+</ul>
+<p><img src="count_misperception_nat_quintiles.png" width="1200" style="display: block; margin: auto;" /></p>
+<p>This map shows each state’s level of misperception by quintile using national benchmarks—<strong>meaning states are grouped into five equal-sized bins based on their average misperception score</strong>, from the least misinformed (lightest shade) to the most misinformed (darkest shade).<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>The quintile classification helps highlight regional patterns in public beliefs, showing where respondents tend to most dramatically overestimate police use of force.</p>
+</div>
+<div id="misperceptions-vs.-local-reality" class="section level3">
+<h3>Misperceptions vs. Local Reality</h3>
+<p><img src="count_misperception_state_quintiles.png" width="1200" style="display: block; margin: auto;" /></p>
+<p>When we anchor responses to <strong>local (state-level) benchmarks</strong> instead of national averages, the geographic pattern of misperception remains stable. State-level misperception scores derived from national benchmarks are strongly correlated with those derived from state-specific benchmarks, indicating a consistent geographic pattern regardless of the reference point.</p>
+<p><img src="rate_misperception_scatter_nat_vs_state.png" width="1050" style="display: block; margin: auto;" /></p>
+</div>
+<div id="why-these-findings-matter" class="section level3">
+<h3>Why These Findings Matter</h3>
+<p>Public opinion about policing is often shaped by high-profile, nationally visible events. But most people interact with local police, not a national aggregate.</p>
+<p>If misperceptions are fueling distrust, driving specific reforms, or shaping media narratives, it’s critical to understand:</p>
+<ul>
+<li><strong>Where people are most misinformed</strong></li>
+<li><strong>How far those beliefs deviate from reality</strong></li>
+<li><strong>Whether those beliefs reflect local or national conditions</strong></li>
+</ul>
+</div>
+<div id="future-work" class="section level3">
+<h3>Future Work</h3>
+<p>These findings raise important questions for future research. While misperceptions about police use of force are widespread, we still know little about <strong>what shapes these beliefs</strong>. Future work should explore:</p>
+<ul>
+<li><strong>Media and Information Sources</strong>: To what extent do national media narratives drive these misperceptions? Does exposure to local crime coverage or firsthand police interactions moderate them?
+<em>Hopefully more on this in the near future with forthcoming work.</em></li>
+<li><strong>Corrective Interventions</strong>: Can targeted, localized information shift these beliefs—or are they resistant to correction?</li>
+<li><strong>Consequences of Misperceptions</strong>: How do inflated beliefs about police use of force affect attitudes toward reform, trust in law enforcement, or support for policy changes?</li>
+<li><strong>Temporal Trends</strong>: Are these misperceptions stable over time, or do they fluctuate with major incidents or political cycles?</li>
+</ul>
+<p>Addressing these questions is essential to developing evidence-based strategies for fostering constructive dialogue about policing in America.</p>
+<blockquote>
+<p>Citation: Mourtgos, S. M. (2025). Mapping Public Misperceptions of Police Use of Force. <a href="https://smourtgos.netlify.app/post/misperceptions-police-force/">Link</a></p>
+</blockquote>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>The fatal police shootings data used in this analysis come from the Washington Post’s Police Shootings Database (2015–2024). While no single dataset on police use of force in the U.S. is comprehensive or free from limitations—including this one—it provides a sufficiently consistent and well-documented benchmark for estimating relative misperceptions across states.
+Estimates for non-lethal use of force are drawn from the Bureau of Justice Statistics (BJS), which suggests that approximately 1.5% of all police-public interactions involve force. To be conservative—and to ensure that overestimation patterns aren’t artificially inflated—I use 2% as the benchmark for force estimates. This figure, however, is based entirely on self-report survey data, and unlike the other three measures (fatal gunfire, racial disparity, and unarmed deaths), there is no state-level benchmark available. As such, the use-of-force comparison is necessarily anchored to a national estimate.
+This analysis does not depend on the accuracy of any single number. Instead, it focuses on the discrepancy between public perceptions and benchmarked figures, which provides an adequate approach, even if the underlying data contain some degree of error or underreporting.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>I z-scored all four measures and estimated the same EFA and CFA models. The results were consistent even when all four measures were placed on the same scale.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Each state’s misperception score across the two factors is highly correlated, so only one is shown here.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>

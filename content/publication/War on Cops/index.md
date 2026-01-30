@@ -26,11 +26,11 @@ image:
   focal_point: ''
   preview_only: no
 publication_types: '2'
-publication: Criminology (*forthcoming*)
-doi: ''
+publication: Criminology
+doi: https://doi.org/10.1111/1745-9125.12334
 url_code: ''
 url_dataset: ''
-url_pdf: https://jnix.netlify.app/files/pdfs/crim_war_on_cops.pdf
+url_pdf: ''
 url_poster: ''
 url_project: ''
 url_slides: ''

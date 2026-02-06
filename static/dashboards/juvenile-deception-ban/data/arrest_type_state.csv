@@ -1,0 +1,22 @@
+state,type,att_pp,se,p
+IL,on-view arrest (taken into custody without a warrant or previous incident report),-1.16330893884114,0.00916455839761014,0.204314036171326
+OR,on-view arrest (taken into custody without a warrant or previous incident report),6.78217937403379,0.00788153942639509,7.6219994664763e-18
+UT,on-view arrest (taken into custody without a warrant or previous incident report),1.204142733692,0.00789265291183167,0.1270970079626
+DE,on-view arrest (taken into custody without a warrant or previous incident report),-2.67157763224344,0.00851469491177707,0.00170332410832175
+NV,on-view arrest (taken into custody without a warrant or previous incident report),2.12436781505999,0.00545118911579235,9.73625563753447e-05
+IN,on-view arrest (taken into custody without a warrant or previous incident report),1.98190368440373,0.00779760511777888,0.0110320320788881
+CO,on-view arrest (taken into custody without a warrant or previous incident report),-0.229233652856062,0.00684290271845665,0.737629041785532
+IL,taken into custody (based on warrant and/or previous incident report),4.13899051999966,0.0101854560645611,4.83157920341918e-05
+OR,taken into custody (based on warrant and/or previous incident report),-2.82344982929193,0.00970264058362554,0.00361450902200841
+UT,taken into custody (based on warrant and/or previous incident report),-1.54859119670248,0.0100175301871075,0.122133252530725
+DE,taken into custody (based on warrant and/or previous incident report),2.33847002728893,0.0130383685991392,0.0728882788884796
+NV,taken into custody (based on warrant and/or previous incident report),-2.49766783677677,0.00703577948528507,0.000385301623281996
+IN,taken into custody (based on warrant and/or previous incident report),-1.25693794985434,0.0104308675243188,0.228196487295058
+CO,taken into custody (based on warrant and/or previous incident report),-0.445625727801669,0.0101340741520908,0.660132610936051
+IL,summoned/cited (not taken into custody),-1.04539853460167,0.00373859109351944,0.00517015312899587
+OR,summoned/cited (not taken into custody),0.774942535437901,0.00370017453166787,0.0362296595715411
+UT,summoned/cited (not taken into custody),4.05568685749666,0.0041184950788248,7.02720786490312e-23
+DE,summoned/cited (not taken into custody),1.46345379792127,0.00362325145141556,5.36653339925616e-05
+NV,summoned/cited (not taken into custody),1.68547996664122,0.00336272182058436,5.37974770625187e-07
+IN,summoned/cited (not taken into custody),-0.440484856763393,0.00290079462438077,0.128889100255855
+CO,summoned/cited (not taken into custody),1.80917240629723,0.00381494328707202,2.11272989168567e-06

@@ -1,0 +1,51 @@
+---
+title: "Juvenile Deception Interrogation Bans and Case Clearances: Preliminary Interactive Results"
+author: "Scott M. Mourtgos"
+date: '2026-02-10'
+slug: juvenile-deception-ban-results
+categories: []
+tags: ['juvenile justice', 'interrogation', 'deception bans', 'NIBRS', 'difference-in-differences']
+subtitle: 'Interactive dashboard presenting preliminary results from a staggered DiD analysis'
+summary: 'Between 2022 and 2024, seven U.S. states banned deceptive interrogation tactics for juveniles. Using NIBRS data on 510,582 juvenile incidents, we find no pooled national effect on case clearance rates---but substantial heterogeneity across states that is systematically related to legislative design.'
+authors: ['Scott M. Mourtgos']
+lastmod: '2026-02-10T12:00:00-05:00'
+featured: yes
+image:
+  caption: ''
+  focal_point: 'center'
+  preview_only: no
+projects: []
+---
+
+
+
+<blockquote>
+<p><strong>Note</strong>: These are <strong>preliminary results</strong> from an ongoing study. They are shared for grant sponsor review and are subject to revision. Please do not cite or distribute.</p>
+</blockquote>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Between 2022 and 2024, seven U.S. states—Illinois, Oregon, Utah, Delaware, Nevada, Indiana, and Colorado—enacted legislation restricting or prohibiting law enforcement from using deceptive interrogation tactics when questioning juvenile suspects. A central policy concern is whether these restrictions reduce case clearance rates.</p>
+<p>Using National Incident-Based Reporting System (NIBRS) data covering <strong>510,582 juvenile incidents</strong> from 2021 through 2024, we employ a staggered difference-in-differences design with 44 never-treated control states to estimate the causal effects of these bans on arrest clearance rates, exceptional clearance rates, and overall case clearance rates.</p>
+</div>
+<div id="key-finding" class="section level2">
+<h2>Key Finding</h2>
+<p><strong>The pooled national effect is null.</strong> Randomization inference yields p = 0.558 for arrest clearance and p = 0.906 for any clearance. However, the null average masks substantial heterogeneity: Oregon’s any-clearance rate <em>increased</em> by 4.4 percentage points (p &lt; 0.001) while Colorado’s <em>decreased</em> by 2.1 pp (p = 0.003). This heterogeneity is systematically related to legislative design—Oregon has the strongest evidentiary standard (clear and convincing), while Colorado has the broadest definition with additional compliance mandates.</p>
+</div>
+<div id="interactive-dashboard" class="section level2">
+<h2>Interactive Dashboard</h2>
+<p>The full results—including state-by-state DiD estimates, distributed lag dynamics, offense-specific effects, exceptional clearance subcategory analysis, sex crime deep dives, Bayesian multilevel models, agency-level heterogeneity, and robustness checks—are available in an interactive dashboard.</p>
+<div style="text-align: center; margin: 30px 0;">
+<p><a href="/dashboards/juvenile-deception-ban/dashboard.html" style="background-color: #2a6496; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; display: inline-block; font-weight: bold;">
+📊 Open Interactive Results Dashboard
+</a></p>
+</div>
+<p>The dashboard allows you to explore all results interactively—filter tables, hover over plots for detailed estimates, and compare across states and outcome measures.</p>
+</div>
+<div id="methods-summary" class="section level2">
+<h2>Methods Summary</h2>
+<ul>
+<li><strong>Estimators</strong>: Two-way fixed effects DiD (state-by-state), Sun &amp; Abraham (2021) interaction-weighted estimator, Callaway &amp; Sant’Anna (2021) group-time ATTs, randomization inference (500 permutations), and Bayesian multilevel binomial models (brms/cmdstanr)</li>
+<li><strong>Outcomes</strong>: Arrest clearance rate, exceptional clearance rate, any clearance rate (constructed from NIBRS administrative and arrestee segments)</li>
+<li><strong>Robustness</strong>: Placebo-in-time tests, pre-trends validation, offense-specific estimation, agency-level ATT distributions, incident volume composition checks</li>
+</ul>
+</div>

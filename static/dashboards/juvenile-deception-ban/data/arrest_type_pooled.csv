@@ -1,0 +1,4 @@
+type,pooled_att,pooled_att_pp,se,p
+on-view arrest (taken into custody without a warrant or previous incident report),0.00799191382832929,0.799191382832929,0.0103780070865403,0.441251402705851
+taken into custody (based on warrant and/or previous incident report),-0.00129175465710628,-0.129175465710628,0.0126220398655813,0.918485857189592
+summoned/cited (not taken into custody),0.0101818908772878,1.01818908772878,0.00799630291474575,0.202902806912589

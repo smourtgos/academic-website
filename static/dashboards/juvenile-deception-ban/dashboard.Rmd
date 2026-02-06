@@ -1,0 +1,929 @@
+---
+title: "Did Banning Deceptive Interrogation Tactics Affect Juvenile Case Outcomes?"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme: cosmo
+    self_contained: true
+    navbar:
+      - { title: "Back to Main Site", href: "https://smourtgos.netlify.app/", align: right }
+---
+
+<style>
+.preliminary-banner {
+  background-color: #fff3cd;
+  border-bottom: 2px solid #ffc107;
+  color: #856404;
+  padding: 8px 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.chart-title {
+  font-size: 15px !important;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+.value-box .inner { padding: 10px !important; }
+.value-box .value { font-size: 24px !important; font-weight: 700; }
+.explainer-box {
+  background-color: #f0f7ff;
+  border-left: 4px solid #0072B2;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  border-radius: 4px;
+}
+.nv-caution {
+  background-color: #FFF3CD;
+  border-left: 4px solid #E69F00;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  border-radius: 4px;
+}
+.js-plotly-plot .plotly .modebar { opacity: 0.3; }
+.js-plotly-plot .plotly .modebar:hover { opacity: 1; }
+</style>
+
+<div class="preliminary-banner">
+&#9888; PRELIMINARY RESULTS &mdash; NOT FOR CITATION OR DISTRIBUTION &#9888;
+<br><small>Analysis is ongoing and subject to revision. | Data: NIBRS 2021&ndash;2024 | N = 510,582 juvenile incidents</small>
+</div>
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(DT)
+library(crosstalk)
+library(dplyr)
+library(tidyr)
+library(readr)
+library(scales)
+library(htmltools)
+library(htmlwidgets)
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+data_dir <- "data"
+did_state     <- read_csv(file.path(data_dir, "did_state_by_state.csv"), show_col_types = FALSE)
+did_lags      <- read_csv(file.path(data_dir, "did_distributed_lags.csv"), show_col_types = FALSE)
+did_offense   <- read_csv(file.path(data_dir, "did_offense_specific.csv"), show_col_types = FALSE)
+did_exc       <- read_csv(file.path(data_dir, "did_exc_subcategories.csv"), show_col_types = FALSE)
+did_agency_vol <- read_csv(file.path(data_dir, "did_agency_with_volume.csv"), show_col_types = FALSE)
+sex_did       <- read_csv(file.path(data_dir, "sex_crime_did.csv"), show_col_types = FALSE)
+sex_lags      <- read_csv(file.path(data_dir, "sex_crime_lags.csv"), show_col_types = FALSE)
+ri_null       <- read_csv(file.path(data_dir, "ri_null_distribution.csv"), show_col_types = FALSE)
+ri_p          <- read_csv(file.path(data_dir, "ri_empirical_p.csv"), show_col_types = FALSE)
+law_features  <- read_csv(file.path(data_dir, "law_features.csv"), show_col_types = FALSE)
+dosage_terc   <- read_csv(file.path(data_dir, "dosage_by_tercile.csv"), show_col_types = FALSE)
+placebos      <- read_csv(file.path(data_dir, "placebos_in_time.csv"), show_col_types = FALSE)
+arr_pooled    <- read_csv(file.path(data_dir, "arrest_type_pooled.csv"), show_col_types = FALSE)
+arr_state     <- read_csv(file.path(data_dir, "arrest_type_state.csv"), show_col_types = FALSE)
+ttc           <- read_csv(file.path(data_dir, "time_to_clearance.csv"), show_col_types = FALSE)
+vol_check     <- read_csv(file.path(data_dir, "volume_check.csv"), show_col_types = FALSE)
+
+posteriors <- tryCatch(
+  read_csv(file.path(data_dir, "bayesian_posteriors.csv"), show_col_types = FALSE),
+  error = function(e) NULL
+)
+bayes_summ <- tryCatch(
+  read_csv(file.path(data_dir, "bayesian_summaries.csv"), show_col_types = FALSE),
+  error = function(e) NULL
+)
+
+# --- Okabe-Ito colorblind-safe palette ---
+state_colors <- c(
+  "IL" = "#E69F00", "OR" = "#56B4E9", "UT" = "#009E73",
+  "DE" = "#F0E442", "NV" = "#0072B2", "IN" = "#D55E00", "CO" = "#CC79A7"
+)
+
+state_names <- c(
+  "IL" = "Illinois", "OR" = "Oregon", "UT" = "Utah",
+  "DE" = "Delaware", "NV" = "Nevada", "IN" = "Indiana", "CO" = "Colorado"
+)
+
+# Sorted state order for State Profiles
+state_order <- sort(names(state_colors))  # CO, DE, IL, IN, NV, OR, UT
+
+sig_pos   <- "#0072B2"
+sig_neg   <- "#D55E00"
+sig_none  <- "#999999"
+
+fmt_p <- function(p) ifelse(p < 0.001, "<0.001", sprintf("%.3f", p))
+
+fmt_sig <- function(p) {
+  case_when(p < 0.001 ~ "***", p < 0.01 ~ "**", p < 0.05 ~ "*", p < 0.10 ~ "\u2020", TRUE ~ "")
+}
+
+fmt_p_sig <- function(p) paste0(fmt_p(p), " ", fmt_sig(p))
+
+sig_color_fn <- function(p, att) {
+  ifelse(p < 0.05, ifelse(att > 0, sig_pos, sig_neg), sig_none)
+}
+
+# Diverging color scale for map — light yellow at 0 so small effects are still visible
+div_colorscale <- list(c(0, "#D55E00"), c(0.5, "#FFFFCC"), c(1, "#0072B2"))
+```
+
+
+Overview
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Effect on Case Clearance Rates by State {.no-title}
+
+```{r fig.height=8}
+# Prepare data for each outcome
+treated_states <- c("IL", "OR", "UT", "DE", "NV", "IN", "CO")
+all_st <- c(state.abb, "DC")
+donor_st <- setdiff(all_st, treated_states)
+
+outcomes <- c("Any clearance", "Arrest clearance", "Exceptional clearance")
+
+p_map <- plot_ly()
+
+for (i in seq_along(outcomes)) {
+  d_treated <- did_state %>% filter(outcome == outcomes[i])
+
+  # Donor states: uniform light gray
+  p_map <- p_map %>%
+    add_trace(
+      type = "choropleth",
+      locationmode = "USA-states",
+      locations = donor_st,
+      z = rep(0, length(donor_st)),
+      colorscale = list(c(0, "#E0E0E0"), c(1, "#E0E0E0")),
+      showscale = FALSE,
+      text = paste0(donor_st, " (control state)"),
+      hoverinfo = "text",
+      visible = (i == 1),
+      marker = list(line = list(color = "black", width = 0.5)),
+      name = paste0("Donors-", outcomes[i])
+    )
+
+  # Treated states (except NV): diverging color
+  d_no_nv <- d_treated %>% filter(state != "NV")
+  p_map <- p_map %>%
+    add_trace(
+      type = "choropleth",
+      locationmode = "USA-states",
+      locations = d_no_nv$state,
+      z = d_no_nv$att_pp,
+      zmin = -5, zmax = 5, zmid = 0,
+      colorscale = div_colorscale,
+      showscale = TRUE,
+      colorbar = list(title = list(text = "Effect (pp)"), len = 0.5, y = 0.5),
+      text = paste0("<b>", d_no_nv$state, "</b> (", state_names[d_no_nv$state], ")",
+                     "\nEffect: ", round(d_no_nv$att_pp, 2), " percentage points",
+                     "\n95% CI: [", round(d_no_nv$ci_lo*100, 2), ", ", round(d_no_nv$ci_hi*100, 2), "]",
+                     "\np = ", fmt_p(d_no_nv$p),
+                     ifelse(d_no_nv$p < 0.05, " *", "")),
+      hoverinfo = "text",
+      customdata = d_no_nv$state,
+      visible = (i == 1),
+      marker = list(line = list(color = "black", width = 1)),
+      name = paste0("Treated-", outcomes[i])
+    )
+
+  # NV: separate trace with reduced opacity
+  d_nv <- d_treated %>% filter(state == "NV")
+  if (nrow(d_nv) > 0) {
+    p_map <- p_map %>%
+      add_trace(
+        type = "choropleth",
+        locationmode = "USA-states",
+        locations = "NV",
+        z = d_nv$att_pp,
+        zmin = -5, zmax = 5, zmid = 0,
+        colorscale = div_colorscale,
+        showscale = FALSE,
+        text = paste0("<b>NV</b> (Nevada) \u26A0 ~6 months post-treatment",
+                       "\nEffect: ", round(d_nv$att_pp, 2), " pp",
+                       "\n95% CI: [", round(d_nv$ci_lo*100, 2), ", ", round(d_nv$ci_hi*100, 2), "]",
+                       "\np = ", fmt_p(d_nv$p),
+                       "\nCAUTION: Effect reverses at month 4"),
+        hoverinfo = "text",
+        customdata = "NV",
+        visible = (i == 1),
+        marker = list(line = list(color = "black", width = 1), opacity = 0.55),
+        name = paste0("NV-", outcomes[i])
+      )
+  }
+}
+
+# 3 traces per outcome (donor, treated, NV) = 9 traces total
+vis_any    <- c(TRUE,TRUE,TRUE, FALSE,FALSE,FALSE, FALSE,FALSE,FALSE)
+vis_arrest <- c(FALSE,FALSE,FALSE, TRUE,TRUE,TRUE, FALSE,FALSE,FALSE)
+vis_exc    <- c(FALSE,FALSE,FALSE, FALSE,FALSE,FALSE, TRUE,TRUE,TRUE)
+
+buttons <- list(
+  list(method = "restyle", args = list("visible", as.list(vis_any)),    label = "Any Clearance"),
+  list(method = "restyle", args = list("visible", as.list(vis_arrest)), label = "Arrest Clearance"),
+  list(method = "restyle", args = list("visible", as.list(vis_exc)),    label = "Exceptional Clearance")
+)
+
+p_map <- p_map %>%
+  layout(
+    geo = list(
+      scope = "usa",
+      projection = list(type = "albers usa"),
+      showlakes = FALSE,
+      bgcolor = "#ffffff",
+      lakecolor = "#ffffff"
+    ),
+    updatemenus = list(list(
+      type = "dropdown",
+      active = 0,
+      x = 0.02, y = 0.98,
+      xanchor = "left", yanchor = "top",
+      bgcolor = "#f0f4f8",
+      bordercolor = "#0072B2",
+      borderwidth = 2,
+      font = list(size = 13),
+      buttons = buttons
+    )),
+    annotations = list(
+      list(
+        text = "<b>Hover over treated states (colored) for details</b> | Gray = control states | NV faded = limited data",
+        x = 0.5, y = 1.0, xref = "paper", yref = "paper",
+        showarrow = FALSE, font = list(size = 12, color = "#333"),
+        xanchor = "center"
+      ),
+      list(
+        text = paste0("<b>Seven states banned deceptive interrogation of juveniles (2022\u20132024).</b> Color shows the<br>",
+                       "estimated effect on case clearance rates (pp). <b>Blue = positive, red-orange = negative.</b><br>",
+                       "<br>",
+                       "<b>Key finding:</b> The pooled national effect is <b>indistinguishable from zero</b> \u2014 these bans did<br>",
+                       "not reduce clearance rates on average. Effects range from +4.4 pp (Oregon) to \u22122.1 pp<br>",
+                       "(Colorado), and this variation tracks how each state\u2019s law was designed."),
+        x = 0.02, y = 0.88, xref = "paper", yref = "paper",
+        showarrow = FALSE, font = list(size = 11, color = "#333"),
+        xanchor = "left", align = "left"
+      ),
+      list(
+        text = "N = 510,582 juvenile incidents | 7 treated states vs 44 controls | NIBRS 2021\u20132024",
+        x = 0.5, y = 0.02, xref = "paper", yref = "paper",
+        showarrow = FALSE, font = list(size = 10, color = "#999"),
+        xanchor = "center"
+      )
+    ),
+    margin = list(l = 0, r = 0, t = 30, b = 20)
+  )
+
+p_map
+```
+
+
+State Profiles
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Select a State to Explore Its Results
+
+```{r fig.height=7}
+# Build a single subplot with a shared dropdown controlling visibility
+# 3 subplots: (1) bar chart of 3 outcomes, (2) lag plot, (3) offense dots
+
+# --- Subplot 1: Outcome bar chart ---
+# --- Subplot 2: Distributed lag ---
+# --- Subplot 3: Offense dot plot ---
+# Each state gets a set of traces across all 3 subplots.
+# The dropdown toggles which state's traces are visible.
+
+# Trace count tracking
+trace_info <- list()  # list of lists: each entry = list(state, subplot, trace_indices)
+total_traces <- 0
+
+# We'll build traces manually and track indices
+p_profile <- plot_ly()
+
+for (st in state_order) {
+  st_vis <- (st == state_order[1])  # Only first state visible initially
+
+  # --- Bar chart traces (subplot 1) ---
+  d_bar <- did_state %>% filter(state == st) %>%
+    mutate(
+      outcome_short = case_when(
+        outcome == "Any clearance" ~ "Any",
+        outcome == "Arrest clearance" ~ "Arrest",
+        outcome == "Exceptional clearance" ~ "Exceptional",
+        TRUE ~ outcome
+      ),
+      bar_col = sig_color_fn(p, att_pp)
+    )
+
+  # Bar traces with whisker-style error bars (semi-transparent so they don't dominate)
+  for (j in 1:nrow(d_bar)) {
+    p_profile <- p_profile %>%
+      add_trace(
+        type = "bar", orientation = "h",
+        y = list(d_bar$outcome_short[j]),
+        x = list(d_bar$att_pp[j]),
+        marker = list(color = d_bar$bar_col[j]),
+        error_x = list(
+          type = "data", symmetric = FALSE,
+          array = list(d_bar$ci_hi[j]*100 - d_bar$att_pp[j]),
+          arrayminus = list(d_bar$att_pp[j] - d_bar$ci_lo[j]*100),
+          thickness = 1.5, width = 5, color = "rgba(0,0,0,0.35)"
+        ),
+        text = paste0(d_bar$outcome[j], "\nEffect: ", round(d_bar$att_pp[j], 2), " pp",
+                       "\n95% CI: [", round(d_bar$ci_lo[j]*100, 2), ", ", round(d_bar$ci_hi[j]*100, 2), "]",
+                       "\np = ", fmt_p(d_bar$p[j])),
+        hoverinfo = "text",
+        showlegend = FALSE,
+        visible = st_vis,
+        xaxis = "x", yaxis = "y"
+      )
+    total_traces <- total_traces + 1
+  }
+
+  # --- Lag plot traces (subplot 2) ---
+  d_lag <- did_lags %>% filter(state == st)
+  if (nrow(d_lag) > 0) {
+    # Ribbon
+    p_profile <- p_profile %>%
+      add_trace(
+        type = "scatter", mode = "lines",
+        x = c(d_lag$lag_months, rev(d_lag$lag_months)),
+        y = c(d_lag$ci_hi_pp, rev(d_lag$ci_lo_pp)),
+        fill = "toself",
+        fillcolor = paste0(state_colors[st], "20"),
+        line = list(color = "transparent"),
+        showlegend = FALSE, hoverinfo = "skip",
+        visible = st_vis,
+        xaxis = "x2", yaxis = "y2"
+      )
+    total_traces <- total_traces + 1
+
+    # Line
+    p_profile <- p_profile %>%
+      add_trace(
+        type = "scatter", mode = "lines+markers",
+        x = d_lag$lag_months, y = d_lag$att_pp,
+        line = list(color = state_colors[st], width = 2.5),
+        marker = list(color = state_colors[st], size = 6),
+        text = paste0("Month ", d_lag$lag_months, "\nEffect: ", round(d_lag$att_pp, 2), " pp",
+                       "\n95% CI: [", round(d_lag$ci_lo_pp, 2), ", ", round(d_lag$ci_hi_pp, 2), "]"),
+        hoverinfo = "text",
+        showlegend = FALSE,
+        visible = st_vis,
+        xaxis = "x2", yaxis = "y2"
+      )
+    total_traces <- total_traces + 1
+  }
+
+  # --- Offense dot plot traces (subplot 3) ---
+  d_off <- did_offense %>%
+    filter(state == st, outcome == "clear_rate") %>%
+    mutate(sig_col = sig_color_fn(p, att_pp))
+
+  if (nrow(d_off) > 0) {
+    p_profile <- p_profile %>%
+      add_trace(
+        type = "scatter", mode = "markers",
+        y = d_off$offense_group, x = d_off$att_pp,
+        marker = list(size = 10, color = d_off$sig_col),
+        error_x = list(
+          type = "data", symmetric = FALSE,
+          arrayminus = d_off$att_pp - d_off$ci_lo_pp,
+          array = d_off$ci_hi_pp - d_off$att_pp,
+          thickness = 1.5, width = 4
+        ),
+        text = paste0(d_off$offense_group, "\nEffect: ", round(d_off$att_pp, 2), " pp",
+                       "\np = ", fmt_p(d_off$p)),
+        hoverinfo = "text",
+        showlegend = FALSE,
+        visible = st_vis,
+        xaxis = "x3", yaxis = "y3"
+      )
+    total_traces <- total_traces + 1
+  }
+}
+
+# Build the state dropdown buttons
+# We need to know how many traces each state has
+# Count traces per state: 3 bars + 2 lag traces + 1 offense dot = 6 per state (if data exists)
+# Let's just count: for each state, we added traces. Track via the total.
+traces_per_state <- total_traces / length(state_order)
+
+# Actually, let's be precise. Recount:
+# Each state: 3 bar (with error_x whiskers) + 1 ribbon + 1 line + 1 offense scatter = 6 traces
+# (assuming all states have lag data and offense data)
+n_per_state <- 6
+
+buttons_profile <- lapply(seq_along(state_order), function(i) {
+  vis <- rep(FALSE, total_traces)
+  start_idx <- (i - 1) * n_per_state + 1
+  end_idx <- i * n_per_state
+  vis[start_idx:end_idx] <- TRUE
+  list(
+    method = "restyle",
+    args = list("visible", as.list(vis)),
+    label = paste0(state_order[i], " (", state_names[state_order[i]], ")")
+  )
+})
+
+p_profile <- p_profile %>%
+  layout(
+    grid = list(rows = 1, columns = 3, pattern = "independent"),
+    xaxis = list(title = "Effect (pp)", zeroline = TRUE, zerolinewidth = 1.5,
+                 domain = c(0.06, 0.30)),
+    yaxis = list(title = ""),
+    xaxis2 = list(title = "Months after ban", domain = c(0.38, 0.64)),
+    yaxis2 = list(title = "Effect (pp)", zeroline = TRUE,
+                  zerolinecolor = "gray", zerolinewidth = 1),
+    xaxis3 = list(title = "Effect (pp)", zeroline = TRUE, zerolinewidth = 1.5,
+                  domain = c(0.72, 1)),
+    yaxis3 = list(title = ""),
+    updatemenus = list(list(
+      type = "dropdown",
+      active = 0,
+      x = 0.5, y = 1.22,
+      xanchor = "center", yanchor = "top",
+      bgcolor = "#f0f4f8",
+      bordercolor = "#0072B2",
+      borderwidth = 2,
+      font = list(size = 14, color = "#333"),
+      buttons = buttons_profile
+    )),
+    annotations = list(
+      list(text = "<b>Effect by Outcome</b>", x = 0.18, y = 1.02,
+           xref = "paper", yref = "paper", showarrow = FALSE,
+           font = list(size = 11)),
+      list(text = "<b>Effect Over Time</b>", x = 0.51, y = 1.02,
+           xref = "paper", yref = "paper", showarrow = FALSE,
+           font = list(size = 11)),
+      list(text = "<b>Effect by Offense Type</b>", x = 0.86, y = 1.02,
+           xref = "paper", yref = "paper", showarrow = FALSE,
+           font = list(size = 11)),
+      list(text = "\u2B07 Select a state from the dropdown above",
+           x = 0.5, y = 1.28, xref = "paper", yref = "paper",
+           showarrow = FALSE, font = list(size = 11, color = "#0072B2"))
+    ),
+    shapes = list(
+      list(type = "line", x0 = 0, x1 = 0, y0 = 0, y1 = 1,
+           xref = "x", yref = "paper",
+           line = list(dash = "dash", color = "gray", width = 1)),
+      list(type = "line", x0 = 0, x1 = 12, y0 = 0, y1 = 0,
+           xref = "x2", yref = "y2",
+           line = list(dash = "dash", color = "gray", width = 1)),
+      list(type = "line", x0 = 0, x1 = 0, y0 = 0, y1 = 1,
+           xref = "x3", yref = "paper",
+           line = list(dash = "dash", color = "gray", width = 1))
+    ),
+    margin = list(t = 100, b = 40, l = 60)
+  )
+
+p_profile
+```
+
+<div class="nv-caution" style="margin-top:8px;">
+<strong>&#9888; Note on Nevada:</strong> NV's ban took effect July 1, 2024 (~6 months of data). The lag plot shows an initial positive effect that <strong>reverses by month 4</strong>. NV estimates should be interpreted with caution.
+</div>
+
+### State Law Details
+
+```{r}
+state_info <- data.frame(
+  State = c("IL", "OR", "UT", "DE", "NV", "IN", "CO"),
+  `Full Name` = c("Illinois", "Oregon", "Utah", "Delaware", "Nevada", "Indiana", "Colorado"),
+  `Effective Date` = c("1/1/2022", "1/1/2022", "5/4/2022", "10/10/2022", "7/1/2024", "7/1/2023", "8/7/2023"),
+  `Law Strength` = c("Moderate", "Strong", "Weak", "Weak-Mod.", "Weak", "Weak-Mod.", "Mod.-Strong"),
+  `Effect on Clearance (pp)` = c(
+    round(did_state$att_pp[did_state$state == "IL" & did_state$outcome == "Any clearance"], 2),
+    round(did_state$att_pp[did_state$state == "OR" & did_state$outcome == "Any clearance"], 2),
+    round(did_state$att_pp[did_state$state == "UT" & did_state$outcome == "Any clearance"], 2),
+    round(did_state$att_pp[did_state$state == "DE" & did_state$outcome == "Any clearance"], 2),
+    round(did_state$att_pp[did_state$state == "NV" & did_state$outcome == "Any clearance"], 2),
+    round(did_state$att_pp[did_state$state == "IN" & did_state$outcome == "Any clearance"], 2),
+    round(did_state$att_pp[did_state$state == "CO" & did_state$outcome == "Any clearance"], 2)
+  ),
+  check.names = FALSE
+)
+
+datatable(state_info,
+  rownames = FALSE,
+  options = list(dom = "t", pageLength = 7, ordering = TRUE,
+                 columnDefs = list(list(className = "dt-center", targets = "_all"))),
+  caption = "Summary of treated states. Click column headers to sort."
+) %>%
+  formatStyle("Law Strength",
+    backgroundColor = styleEqual(
+      c("Strong", "Mod.-Strong", "Moderate", "Weak-Mod.", "Weak"),
+      c("#D0E8F2", "#D0E8F2", "#FFF3CD", "#f8f9fa", "#FAD9CC")
+    )
+  )
+```
+
+
+Dynamic Effects
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### All Crimes: Any Clearance Rate Over Time by State (pp)
+
+<div class="explainer-box">
+<strong>How to read these plots:</strong> Each panel shows how the effect of the ban unfolded over time in a single state. The line tracks the estimated effect at each month after the law took effect. The shaded band is a 95% confidence interval &mdash; if it includes zero, the effect at that time point is not statistically distinguishable from no change.
+</div>
+
+```{r fig.height=8}
+plots <- lapply(sort(unique(did_lags$state)), function(st) {
+  d <- filter(did_lags, state == st)
+
+  p <- plot_ly() %>%
+    add_ribbons(data = d, x = ~lag_months, ymin = ~ci_lo_pp, ymax = ~ci_hi_pp,
+                fillcolor = paste0(state_colors[st], "30"),
+                line = list(width = 0), showlegend = FALSE) %>%
+    add_trace(data = d, x = ~lag_months, y = ~att_pp, type = "scatter",
+              mode = "lines+markers",
+              line = list(color = state_colors[st], width = 2),
+              marker = list(color = state_colors[st], size = 5),
+              name = st,
+              text = ~paste0(state, " | Month ", lag_months,
+                            "\nEffect: ", round(att_pp, 2), " pp",
+                            "\n95% CI: [", round(ci_lo_pp, 2), ", ", round(ci_hi_pp, 2), "]"),
+              hoverinfo = "text")
+
+  ann <- list(list(text = paste0("<b>", st, " (", state_names[st], ")</b>"),
+                    x = 0.5, y = 1.04, xref = "paper", yref = "paper",
+                    showarrow = FALSE, font = list(size = 11)))
+
+  if (st == "NV") {
+    nv_lag4 <- filter(d, lag_months == 4)
+    if (nrow(nv_lag4) > 0) {
+      ann <- c(ann, list(list(
+        x = 4, y = nv_lag4$att_pp[1],
+        text = "Effect reverses\nat month 4",
+        showarrow = TRUE, arrowhead = 2, ax = 40, ay = -30,
+        font = list(size = 9, color = "#D55E00"), arrowcolor = "#D55E00"
+      )))
+    }
+  }
+
+  p %>% layout(
+    annotations = ann,
+    shapes = list(list(type = "line", x0 = 0, x1 = 12, y0 = 0, y1 = 0,
+                       line = list(dash = "dash", color = "gray", width = 1)))
+  )
+})
+subplot(plots, nrows = 3, shareX = TRUE, margin = 0.08) %>%
+  layout(showlegend = FALSE)
+```
+
+### Sex Crimes: Clearance Rate Over Time by State (pp)
+
+<div class="explainer-box">
+<strong>Why sex crimes matter:</strong> Confessions play an outsized role in sex crime cases. If deception bans affect case outcomes, the impact may be most visible here. These panels show the same month-by-month analysis, focused specifically on sex crime clearances.
+</div>
+
+```{r fig.height=8}
+sex_plots <- lapply(sort(unique(sex_lags$state)), function(st) {
+  d <- filter(sex_lags, state == st)
+  plot_ly() %>%
+    add_ribbons(data = d, x = ~lag_months, ymin = ~ci_lo_pp, ymax = ~ci_hi_pp,
+                fillcolor = paste0(state_colors[st], "30"),
+                line = list(width = 0), showlegend = FALSE) %>%
+    add_trace(data = d, x = ~lag_months, y = ~att_pp, type = "scatter",
+              mode = "lines+markers",
+              line = list(color = state_colors[st], width = 2),
+              marker = list(color = state_colors[st], size = 5),
+              name = st,
+              text = ~paste0(state, " | Month ", lag_months,
+                            "\nEffect: ", round(att_pp, 2), " pp",
+                            "\n95% CI: [", round(ci_lo_pp, 2), ", ", round(ci_hi_pp, 2), "]"),
+              hoverinfo = "text") %>%
+    layout(
+      annotations = list(list(text = paste0("<b>", st, " (", state_names[st], ")</b>"),
+                              x = 0.5, y = 1.04, xref = "paper", yref = "paper",
+                              showarrow = FALSE, font = list(size = 11))),
+      shapes = list(list(type = "line", x0 = 0, x1 = max(d$lag_months, na.rm = TRUE),
+                         y0 = 0, y1 = 0,
+                         line = list(dash = "dash", color = "gray", width = 1)))
+    )
+})
+subplot(sex_plots, nrows = 3, shareX = TRUE, margin = 0.08) %>%
+  layout(showlegend = FALSE)
+```
+
+
+Exceptional Clearance
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Pooled Effect on Exceptional Clearance Subcategories
+
+<div class="explainer-box">
+<strong>What this shows:</strong> Exceptional clearances are cases closed without an arrest &mdash; e.g., prosecution declined, victim refused to cooperate, or juvenile handled informally. Each dot shows the <strong>pooled average effect</strong> across all 7 states for that subcategory. Horizontal whiskers represent the pooled 95% confidence interval. Estimates whose CI does not cross zero are statistically significant.
+</div>
+
+```{r fig.height=5}
+# Compute pooled estimates across states for each exc_type
+exc_pooled <- did_exc %>%
+  group_by(exc_type) %>%
+  summarize(
+    mean_att_pp = mean(att_pp, na.rm = TRUE),
+    se_pooled = sqrt(sum(se^2, na.rm = TRUE)) / n(),
+    ci_lo_pp = mean_att_pp - 1.96 * se_pooled * 100,
+    ci_hi_pp = mean_att_pp + 1.96 * se_pooled * 100,
+    n_states = n(),
+    n_sig = sum(p < 0.05, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    exc_type = factor(exc_type, levels = exc_type[order(mean_att_pp)]),
+    dot_col = sig_color_fn(
+      ifelse(ci_lo_pp > 0 | ci_hi_pp < 0, 0.01, 0.5),
+      mean_att_pp
+    )
+  )
+
+plot_ly(exc_pooled, y = ~exc_type, x = ~mean_att_pp,
+        type = "scatter", mode = "markers",
+        marker = list(size = 12, color = ~dot_col, symbol = "diamond",
+                      line = list(color = "white", width = 1)),
+        error_x = list(
+          type = "data", symmetric = FALSE,
+          arrayminus = ~(mean_att_pp - ci_lo_pp),
+          array = ~(ci_hi_pp - mean_att_pp),
+          thickness = 2, width = 6, color = ~dot_col
+        ),
+        text = ~paste0(exc_type,
+                       "\nPooled effect: ", round(mean_att_pp, 2), " pp",
+                       "\n95% CI: [", round(ci_lo_pp, 2), ", ", round(ci_hi_pp, 2), "]",
+                       "\n", n_sig, " of ", n_states, " states significant"),
+        hoverinfo = "text") %>%
+  layout(
+    xaxis = list(title = "Pooled Effect (percentage points)", zeroline = TRUE,
+                 zerolinecolor = "black", zerolinewidth = 2),
+    yaxis = list(title = "", categoryorder = "array", categoryarray = levels(exc_pooled$exc_type)),
+    shapes = list(list(type = "line", x0 = 0, x1 = 0, y0 = -0.5, y1 = nrow(exc_pooled) - 0.5,
+                       line = list(dash = "dash", color = "gray", width = 1.5))),
+    annotations = list(list(
+      text = "Blue = positive (sig.) | Red-orange = negative (sig.) | Gray = not significant",
+      x = 0.5, y = -0.15, xref = "paper", yref = "paper",
+      showarrow = FALSE, font = list(size = 10, color = "#666")
+    )),
+    showlegend = FALSE,
+    margin = list(l = 180, b = 60))
+```
+
+
+Technical Details
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Randomization Inference
+
+<div class="explainer-box">
+<strong>What this tests:</strong> If these bans had no real effect, how unusual is the observed result? I randomly re-assign treatment timing 500 times and re-estimate the pooled effect each time. The histogram shows this "null distribution." If the actual estimate (vertical line) falls within the bulk of the distribution, the real effect cannot be distinguished from random noise.
+</div>
+
+```{r fig.height=5}
+ri_clear <- ri_null %>% filter(outcome == "clear_rate")
+ri_vals <- ri_clear$att
+real_att_clear <- ri_p %>% filter(outcome == "clear_rate")
+real_att_val <- real_att_clear$real_att[1] * 100
+ri_p_val <- real_att_clear$p_empirical[1]
+
+plot_ly(x = ri_vals * 100, type = "histogram", nbinsx = 40,
+        marker = list(color = "#0072B2", opacity = 0.7,
+                      line = list(color = "white", width = 0.5)),
+        name = "Null Distribution") %>%
+  add_segments(x = real_att_val, xend = real_att_val,
+               y = 0, yend = 40,
+               line = list(color = sig_neg, width = 3, dash = "dash"),
+               name = "Observed Effect") %>%
+  layout(
+    title = list(text = "Randomization Inference: Any Clearance Rate", font = list(size = 14)),
+    xaxis = list(title = "Placebo Effect (pp)"),
+    yaxis = list(title = "Count (out of 500 permutations)"),
+    showlegend = TRUE,
+    legend = list(x = 0.75, y = 0.95),
+    annotations = list(list(
+      x = real_att_val + 0.5, y = 35,
+      text = paste0("<b>Observed = ", round(real_att_val, 2), " pp</b>",
+                    "<br>p = ", ri_p_val,
+                    "<br><i>Not distinguishable from noise</i>"),
+      showarrow = TRUE, arrowhead = 2, ax = 50, ay = -30,
+      font = list(size = 11, color = sig_neg),
+      bgcolor = "white", bordercolor = sig_neg, borderwidth = 1, borderpad = 4
+    ))
+  )
+```
+
+### Placebo Tests
+
+<div class="explainer-box">
+<strong>What this tests:</strong> I check for "effects" at fake treatment dates (6, 9, and 12 months <em>before</em> the actual ban). If the research design is valid, these placebo effects should be zero &mdash; indicating no pre-existing trend that could be mistaken for a real effect. Points near zero (gray shaded zone) support the design.
+<br><em>Note: IL and OR lack estimates at 12 months before the ban due to insufficient pre-treatment data at that lead.</em>
+</div>
+
+```{r fig.height=6}
+plac_clean <- placebos %>%
+  filter(!is.na(att_pp), outcome == "Any clearance") %>%
+  mutate(
+    sig_col = sig_color_fn(p, att_pp),
+    ci_lo_pp = att_pp - 1.96 * se * 100,
+    ci_hi_pp = att_pp + 1.96 * se * 100
+  )
+
+if (nrow(plac_clean) > 0) {
+  plac_plots <- lapply(sort(unique(plac_clean$k_lead)), function(k) {
+    d <- filter(plac_clean, k_lead == k) %>%
+      mutate(state = factor(state, levels = rev(sort(unique(state)))))
+    plot_ly(d, y = ~state, x = ~att_pp, type = "scatter", mode = "markers",
+            marker = list(size = 10, color = ~sig_col),
+            error_x = list(type = "data", symmetric = FALSE,
+                           arrayminus = ~pmax(att_pp - ci_lo_pp, 0),
+                           array = ~pmax(ci_hi_pp - att_pp, 0),
+                           color = ~sig_col, thickness = 1.5, width = 5),
+            text = ~paste0(state, " | ", abs(k), " months before ban",
+                          "\nPlacebo effect: ", round(att_pp, 2), " pp",
+                          "\np = ", fmt_p(p)),
+            hoverinfo = "text") %>%
+      layout(
+        annotations = list(list(
+          text = paste0("<b>", abs(k), " Months Before Ban</b>"),
+          x = 0.5, y = 1.05, xref = "paper", yref = "paper",
+          showarrow = FALSE, font = list(size = 11)
+        )),
+        shapes = list(
+          list(type = "rect", x0 = -2, x1 = 2, y0 = -0.5, y1 = 6.5,
+               fillcolor = "rgba(200,200,200,0.15)", line = list(width = 0)),
+          list(type = "line", x0 = 0, x1 = 0, y0 = -0.5, y1 = 6.5,
+               line = list(dash = "dash", color = "gray", width = 1))
+        )
+      )
+  })
+  subplot(plac_plots, nrows = 1, shareY = TRUE, margin = 0.05) %>%
+    layout(title = list(text = "Placebo Tests: Any Clearance at Fake Pre-Treatment Dates (pp)",
+                        font = list(size = 14)),
+           showlegend = FALSE)
+} else {
+  htmltools::tags$p("No valid placebo estimates available.")
+}
+```
+
+### Bayesian Summary
+
+```{r}
+if (!is.null(bayes_summ)) {
+  bs <- bayes_summ %>%
+    mutate(
+      estimate = round(estimate, 3),
+      est_error = round(est_error, 3),
+      ci = paste0("[", round(ci_lo, 3), ", ", round(ci_hi, 3), "]"),
+      excludes_zero = ifelse(ci_lo > 0 | ci_hi < 0, "Yes", "No")
+    ) %>%
+    select(Model = model_label, Estimate = estimate,
+           `Std. Error` = est_error, `95% CrI` = ci,
+           `Excludes Zero` = excludes_zero)
+
+  datatable(bs, rownames = FALSE,
+    options = list(dom = "t", pageLength = 7, ordering = FALSE,
+                   columnDefs = list(list(className = "dt-center", targets = "_all"))),
+    caption = "Bayesian multilevel binomial models (logit scale). See 'Bayesian Posteriors' tab for density plots."
+  ) %>%
+    formatStyle("Excludes Zero",
+      backgroundColor = styleEqual(c("Yes", "No"), c("#D0E8F2", "#f8f9fa")))
+}
+```
+
+### Bayesian Posteriors
+
+```{r fig.height=6}
+if (!is.null(posteriors) && !is.null(bayes_summ)) {
+  models <- unique(posteriors$model_label)
+  bayes_colors <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442",
+                    "#0072B2", "#D55E00", "#CC79A7")
+  if (length(models) > length(bayes_colors))
+    bayes_colors <- rep_len(bayes_colors, length(models))
+
+  p_bayes <- plot_ly()
+  for (i in seq_along(models)) {
+    d <- filter(posteriors, model_label == models[i])
+    dens <- density(d$beta, n = 256)
+    p_bayes <- p_bayes %>%
+      add_trace(x = dens$x, y = dens$y, type = "scatter", mode = "lines",
+                line = list(color = bayes_colors[i], width = 2.5),
+                fill = "tozeroy", fillcolor = paste0(bayes_colors[i], "25"),
+                name = models[i], visible = TRUE,
+                text = paste0(models[i], "<br>Coef: ", round(dens$x, 3)),
+                hoverinfo = "text")
+  }
+
+  btns <- list(list(method = "restyle",
+    args = list("visible", as.list(rep(TRUE, length(models)))),
+    label = "--- All Models ---"))
+  for (i in seq_along(models)) {
+    vis <- as.list(rep(FALSE, length(models)))
+    vis[[i]] <- TRUE
+    btns <- c(btns, list(list(method = "restyle", args = list("visible", vis),
+                               label = models[i])))
+  }
+
+  p_bayes %>% layout(
+    xaxis = list(title = "Coefficient"),
+    yaxis = list(title = "Density"),
+    showlegend = TRUE,
+    legend = list(orientation = "h", y = -0.12, font = list(size = 10)),
+    shapes = list(list(type = "line", x0 = 0, x1 = 0, y0 = 0, y1 = 1,
+                       yref = "paper", line = list(dash = "dash", color = "black", width = 1.5))),
+    updatemenus = list(list(type = "dropdown", active = 0,
+      x = 0.5, y = 1.22, xanchor = "center", yanchor = "top",
+      bgcolor = "#f0f4f8", bordercolor = "#0072B2", borderwidth = 2,
+      font = list(size = 13), buttons = btns)),
+    annotations = list(
+      list(
+        text = "<b>\u2B07 Select a model from the dropdown to isolate it</b>",
+        x = 0.5, y = 1.15, xref = "paper", yref = "paper",
+        showarrow = FALSE, font = list(size = 11, color = "#0072B2")),
+      list(
+        text = "<b>Posterior Densities (logit scale)</b>",
+        x = 0.5, y = 1.06, xref = "paper", yref = "paper",
+        showarrow = FALSE, font = list(size = 14, color = "#1a1a2e"))
+    ),
+    margin = list(t = 120)
+  )
+}
+```
+
+### Agency-Level Effect Distributions: Arrest Clearance (pp)
+
+<div class="explainer-box">
+<strong>What this shows:</strong> Each panel shows the distribution of agency-level treatment effects within a state. A distribution centered on zero means most agencies saw no change. <strong>Agency counts appear low</strong> because the analysis is restricted to agencies with enough juvenile incidents both before and after the ban to produce reliable estimates &mdash; most small or rural departments are excluded. States with shorter post-treatment windows (e.g., NV with ~6 months) have fewer qualifying agencies.
+</div>
+
+```{r fig.height=8}
+agency_states <- sort(unique(did_agency_vol$state_abb))
+agency_plots <- lapply(agency_states, function(st) {
+  st_upper <- toupper(st)
+  d <- filter(did_agency_vol, state_abb == st)
+  if (nrow(d) >= 5) {
+    dens <- density(d$att_pp, na.rm = TRUE, bw = "SJ")
+    col <- state_colors[st_upper]
+    if (is.na(col)) col <- "#0072B2"
+    plot_ly() %>%
+      add_trace(x = dens$x, y = dens$y, type = "scatter", mode = "lines",
+                fill = "tozeroy", fillcolor = paste0(col, "30"),
+                line = list(color = col, width = 2), showlegend = FALSE,
+                text = ~paste0("Effect: ", round(dens$x, 1), " pp"), hoverinfo = "text") %>%
+      layout(
+        annotations = list(list(
+          text = paste0("<b>", st_upper, "</b> (n=", nrow(d), " agencies)"),
+          x = 0.5, y = 1.03, xref = "paper", yref = "paper",
+          showarrow = FALSE, font = list(size = 11))),
+        shapes = list(list(type = "line", x0 = 0, x1 = 0, y0 = 0, y1 = max(dens$y),
+                           line = list(dash = "dash", color = "black", width = 1.5))),
+        xaxis = list(range = c(-50, 50)),
+        yaxis = list(showticklabels = FALSE))
+  } else {
+    plotly_empty() %>%
+      layout(annotations = list(list(
+        text = paste0(st_upper, ": <5 agencies"), x = 0.5, y = 0.5,
+        xref = "paper", yref = "paper", showarrow = FALSE)))
+  }
+})
+subplot(agency_plots, nrows = 3, shareX = TRUE, margin = 0.07) %>%
+  layout(showlegend = FALSE)
+```
+
+```{r fig.height=5}
+terc_data <- dosage_terc %>%
+  mutate(state = factor(state),
+         volume_tercile = factor(volume_tercile, levels = c("Low", "Medium", "High")))
+terc_colors <- c("Low" = "#009E73", "Medium" = "#E69F00", "High" = "#0072B2")
+
+plot_ly(terc_data, x = ~state, y = ~mean_att, color = ~volume_tercile,
+        colors = terc_colors, type = "bar",
+        error_y = list(type = "data", array = ~sd_att, visible = TRUE, thickness = 1.5),
+        text = ~paste0(state, " | ", volume_tercile, " volume",
+                       "\nMean effect: ", round(mean_att, 1), " pp",
+                       "\nn = ", n_agencies, " agencies"),
+        hoverinfo = "text") %>%
+  layout(
+    title = list(text = "Effect by Case Volume Tercile (pp)", font = list(size = 13)),
+    xaxis = list(title = ""), yaxis = list(title = "Mean Effect (pp)"),
+    barmode = "group",
+    legend = list(title = list(text = "Volume Tercile"), orientation = "h", y = -0.15),
+    shapes = list(list(type = "line", x0 = -0.5, x1 = 6.5, y0 = 0, y1 = 0,
+                       line = list(dash = "dash", color = "gray", width = 1.5))))
+```
+

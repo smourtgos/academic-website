@@ -38,8 +38,6 @@ From the plot we can see that Democrats use words such as "racism," "black," and
 
 An even clearer picture emerges from log odds ratios, which identify the words most distinctively associated with each party's Twitter statements. The top 15 most distinctive words from each party are plotted below.
 
-![Log odds ratio plot showing the top 15 most distinctive words for each party](/images/posts/police-twitter-rhetoric/unnamed-chunk-4-1.png)
-
 ## Bigrams
 
 Beyond single words, we can also examine consecutive word pairs (bigrams) to gain better insight into the meaning within senators' tweets.
@@ -48,15 +46,11 @@ Beyond single words, we can also examine consecutive word pairs (bigrams) to gai
 
 Tokenizing tweets into bigrams and creating a network visualization reveals the structure of policing discussions. The arrows indicate the directionality of a bigram, and darker connecting arrows indicate more common bigrams.
 
-![Bigram network showing word pair relationships in senators' policing tweets, with nodes for police accountability, reform, brutality, race, qualified immunity, and systemic racism](/images/posts/police-twitter-rhetoric/unnamed-chunk-5-1.png)
-
 Many of the policing reform discussions that have been publicized in the past few months are apparent in the senators' tweets, with nodes surrounding police accountability, reform, brutality, and violence; political parties; the Justice in Policing Act; race; qualified immunity; and systemic racism.
 
 ### TF-IDF
 
 To better understand the more important bigrams in each party's rhetoric, we can use the term frequency-inverse document frequency (tf-idf) statistic. This statistic decreases the weight given to commonly used bigrams and increases the weight given to bigrams not used as frequently, and are thus more distinctive.
-
-![TF-IDF weighted bigram plot faceted by party showing the most distinctive two-word phrases for Democrats and Republicans](/images/posts/police-twitter-rhetoric/unnamed-chunk-6-1.png)
 
 By examining bigrams between parties with tf-idf weighting, we gain a better understanding of each party's rhetoric. Democrats most frequently reference ideas regarding the Justice in Policing Act, police accountability, systemic racism, police violence, and George Floyd. And while Republicans frequently mention ideas surrounding police reform, they also frequently reference ideas regarding radicals, mobs, and the police defunding movement.
 
@@ -66,11 +60,7 @@ Finally, we can examine differences between the two parties with sentiment analy
 
 The top 9 most positive senators, when tweeting about policing, are Republicans. Comparing sentiment across all senators confirms that Democrats express more negative sentiment toward policing than Republicans.
 
-![Box plots comparing VADER sentiment scores between Democrat and Republican senators' policing tweets](/images/posts/police-twitter-rhetoric/unnamed-chunk-7-1.png)
-
 When examining sentiment by party across time, a more nuanced story emerges. Immediately following Floyd's death, Republican senators spoke about policing in much more positive terms than Democrat senators. However, across time, Republican senators' sentiment became more and more negative, until ultimately at the end of June 2020, aligning with negative Democrat senator sentiment.
-
-![Time series of average VADER sentiment scores by party showing convergence over time](/images/posts/police-twitter-rhetoric/unnamed-chunk-8-1.png)
 
 ## Takeaways
 

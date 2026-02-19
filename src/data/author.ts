@@ -1,0 +1,30 @@
+export const author = {
+  name: 'Scott M. Mourtgos, Ph.D.',
+  shortName: 'Scott M. Mourtgos',
+  role: 'Assistant Professor',
+  organization: 'University of South Carolina',
+  department: 'Department of Criminology & Criminal Justice',
+  organizationUrl: 'https://sc.edu/study/colleges_schools/artsandsciences/criminology_and_criminal_justice/',
+  email: 'smourtgos@gmail.com',
+  avatar: '/media/avatar.jpeg',
+  bio: `Scott M. Mourtgos is an Assistant Professor in the Department of Criminology & Criminal Justice at the University of South Carolina. His applied research focuses on policing and criminal justice policy. In particular, he is interested in public perceptions of police use-of-force, crime deterrence policies, police personnel issues, and the application of Bayesian statistics in criminal justice research. He has over twenty peer-reviewed publications on these and related topics, and his work has been published in the top general interest journals of both criminal justice and public administration, including Criminology, Justice Quarterly, and Public Administration Review. He is committed to integrating police practice with high-quality scientific evidence, an aim that is supported by his appointment as a 2020 NIJ LEADS Scholar. He also serves on the Research Advisory Board for the Police Executive Research Forum (PERF), is an affiliate of the Police Staffing Observatory at Michigan State University, a member of the Police Accountability and Policy Evaluation Research (PAPER) lab at the University of South Carolina and University of Utah, and serves on the editorial boards of Journal of Criminal Justice and Police Practice & Research: An International Journal.`,
+  bioShort: `His public-facing communication has appeared in multiple written, radio, and podcast outlets. He is a past doctoral fellow of the Academy of Criminal Justice Sciences (2022), and an FBI National Academy graduate (Session 280), having served in various capacities in policing for two decades, including as a police executive.`,
+  interests: [
+    'Policing',
+    'Criminal Justice Policy',
+    'Bayesian Statistics',
+    'Text Analytics',
+  ],
+  education: [
+    { degree: 'PhD Political Science', institution: 'University of Utah', year: 2024 },
+    { degree: 'MA in Forensic Psychology', institution: 'University of North Dakota', year: 2016 },
+    { degree: 'BSc in Criminal Justice', institution: 'Weber State University', year: 2004 },
+    { degree: 'Graduate Certificate in Criminal Justice Education', institution: 'University of Virginia', year: 2021 },
+  ],
+  social: [
+    { name: 'Twitter', href: 'https://twitter.com/smourtgos', icon: 'twitter' },
+    { name: 'Google Scholar', href: 'https://scholar.google.com/citations?user=ypvpo1gAAAAJ&hl=en', icon: 'scholar' },
+    { name: 'GitHub', href: 'https://github.com/smourtgos', icon: 'github' },
+    { name: 'LinkedIn', href: 'https://www.linkedin.com/in/scott-m-mourtgos-517770374/', icon: 'linkedin' },
+  ],
+};

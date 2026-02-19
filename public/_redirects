@@ -1,0 +1,33 @@
+# Redirect old Hugo URLs to new Astro URLs
+/publication/assessing-public-perceptions-of-police-use-of-force/*  /publications/assessing-public-perceptions-police-use-of-force  301
+/publication/challenging-the-ordinality-of-police-use-of-force-policy/*  /publications/challenging-ordinality-police-use-of-force  301
+/publication/comparing-911-and-emergency-hotline-calls-for-domestic-violence-in-seven-cities-what-happened-when-people-started-staying-home-due-to-covid-19/*  /publications/comparing-911-domestic-violence-covid  301
+/publication/covid-19-vaccine-program-eliminates-law-enforcement-workforce-infections-a-bayesian-structural-time-series-analysis/*  /publications/covid-vaccine-law-enforcement  301
+/publication/defanged/*  /publications/defanged  301
+/publication/elevated-police-turnover-following-the-summer-of-george-floyd-protests-a-synthetic-control-study/*  /publications/elevated-police-turnover-george-floyd  301
+/publication/high-stakes-administrative-discretion-what-drives-bwc-activation/*  /publications/high-stakes-bwc-activation  301
+/publication/if-the-face-fits/*  /publications/if-the-face-fits  301
+/publication/improving-victim-engagement-and-officer-response-in-rape-investigations-a-longitudinal-assessment-of-a-brief-training/*  /publications/improving-victim-engagement-rape-investigations  301
+/publication/mandatory-sexual-assault-kit-testing-policies-and-arrest-trends-a-natural-experiment/*  /publications/mandatory-sexual-assault-kit-testing  301
+/publication/police-trust-in-the-public/*  /publications/police-trust-in-public  301
+/publication/the-consequences-of-restricting-police-arrest-authority/*  /publications/consequences-restricting-police-arrest  301
+/publication/the-effect-of-prosecutorial-actions-on-deterrence/*  /publications/prosecutorial-actions-deterrence  301
+/publication/the-ethics-of-emotional-labor-in-public-service-the-case-of-childrens-services-forensic-interviewers/*  /publications/ethics-emotional-labor-public-service  301
+/publication/the-rhetoric-of-de-policing/*  /publications/rhetoric-of-depolicing  301
+/publication/war-on-cops/*  /publications/war-on-cops  301
+
+# Post redirects
+/post/policing-in-a-pandemic-how-data-can-help/*  /posts/policing-in-a-pandemic  301
+/post/fleeing-police-evaluating-and-forecasting-police-turnover/*  /posts/fleeing-police  301
+/post/police-twitter-rhetoric-post-george-floyd-differences-by-party-in-the-us-senate/*  /posts/police-twitter-rhetoric  301
+/post/explaining-federal-crime-control-policy-with-punctuated-equilibrium-theory/*  /posts/punctuated-equilibrium  301
+/post/don-t-forget-the-good-with-the-bad-and-the-ugly-topic-modeling-a-policing-commission-listening-session/*  /posts/stm-listening-session  301
+/post/decoding-the-narrative-using-machine-learning-to-uncover-trends-in-news-coverage-of-police-use-of-force/*  /posts/decoding-the-narrative  301
+/post/police-staffing/*  /posts/police-staffing  301
+/post/juvenile-deception-ban-results/*  /posts/juvenile-deception-ban-results  301
+/post/pursuit-termination-support/*  /posts/pursuit-termination-support  301
+/post/misperceptions-police-force/*  /posts/misperceptions-police-force  301
+
+# Section redirects
+/publication/  /publications  301
+/post/  /posts  301

@@ -1,0 +1,56 @@
+---
+interface Props {
+  title: string;
+  authors: string[];
+  publication: string;
+  date: Date;
+  doi?: string;
+  pdfUrl?: string;
+  slug: string;
+  abstract?: string;
+  summary?: string;
+}
+
+const { title, authors, publication, date, doi, pdfUrl, slug, abstract, summary } = Astro.props;
+const year = date.getFullYear();
+const description = summary || abstract;
+---
+
+<article class="group">
+  <div class="flex flex-col gap-1.5">
+    <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+      <a href={`/publications/${slug}`}>{title}</a>
+    </h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      {authors.join(', ')}
+    </p>
+    <p class="text-sm italic text-gray-500 dark:text-gray-400">
+      {publication} ({year})
+    </p>
+    {description && (
+      <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">{description}</p>
+    )}
+    <div class="flex items-center gap-3 mt-2">
+      {doi && (
+        <a
+          href={`https://doi.org/${doi}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
+        >
+          DOI
+        </a>
+      )}
+      {pdfUrl && (
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        >
+          PDF
+        </a>
+      )}
+    </div>
+  </div>
+</article>

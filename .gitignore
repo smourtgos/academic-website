@@ -1,14 +1,27 @@
+# build output
+dist/
+
+# dependencies
+node_modules/
+
+# environment
+.env
+.env.*
+
+# macOS
 .DS_Store
 Thumbs.db
 
-# blogdown / Hugo build output (Netlify builds this)
-public/
-resources/
+# IDE
+.vscode/
+.idea/
 
-# RStudio
-.Rproj.user/
+# astro
+.astro/
 
-# R session stuff
+# R artifacts (legacy)
 .Rhistory
+.Rprofile
 .RData
 .Ruserdata
+.Rproj.user/

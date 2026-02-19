@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import PublicationCard from '../components/PublicationCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPublications = await getCollection('publications');
+const featuredPubs = allPublications
+  .filter(p => p.data.featured)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const recentPubs = allPublications
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 5);
+const displayPubs = featuredPubs.length > 0 ? featuredPubs : recentPubs;
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const recentPosts = allPosts
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 5);
+---
+
+<BaseLayout title="Scott M. Mourtgos, Ph.D.">
+  <Hero />
+
+  <!-- Divider -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <hr class="border-gray-200 dark:border-gray-800" />
+  </div>
+
+  <!-- Featured/Recent Publications -->
+  <section class="py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {featuredPubs.length > 0 ? 'Featured Publications' : 'Recent Publications'}
+        </h2>
+        <a href="/publications" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+          View all &rarr;
+        </a>
+      </div>
+      <div class="space-y-6">
+        {displayPubs.map((pub) => (
+          <PublicationCard
+            title={pub.data.title}
+            authors={pub.data.authors}
+            publication={pub.data.publication}
+            date={pub.data.date}
+            doi={pub.data.doi}
+            pdfUrl={pub.data.pdfUrl}
+            slug={pub.id}
+            abstract={pub.data.abstract}
+            summary={pub.data.summary}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <hr class="border-gray-200 dark:border-gray-800" />
+  </div>
+
+  <!-- Recent Posts -->
+  {recentPosts.length > 0 && (
+    <section class="py-12">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Recent Posts</h2>
+          <a href="/posts" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+            View all &rarr;
+          </a>
+        </div>
+        <div class="space-y-6">
+          {recentPosts.map((post) => (
+            <PostCard
+              title={post.data.title}
+              date={post.data.date}
+              summary={post.data.summary}
+              tags={post.data.tags}
+              slug={post.id}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Divider -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <hr class="border-gray-200 dark:border-gray-800" />
+  </div>
+
+  <!-- Dashboards -->
+  <section class="py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Interactive Dashboards</h2>
+      <a
+        href="/dashboards"
+        class="block group rounded-xl border border-gray-200 dark:border-gray-800 p-6 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg transition-all"
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+          Did Banning Deceptive Interrogation Tactics Affect Juvenile Case Outcomes?
+        </h3>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Interactive dashboard presenting results from a staggered difference-in-differences analysis of state-level bans on deceptive interrogation tactics for juveniles, using NIBRS data (2021-2024, N = 510,582 incidents).
+        </p>
+        <span class="inline-flex items-center gap-1 mt-3 text-sm font-medium text-primary-600 dark:text-primary-400">
+          Explore Dashboard
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

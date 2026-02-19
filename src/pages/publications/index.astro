@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PublicationCard from '../../components/PublicationCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPublications = await getCollection('publications');
+const sorted = allPublications.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Group by year
+const byYear = new Map<number, typeof sorted>();
+for (const pub of sorted) {
+  const year = pub.data.date.getFullYear();
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(pub);
+}
+---
+
+<BaseLayout title="Publications | Scott M. Mourtgos">
+  <section class="py-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Publications</h1>
+
+      {[...byYear.entries()].map(([year, pubs]) => (
+        <div class="mb-10">
+          <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-200 dark:border-gray-800 pb-2">
+            {year}
+          </h2>
+          <div class="space-y-6">
+            {pubs.map((pub) => (
+              <PublicationCard
+                title={pub.data.title}
+                authors={pub.data.authors}
+                publication={pub.data.publication}
+                date={pub.data.date}
+                doi={pub.data.doi}
+                pdfUrl={pub.data.pdfUrl}
+                slug={pub.id}
+                abstract={pub.data.abstract}
+                summary={pub.data.summary}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

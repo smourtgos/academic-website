@@ -641,6 +641,19 @@ input[type="range"]::-moz-range-thumb {
   margin-bottom: 0.5rem;
 }
 
+/* Rho explanation banner */
+.rho-banner {
+  background: rgba(6,182,212,0.08);
+  border-left: 4px solid #06b6d4;
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.rho-banner strong { color: var(--navy); }
+
 /* Footer */
 .footer {
   text-align: center;
@@ -743,7 +756,7 @@ input[type="range"]::-moz-range-thumb {
   <div class="explain-box">
     <p><strong>What did this study find?</strong> Using Bayesian inverse probability simulation, this study estimates the population-level risk that a legally permissible interrogation tactic contributes to a false confession wrongful conviction (FCWC). Across a wide range of empirically plausible assumptions, the median estimated risk clusters near 1%.</p>
     <p>This stands in contrast to figures of 8&ndash;25% often cited in the literature, which represent the proportion of <em>known wrongful convictions</em> that involved false confessions&mdash;a fundamentally different quantity that does not account for the vast majority of interrogations that produce no false confession.</p>
-    <p>Results below are shown for three values of <strong>&rho;</strong> (rho), which represents the share of FCWCs attributable to police conduct&mdash;as opposed to voluntary or protective false confessions. At &rho;&nbsp;=&nbsp;1.0, all FCWCs are assumed to result from police tactics; at &rho;&nbsp;=&nbsp;0.75 and &rho;&nbsp;=&nbsp;0.5, only 75% and 50% are, respectively.</p>
+    <p>Results below are shown for three values of <strong>&rho;</strong> (rho), which represents the share of FCWCs attributable to police conduct&mdash;as opposed to false confessions that are voluntary or made to cover for someone else. At &rho;&nbsp;=&nbsp;1.0, all FCWCs are assumed to result from police tactics; at &rho;&nbsp;=&nbsp;0.75 and &rho;&nbsp;=&nbsp;0.5, only 75% and 50% are, respectively.</p>
   </div>
 
   <div class="kpi-grid">
@@ -770,6 +783,9 @@ input[type="range"]::-moz-range-thumb {
   </div>
 
   <h2 class="section-title">Posterior Distributions of FCWC Risk</h2>
+  <div class="rho-banner">
+    <strong>What is &rho; (rho)?</strong> The share of false confession wrongful convictions caused by police tactics, rather than voluntary confessions or confessions made to cover for someone else. Results shown for &rho;&nbsp;=&nbsp;100%, 75%, and 50%.
+  </div>
   <div class="chart-container">
     <div class="chart-title">Estimated FCWC Risk Across Attribution Assumptions</div>
     <div class="chart-subtitle">Three scenarios for the share of FCWCs attributable to police tactics (&rho;). Red dashed line = median.</div>
@@ -987,6 +1003,9 @@ input[type="range"]::-moz-range-thumb {
     </div>
   </div>
 
+  <div class="rho-banner">
+    <strong>What is &rho; (rho)?</strong> The share of false confession wrongful convictions caused by police tactics, rather than voluntary confessions or confessions made to cover for someone else. The three curves below show results for &rho;&nbsp;=&nbsp;100%, 75%, and 50%.
+  </div>
   <div class="chart-container">
     <div class="chart-title">Acceptability Curve</div>
     <div class="chart-subtitle">Posterior probability that the tactic is &ldquo;acceptable&rdquo; as a function of &lambda;, for three attribution assumptions (&rho;).</div>
@@ -1243,7 +1262,7 @@ input[type="range"]::-moz-range-thumb {
       paper_bgcolor: 'transparent',
       plot_bgcolor: 'transparent',
       font: { family: 'Inter, sans-serif', size: isMobile() ? 10 : 12, color: '#64748b' },
-      xaxis: { title: { text: 'FCWC Risk (%)', font: { size: isMobile() ? 10 : 12 } }, gridcolor: '#e2e8f0' },
+      xaxis: { title: { text: 'FCWC Risk (%)', font: { size: isMobile() ? 10 : 12 } }, gridcolor: '#e2e8f0', ticksuffix: '%' },
       yaxis: { title: { text: 'Frequency', font: { size: isMobile() ? 10 : 12 } }, gridcolor: '#e2e8f0' },
       bargap: 0.05,
       showlegend: false
@@ -1359,32 +1378,24 @@ input[type="range"]::-moz-range-thumb {
   }
 
   /* ========== Tab 3: Acceptability Curve ========== */
-  // Hardcoded acceptance probabilities from the paper (Mourtgos & Adams, 2026, Table/Figure 2)
-  // Lambda values and corresponding acceptance probabilities (%) for each rho
-  var paperLambdas = [1, 2, 5, 10, 20, 30, 50, 75, 100, 200, 500, 1000, 2000];
-  var paperAcceptance = {
-    rho050: [100, 100, 100, 99.9, 97.6, 93, 86.7, 78, 70, 52, 28, 12, 3],
-    rho075: [100, 100, 100, 99.2, 94.0, 88, 77.4, 67, 58, 40, 18, 7, 1.5],
-    rho100: [100, 100, 100, 97.5, 90.2, 82, 67.8, 57, 48, 30, 12, 4, 0.8]
-  };
+  // Calibrated log-normal CDF for smooth acceptability curves
+  // Sigma values derived so that CDF matches paper's reported acceptance probabilities at lambda=10
+  // For rho=1.0: sigma = ln(9.09/1.30) / Phi^-1(0.975) = 1.945/1.96 ≈ 0.992
+  // For rho=0.75: sigma = ln(9.09/0.97) / Phi^-1(0.992) = 2.237/2.41 ≈ 0.928
+  // For rho=0.5: sigma = ln(9.09/0.65) / Phi^-1(0.999) = 2.637/3.09 ≈ 0.854
 
-  // Log-linear interpolation between anchor points
-  function interpolateAcceptance(lambda, rhoKey) {
-    var anchors = paperAcceptance[rhoKey];
-    if (lambda <= paperLambdas[0]) return anchors[0];
-    if (lambda >= paperLambdas[paperLambdas.length - 1]) return Math.max(0, anchors[anchors.length - 1]);
+  function normalCDF(z) {
+    // Abramowitz & Stegun approximation
+    var t = 1 / (1 + 0.2316419 * Math.abs(z));
+    var d = 0.3989422804 * Math.exp(-z * z / 2);
+    var p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+    return z >= 0 ? 1 - p : p;
+  }
 
-    // Find bounding anchor points
-    var logLam = Math.log(lambda);
-    for (var i = 0; i < paperLambdas.length - 1; i++) {
-      var logL0 = Math.log(paperLambdas[i]);
-      var logL1 = Math.log(paperLambdas[i + 1]);
-      if (logLam >= logL0 && logLam <= logL1) {
-        var frac = (logLam - logL0) / (logL1 - logL0);
-        return anchors[i] + frac * (anchors[i + 1] - anchors[i]);
-      }
-    }
-    return 0;
+  function acceptanceProb(lambda, median, sigma) {
+    var threshold = 100 / (1 + lambda);
+    var z = (Math.log(threshold) - Math.log(median)) / sigma;
+    return normalCDF(z) * 100; // returns 0-100
   }
 
   function renderAcceptabilityCurve() {
@@ -1402,13 +1413,13 @@ input[type="range"]::-moz-range-thumb {
     if (lambdas[lambdas.length - 1] < 1000) lambdas.push(1000);
 
     var rhoConfigs = [
-      { key: 'rho050', name: '\u03c1 = 0.5 (50%)', color: '#06b6d4' },
-      { key: 'rho075', name: '\u03c1 = 0.75 (75%)', color: '#3b82f6' },
-      { key: 'rho100', name: '\u03c1 = 1.0 (100%)', color: '#7c3aed' }
+      { median: 0.65, sigma: 0.854, name: '\u03c1 = 0.5 (50%)', color: '#06b6d4' },
+      { median: 0.97, sigma: 0.928, name: '\u03c1 = 0.75 (75%)', color: '#3b82f6' },
+      { median: 1.30, sigma: 0.992, name: '\u03c1 = 1.0 (100%)', color: '#7c3aed' }
     ];
 
     var traces = rhoConfigs.map(function(rc) {
-      var ys = lambdas.map(function(l) { return interpolateAcceptance(l, rc.key); });
+      var ys = lambdas.map(function(l) { return acceptanceProb(l, rc.median, rc.sigma); });
       return {
         x: lambdas, y: ys, name: rc.name, mode: 'lines',
         line: { color: rc.color, width: 2.5 },

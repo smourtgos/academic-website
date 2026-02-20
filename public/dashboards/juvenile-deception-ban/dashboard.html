@@ -404,6 +404,41 @@ body {
   color: var(--gray-300);
 }
 
+/* Outcome toggle */
+.outcome-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.outcome-toggle-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  align-self: center;
+  margin-right: 0.25rem;
+}
+.outcome-btn {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.outcome-btn:hover { border-color: var(--blue); color: var(--blue); }
+.outcome-btn.active {
+  background: var(--blue);
+  color: var(--white);
+  border-color: var(--blue);
+}
+
 /* State selector for time series */
 .state-selector {
   display: flex;
@@ -494,7 +529,7 @@ body {
     <button class="tab-btn" data-tab="state-results">State Results</button>
     <button class="tab-btn" data-tab="time-effects">Effects Over Time</button>
     <button class="tab-btn" data-tab="sex-crimes">Sex Crimes</button>
-    <button class="tab-btn" data-tab="verification">How We Verified</button>
+    <button class="tab-btn" data-tab="verification">How I Verified</button>
     <button class="tab-btn" data-tab="about">About &amp; Methodology</button>
   </div>
 </div>
@@ -533,9 +568,17 @@ body {
     <p><strong>The key finding:</strong> when all seven states are analyzed together, there is no statistically significant effect on any clearance outcome. However, there is substantial variation across individual states.</p>
   </div>
 
+  <!-- Outcome toggle for Overview -->
+  <div class="outcome-toggle" id="overview-outcome-toggle">
+    <span class="outcome-toggle-label">Outcome:</span>
+    <button class="outcome-btn active" data-outcome="clear_rate">Any Clearance</button>
+    <button class="outcome-btn" data-outcome="arrest_rate">Arrest Clearance</button>
+    <button class="outcome-btn" data-outcome="exc_rate">Exceptional Clearance</button>
+  </div>
+
   <!-- Choropleth map -->
   <div class="chart-container">
-    <div class="chart-title">State Effects on Any Clearance Rate</div>
+    <div class="chart-title" id="map-title">State Effects on Any Clearance Rate</div>
     <div class="chart-subtitle">Estimated change in percentage points after ban enactment. Gray states are controls.</div>
     <div id="map-overview" style="width:100%;height:500px;"></div>
   </div>
@@ -543,61 +586,19 @@ body {
   <!-- State law details table -->
   <h3 class="section-title">State Law Details</h3>
   <div class="styled-table-wrapper">
-    <table class="styled-table">
+    <table class="styled-table" id="state-law-table">
       <thead>
         <tr>
           <th>State</th>
           <th>Effective Date</th>
           <th>Law Strength</th>
-          <th>Effect on Any Clearance (pp)</th>
+          <th id="state-law-effect-header">Effect on Any Clearance (pp)</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Illinois</td>
-          <td>Jan 1, 2022</td>
-          <td>Moderate</td>
-          <td class="positive">+1.23</td>
-        </tr>
-        <tr>
-          <td>Oregon</td>
-          <td>Jan 1, 2022</td>
-          <td>Strong</td>
-          <td class="positive sig">+4.43***</td>
-        </tr>
-        <tr>
-          <td>Utah</td>
-          <td>May 4, 2022</td>
-          <td>Weak</td>
-          <td class="neutral">+0.30</td>
-        </tr>
-        <tr>
-          <td>Delaware</td>
-          <td>Oct 10, 2022</td>
-          <td>Weak-Moderate</td>
-          <td class="neutral">-0.23</td>
-        </tr>
-        <tr>
-          <td>Indiana</td>
-          <td>Jul 1, 2023</td>
-          <td>Weak-Moderate</td>
-          <td class="neutral">+0.49</td>
-        </tr>
-        <tr>
-          <td>Colorado</td>
-          <td>Aug 7, 2023</td>
-          <td>Moderate-Strong</td>
-          <td class="negative sig">-2.06***</td>
-        </tr>
-        <tr>
-          <td>Nevada</td>
-          <td>Jul 1, 2024</td>
-          <td>Weak</td>
-          <td class="positive sig">+2.46*** &#9888;</td>
-        </tr>
+      <tbody id="state-law-tbody">
       </tbody>
     </table>
-    <div class="table-footnote">*** p &lt; 0.01. &#9888; Nevada has only ~6 months of post-treatment data; results should be interpreted with extreme caution.</div>
+    <div class="table-footnote">*** p &lt; 0.01; ** p &lt; 0.05; * p &lt; 0.10. &#9888; Nevada has only ~6 months of post-treatment data; results should be interpreted with extreme caution.</div>
   </div>
 
 </div>
@@ -618,10 +619,18 @@ body {
     <div id="heatmap-state" style="width:100%;height:420px;"></div>
   </div>
 
+  <!-- Outcome toggle for bar chart -->
+  <div class="outcome-toggle" id="bar-outcome-toggle">
+    <span class="outcome-toggle-label">Outcome:</span>
+    <button class="outcome-btn active" data-outcome="arrest_rate">Arrest Clearance</button>
+    <button class="outcome-btn" data-outcome="exc_rate">Exceptional Clearance</button>
+    <button class="outcome-btn" data-outcome="clear_rate">Any Clearance</button>
+  </div>
+
   <!-- Bar chart -->
   <div class="chart-container">
-    <div class="chart-title">Arrest Clearance Effects by State</div>
-    <div class="chart-subtitle">Estimated change in arrest clearance rate (pp) with 95% confidence intervals.</div>
+    <div class="chart-title" id="bar-title">Arrest Clearance Effects by State</div>
+    <div class="chart-subtitle" id="bar-subtitle">Estimated change in arrest clearance rate (pp) with 95% confidence intervals.</div>
     <div id="bar-arrest" style="width:100%;height:400px;"></div>
   </div>
 
@@ -633,7 +642,15 @@ body {
 <div class="tab-panel" id="panel-time-effects">
 
   <div class="explain-box">
-    <p><strong>How to read these plots:</strong> Each chart tracks the estimated effect of a ban over time for a single state. The solid line shows the estimated change in the arrest clearance rate (in percentage points) at each time point after the ban took effect. The shaded band represents the 95% confidence interval &mdash; the range where the true effect likely falls. When the band includes zero (the dashed horizontal line), the effect is not statistically distinguishable from no change.</p>
+    <p><strong>How to read these plots:</strong> Each chart tracks the estimated effect of a ban over time for a single state. The solid line shows the estimated change in clearance rate (in percentage points) at each time point after the ban took effect. The shaded band represents the 95% confidence interval &mdash; the range where the true effect likely falls. When the band includes zero (the dashed horizontal line), the effect is not statistically distinguishable from no change.</p>
+  </div>
+
+  <!-- Outcome toggle for time series -->
+  <div class="outcome-toggle" id="time-outcome-toggle">
+    <span class="outcome-toggle-label">Outcome:</span>
+    <button class="outcome-btn active" data-outcome="arrest_rate">Arrest Clearance</button>
+    <button class="outcome-btn" data-outcome="exc_rate">Exceptional Clearance</button>
+    <button class="outcome-btn" data-outcome="clear_rate">Any Clearance</button>
   </div>
 
   <!-- State selector buttons -->
@@ -786,13 +803,13 @@ body {
 <div class="tab-panel" id="panel-verification">
 
   <div class="explain-box">
-    <p>Any good study needs to check its own work. Below are three methods used to test whether the findings are robust.</p>
+    <p>Any good study needs to check its own work. Below are three methods I used to test whether the findings are robust.</p>
   </div>
 
   <!-- Randomization Inference -->
   <h3 class="section-title">Randomization Inference</h3>
   <div class="chart-container">
-    <p style="font-size:0.92rem;color:var(--gray-600);margin-bottom:1rem;line-height:1.7;">If these bans had no real effect, how unusual would our results be? To answer this, treatment assignments were randomly reshuffled 500 times and the effect re-estimated each time. This creates a distribution of &ldquo;fake&rdquo; effects that would arise by chance alone.</p>
+    <p style="font-size:0.92rem;color:var(--gray-600);margin-bottom:1rem;line-height:1.7;">If these bans had no real effect, how unusual would the results be? To answer this, I randomly reshuffled treatment assignments 500 times and re-estimated the effect each time. This creates a distribution of &ldquo;fake&rdquo; effects that would arise by chance alone.</p>
     <p style="font-size:0.92rem;font-weight:600;color:var(--navy);margin-bottom:1.25rem;">Result: The pooled estimates are well within the range of random noise.</p>
     <div style="padding:0 0.5rem;">
       <div class="ri-result">
@@ -808,7 +825,7 @@ body {
         <span class="ri-value">empirical p = 0.926</span>
       </div>
     </div>
-    <p style="font-size:0.88rem;color:var(--gray-500);margin-top:1.25rem;line-height:1.6;"><strong style="color:var(--navy);">In plain English:</strong> If you shuffled which states got bans, you would get results as large as ours more than half the time. This confirms there is no robust pooled effect.</p>
+    <p style="font-size:0.88rem;color:var(--gray-500);margin-top:1.25rem;line-height:1.6;"><strong style="color:var(--navy);">In plain English:</strong> If you shuffled which states got bans, you would get results as large as these more than half the time. This confirms there is no robust pooled effect.</p>
   </div>
 
   <!-- Bayesian Analysis -->
@@ -1006,31 +1023,102 @@ body {
 
   var fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
+  // ---- Outcome labels ----
+  var outcomeLabels = {
+    'arrest_rate': 'Arrest Clearance',
+    'exc_rate': 'Exceptional Clearance',
+    'clear_rate': 'Any Clearance'
+  };
+
+  // ---- State names ----
+  var stateNames = {
+    'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California',
+    'CO':'Colorado','CT':'Connecticut','DE':'Delaware','FL':'Florida','GA':'Georgia',
+    'HI':'Hawaii','ID':'Idaho','IL':'Illinois','IN':'Indiana','IA':'Iowa','KS':'Kansas',
+    'KY':'Kentucky','LA':'Louisiana','ME':'Maine','MD':'Maryland','MA':'Massachusetts',
+    'MI':'Michigan','MN':'Minnesota','MS':'Mississippi','MO':'Missouri','MT':'Montana',
+    'NE':'Nebraska','NV':'Nevada','NH':'New Hampshire','NJ':'New Jersey','NM':'New Mexico',
+    'NY':'New York','NC':'North Carolina','ND':'North Dakota','OH':'Ohio','OK':'Oklahoma',
+    'OR':'Oregon','PA':'Pennsylvania','RI':'Rhode Island','SC':'South Carolina',
+    'SD':'South Dakota','TN':'Tennessee','TX':'Texas','UT':'Utah','VT':'Vermont',
+    'VA':'Virginia','WA':'Washington','WI':'Wisconsin','WY':'Wyoming'
+  };
+
+  var controlStates = ['AL','AK','AZ','AR','CA','CT','FL','GA','HI','ID','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NH','NJ','NM','NY','NC','ND','OH','OK','PA','RI','SC','SD','TN','TX','VA','VT','WA','WI','WY'];
+
+  // ---- All state-level results by outcome ----
+  var stateResults = {
+    'arrest_rate': {
+      'IL': { att: 1.31, p: 0.118, ciLo: -0.33, ciHi: 2.96 },
+      'OR': { att: 2.80, p: 0.0006, ciLo: 1.20, ciHi: 4.41 },
+      'UT': { att: 0.07, p: 0.928, ciLo: -1.44, ciHi: 1.58 },
+      'DE': { att: 3.09, p: 0.0002, ciLo: 1.48, ciHi: 4.70 },
+      'NV': { att: 1.91, p: 0.003, ciLo: 0.63, ciHi: 3.18 },
+      'IN': { att: 1.64, p: 0.022, ciLo: 0.24, ciHi: 3.03 },
+      'CO': { att: 0.07, p: 0.924, ciLo: -1.29, ciHi: 1.42 }
+    },
+    'exc_rate': {
+      'IL': { att: -0.08, p: 0.810, ciLo: -0.76, ciHi: 0.59 },
+      'OR': { att: 1.63, p: 7.09e-7, ciLo: 0.99, ciHi: 2.28 },
+      'UT': { att: 0.23, p: 0.484, ciLo: -0.41, ciHi: 0.86 },
+      'DE': { att: -3.32, p: 1.60e-20, ciLo: -4.02, ciHi: -2.62 },
+      'NV': { att: 0.55, p: 0.012, ciLo: 0.12, ciHi: 0.98 },
+      'IN': { att: -1.15, p: 8.88e-5, ciLo: -1.72, ciHi: -0.57 },
+      'CO': { att: -2.13, p: 4.33e-12, ciLo: -2.73, ciHi: -1.52 }
+    },
+    'clear_rate': {
+      'IL': { att: 1.23, p: 0.189, ciLo: -0.61, ciHi: 3.07 },
+      'OR': { att: 4.43, p: 8.73e-7, ciLo: 2.67, ciHi: 6.20 },
+      'UT': { att: 0.30, p: 0.725, ciLo: -1.35, ciHi: 1.94 },
+      'DE': { att: -0.23, p: 0.778, ciLo: -1.81, ciHi: 1.36 },
+      'NV': { att: 2.46, p: 0.0001, ciLo: 1.19, ciHi: 3.73 },
+      'IN': { att: 0.49, p: 0.499, ciLo: -0.93, ciHi: 1.91 },
+      'CO': { att: -2.06, p: 0.003, ciLo: -3.44, ciHi: -0.68 }
+    }
+  };
+
+  // ---- State law details ----
+  var stateLawDetails = [
+    { name: 'Illinois', abbr: 'IL', date: 'Jan 1, 2022', strength: 'Moderate' },
+    { name: 'Oregon', abbr: 'OR', date: 'Jan 1, 2022', strength: 'Strong' },
+    { name: 'Utah', abbr: 'UT', date: 'May 4, 2022', strength: 'Weak' },
+    { name: 'Delaware', abbr: 'DE', date: 'Oct 10, 2022', strength: 'Weak-Moderate' },
+    { name: 'Indiana', abbr: 'IN', date: 'Jul 1, 2023', strength: 'Weak-Moderate' },
+    { name: 'Colorado', abbr: 'CO', date: 'Aug 7, 2023', strength: 'Moderate-Strong' },
+    { name: 'Nevada', abbr: 'NV', date: 'Jul 1, 2024', strength: 'Weak' }
+  ];
+
+  function sigMarker(p) {
+    if (p < 0.001) return '***';
+    if (p < 0.01) return '**';
+    if (p < 0.05) return '*';
+    return '';
+  }
+
+  function effectClass(att, p) {
+    if (p < 0.05) return att >= 0 ? 'positive sig' : 'negative sig';
+    if (att > 0.5) return 'positive';
+    if (att < -0.5) return 'negative';
+    return 'neutral';
+  }
+
+  // ---- Current overview outcome ----
+  var currentOverviewOutcome = 'clear_rate';
+
   // ---- TAB 1: Choropleth Map ----
-  function renderMap() {
-    var stateAbbrevs = ['AL','AK','AZ','AR','CA','CT','FL','GA','HI','ID','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NH','NJ','NM','NY','NC','ND','OH','OK','PA','RI','SC','SD','TN','TX','VA','VT','WA','WI','WY'];
-    var treatedMap = { 'IL': 1.23, 'OR': 4.43, 'UT': 0.30, 'DE': -0.23, 'NV': 2.46, 'IN': 0.49, 'CO': -2.06 };
-    var allStates = stateAbbrevs.concat(Object.keys(treatedMap));
-    // Remove duplicates
+  function renderMap(outcome) {
+    var treatedMap = {};
+    var states = ['IL','OR','UT','DE','NV','IN','CO'];
+    states.forEach(function(s) {
+      treatedMap[s] = stateResults[outcome][s].att;
+    });
+
+    var allStates = controlStates.concat(Object.keys(treatedMap));
     allStates = allStates.filter(function(v, i, a) { return a.indexOf(v) === i; });
 
     var locations = [];
     var zValues = [];
     var textLabels = [];
-    var colors = [];
-
-    var stateNames = {
-      'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California',
-      'CO':'Colorado','CT':'Connecticut','DE':'Delaware','FL':'Florida','GA':'Georgia',
-      'HI':'Hawaii','ID':'Idaho','IL':'Illinois','IN':'Indiana','IA':'Iowa','KS':'Kansas',
-      'KY':'Kentucky','LA':'Louisiana','ME':'Maine','MD':'Maryland','MA':'Massachusetts',
-      'MI':'Michigan','MN':'Minnesota','MS':'Mississippi','MO':'Missouri','MT':'Montana',
-      'NE':'Nebraska','NV':'Nevada','NH':'New Hampshire','NJ':'New Jersey','NM':'New Mexico',
-      'NY':'New York','NC':'North Carolina','ND':'North Dakota','OH':'Ohio','OK':'Oklahoma',
-      'OR':'Oregon','PA':'Pennsylvania','RI':'Rhode Island','SC':'South Carolina',
-      'SD':'South Dakota','TN':'Tennessee','TX':'Texas','UT':'Utah','VT':'Vermont',
-      'VA':'Virginia','WA':'Washington','WI':'Wisconsin','WY':'Wyoming'
-    };
 
     allStates.forEach(function(s) {
       locations.push(s);
@@ -1088,39 +1176,59 @@ body {
     };
 
     Plotly.newPlot('map-overview', data, layout, plotlyConfig);
+    document.getElementById('map-title').textContent = 'State Effects on ' + outcomeLabels[outcome] + ' Rate';
   }
+
+  // ---- TAB 1: State Law Table ----
+  function renderLawTable(outcome) {
+    var tbody = document.getElementById('state-law-tbody');
+    tbody.innerHTML = '';
+    document.getElementById('state-law-effect-header').textContent = 'Effect on ' + outcomeLabels[outcome] + ' (pp)';
+
+    stateLawDetails.forEach(function(s) {
+      var r = stateResults[outcome][s.abbr];
+      var sign = r.att >= 0 ? '+' : '';
+      var sig = sigMarker(r.p);
+      var cls = effectClass(r.att, r.p);
+      var nvWarning = s.abbr === 'NV' ? ' \u26A0' : '';
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + s.name + '</td>' +
+        '<td>' + s.date + '</td>' +
+        '<td>' + s.strength + '</td>' +
+        '<td class="' + cls + '">' + sign + r.att.toFixed(2) + sig + nvWarning + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---- Overview outcome toggle handler ----
+  document.querySelectorAll('#overview-outcome-toggle .outcome-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#overview-outcome-toggle .outcome-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      currentOverviewOutcome = this.getAttribute('data-outcome');
+      renderMap(currentOverviewOutcome);
+      renderLawTable(currentOverviewOutcome);
+    });
+  });
 
   // ---- TAB 2: Heatmap ----
   function renderHeatmap() {
     var states = ['CO','DE','IL','IN','NV','OR','UT'];
     var outcomes = ['Arrest Clearance','Exceptional Clearance','Any Clearance'];
+    var outcomeKeys = ['arrest_rate','exc_rate','clear_rate'];
 
-    var att = [
-      [0.07, -2.13, -2.06],
-      [3.09, -3.32, -0.23],
-      [1.31, -0.08, 1.23],
-      [1.64, -1.15, 0.49],
-      [1.91, 0.55, 2.46],
-      [2.80, 1.63, 4.43],
-      [0.07, 0.23, 0.30]
-    ];
-
-    var pvals = [
-      [0.924, 4.33e-12, 0.003],
-      [0.0002, 1.60e-20, 0.778],
-      [0.118, 0.810, 0.189],
-      [0.022, 8.88e-05, 0.499],
-      [0.003, 0.012, 0.0001],
-      [0.001, 7.09e-07, 8.73e-07],
-      [0.928, 0.484, 0.725]
-    ];
-
-    function sigMarker(p) {
-      if (p < 0.001) return '***';
-      if (p < 0.01) return '**';
-      if (p < 0.05) return '*';
-      return '';
-    }
+    var att = [];
+    var pvals = [];
+    states.forEach(function(s) {
+      var row = [];
+      var prow = [];
+      outcomeKeys.forEach(function(o) {
+        row.push(stateResults[o][s].att);
+        prow.push(stateResults[o][s].p);
+      });
+      att.push(row);
+      pvals.push(prow);
+    });
 
     var annotations = [];
     var hoverText = [];
@@ -1142,7 +1250,7 @@ body {
             weight: 600
           }
         });
-        row.push('<b>' + states[i] + ' - ' + outcomes[j] + '</b><br>ATT: ' + sign + att[i][j].toFixed(2) + ' pp<br>p = ' + pvals[i][j].toExponential(2));
+        row.push('<b>' + states[i] + ' \u2014 ' + outcomes[j] + '</b><br>ATT: ' + sign + att[i][j].toFixed(2) + ' pp<br>p = ' + pvals[i][j].toExponential(2));
       }
       hoverText.push(row);
     }
@@ -1187,11 +1295,22 @@ body {
   }
 
   // ---- TAB 2: Bar chart ----
-  function renderBarChart() {
-    var states = ['UT','CO','IL','IN','NV','DE','OR'];
-    var values = [0.07, 0.07, 1.31, 1.64, 1.91, 3.09, 2.80];
-    var ciLo = [-1.44, -1.29, -0.33, 0.24, 0.63, 1.48, 1.20];
-    var ciHi = [1.58, 1.42, 2.96, 3.03, 3.18, 4.70, 4.41];
+  var currentBarOutcome = 'arrest_rate';
+
+  function renderBarChart(outcome) {
+    currentBarOutcome = outcome;
+    var label = outcomeLabels[outcome];
+
+    // Sort states by ATT value for display
+    var stateOrder = ['IL','OR','UT','DE','NV','IN','CO'];
+    var sorted = stateOrder.map(function(s) {
+      return { abbr: s, data: stateResults[outcome][s] };
+    }).sort(function(a, b) { return a.data.att - b.data.att; });
+
+    var states = sorted.map(function(d) { return d.abbr; });
+    var values = sorted.map(function(d) { return d.data.att; });
+    var ciLo = sorted.map(function(d) { return d.data.ciLo; });
+    var ciHi = sorted.map(function(d) { return d.data.ciHi; });
 
     var barColors = values.map(function(v) {
       return v >= 0 ? '#3b82f6' : '#ef4444';
@@ -1227,7 +1346,7 @@ body {
         tickfont: { size: 13, color: '#1e293b' }
       },
       yaxis: {
-        title: { text: 'Change in Arrest Clearance Rate (pp)', font: { size: 12 } },
+        title: { text: 'Change in ' + label + ' Rate (pp)', font: { size: 12 } },
         tickfont: { size: 11 },
         zeroline: true,
         zerolinecolor: '#94a3b8',
@@ -1243,73 +1362,184 @@ body {
     };
 
     Plotly.newPlot('bar-arrest', data, layout, plotlyConfig);
+    document.getElementById('bar-title').textContent = label + ' Effects by State';
+    document.getElementById('bar-subtitle').textContent = 'Estimated change in ' + label.toLowerCase() + ' rate (pp) with 95% confidence intervals.';
   }
 
-  // ---- TAB 3: Time series ----
+  // ---- Bar chart outcome toggle handler ----
+  document.querySelectorAll('#bar-outcome-toggle .outcome-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#bar-outcome-toggle .outcome-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      renderBarChart(this.getAttribute('data-outcome'));
+    });
+  });
+
+  // ---- TAB 3: Time series data (all three outcomes) ----
   var timeData = {
-    'IL': {
-      label: 'Illinois',
-      effectiveDate: 'Jan 1, 2022',
-      months: [0,1,2,3,4,6,9,12],
-      att: [1.31,1.67,1.72,1.51,1.80,1.54,0.97,-0.25],
-      ciLo: [-0.33,0.02,0.12,-0.08,0.25,0.02,-0.44,-1.66],
-      ciHi: [2.96,3.31,3.32,3.10,3.34,3.06,2.37,1.16]
+    'arrest_rate': {
+      'IL': {
+        label: 'Illinois', effectiveDate: 'Jan 1, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [1.31,1.67,1.72,1.51,1.80,1.54,0.97,-0.25],
+        ciLo: [-0.33,0.02,0.12,-0.08,0.25,0.02,-0.44,-1.66],
+        ciHi: [2.96,3.31,3.32,3.10,3.34,3.06,2.37,1.16]
+      },
+      'OR': {
+        label: 'Oregon', effectiveDate: 'Jan 1, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [2.80,2.91,3.08,3.37,3.40,4.56,3.68,3.73],
+        ciLo: [1.20,1.29,1.48,1.77,1.84,3.03,2.22,2.28],
+        ciHi: [4.41,4.53,4.68,4.96,4.96,6.09,5.13,5.17]
+      },
+      'UT': {
+        label: 'Utah', effectiveDate: 'May 4, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [0.07,-0.50,-0.51,-0.67,-0.75,-1.62,-0.61,-0.63],
+        ciLo: [-1.44,-2.02,-2.04,-2.19,-2.26,-3.07,-2.06,-2.02],
+        ciHi: [1.58,1.03,1.02,0.85,0.76,-0.16,0.84,0.76]
+      },
+      'DE': {
+        label: 'Delaware', effectiveDate: 'Oct 10, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [3.09,2.03,0.95,0.78,0.53,1.25,4.52,2.32],
+        ciLo: [1.48,0.42,-0.66,-0.84,-1.07,-0.31,3.05,1.03],
+        ciHi: [4.70,3.64,2.56,2.39,2.12,2.80,5.99,3.61]
+      },
+      'IN': {
+        label: 'Indiana', effectiveDate: 'Jul 1, 2023',
+        months: [0,1,2,3,4,6,9,12],
+        att: [1.64,1.65,1.16,1.22,0.82,-0.37,-0.10,-0.33],
+        ciLo: [0.24,0.30,-0.12,-0.04,-0.42,-1.66,-1.32,-1.56],
+        ciHi: [3.03,3.00,2.44,2.47,2.05,0.92,1.11,0.90]
+      },
+      'CO': {
+        label: 'Colorado', effectiveDate: 'Aug 7, 2023',
+        months: [0,1,2,3,4,6,9,12],
+        att: [0.07,0.11,0.18,0.06,0.47,0.58,-0.86,-1.45],
+        ciLo: [-1.29,-1.20,-1.11,-1.21,-0.82,-0.75,-2.04,-2.74],
+        ciHi: [1.42,1.42,1.46,1.34,1.76,1.92,0.32,-0.17]
+      },
+      'NV': {
+        label: 'Nevada', effectiveDate: 'Jul 1, 2024',
+        months: [0,1,2,3,4],
+        att: [1.91,1.60,-1.36,-1.25,-3.87],
+        ciLo: [0.63,0.28,-2.47,-2.38,-4.60],
+        ciHi: [3.18,2.93,-0.25,-0.12,-3.13]
+      }
     },
-    'OR': {
-      label: 'Oregon',
-      effectiveDate: 'Jan 1, 2022',
-      months: [0,1,2,3,4,6,9,12],
-      att: [2.80,2.91,3.08,3.37,3.40,4.56,3.68,3.73],
-      ciLo: [1.20,1.29,1.48,1.77,1.84,3.03,2.22,2.28],
-      ciHi: [4.41,4.53,4.68,4.96,4.96,6.09,5.13,5.17]
+    'exc_rate': {
+      'IL': {
+        label: 'Illinois', effectiveDate: 'Jan 1, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [-0.08,-0.06,0.05,0.22,0.30,0.30,0.06,0.12],
+        ciLo: [-0.76,-0.71,-0.61,-0.39,-0.32,-0.35,-0.51,-0.43],
+        ciHi: [0.59,0.59,0.71,0.83,0.92,0.94,0.62,0.66]
+      },
+      'OR': {
+        label: 'Oregon', effectiveDate: 'Jan 1, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [1.63,1.42,1.54,2.04,2.00,1.90,1.51,1.58],
+        ciLo: [0.99,0.78,0.90,1.44,1.39,1.26,0.92,1.00],
+        ciHi: [2.28,2.06,2.19,2.65,2.62,2.54,2.11,2.16]
+      },
+      'UT': {
+        label: 'Utah', effectiveDate: 'May 4, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [0.23,0.17,0.00,-0.46,-0.42,-0.36,-0.77,-0.29],
+        ciLo: [-0.41,-0.48,-0.66,-1.09,-1.02,-0.96,-1.36,-0.87],
+        ciHi: [0.86,0.83,0.66,0.17,0.19,0.24,-0.18,0.30]
+      },
+      'DE': {
+        label: 'Delaware', effectiveDate: 'Oct 10, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [-3.32,-2.94,-2.63,-2.83,-2.44,-3.69,-4.73,-3.81],
+        ciLo: [-4.02,-3.64,-3.32,-3.50,-3.11,-4.35,-5.36,-4.41],
+        ciHi: [-2.62,-2.25,-1.95,-2.15,-1.77,-3.02,-4.11,-3.21]
+      },
+      'IN': {
+        label: 'Indiana', effectiveDate: 'Jul 1, 2023',
+        months: [0,1,2,3,4,6,9,12],
+        att: [-1.15,-1.12,-1.34,-1.55,-1.64,-1.67,-1.35,-1.43],
+        ciLo: [-1.72,-1.69,-1.89,-2.08,-2.16,-2.16,-1.84,-1.93],
+        ciHi: [-0.57,-0.55,-0.79,-1.02,-1.11,-1.18,-0.86,-0.94]
+      },
+      'CO': {
+        label: 'Colorado', effectiveDate: 'Aug 7, 2023',
+        months: [0,1,2,3,4,6,9,12],
+        att: [-2.13,-2.36,-2.58,-2.47,-2.12,-2.54,-2.05,-1.77],
+        ciLo: [-2.73,-2.95,-3.15,-3.04,-2.69,-3.05,-2.62,-2.43],
+        ciHi: [-1.52,-1.77,-2.01,-1.90,-1.55,-2.03,-1.48,-1.12]
+      },
+      'NV': {
+        label: 'Nevada', effectiveDate: 'Jul 1, 2024',
+        months: [0,1,2,3,4],
+        att: [0.55,0.60,0.56,0.70,1.14],
+        ciLo: [0.12,0.16,0.16,0.28,0.77],
+        ciHi: [0.98,1.04,0.96,1.12,1.51]
+      }
     },
-    'UT': {
-      label: 'Utah',
-      effectiveDate: 'May 4, 2022',
-      months: [0,1,2,3,4,6,9,12],
-      att: [0.07,-0.50,-0.51,-0.67,-0.75,-1.62,-0.61,-0.63],
-      ciLo: [-1.44,-2.02,-2.04,-2.19,-2.26,-3.07,-2.06,-2.02],
-      ciHi: [1.58,1.03,1.02,0.85,0.76,-0.16,0.84,0.76]
-    },
-    'DE': {
-      label: 'Delaware',
-      effectiveDate: 'Oct 10, 2022',
-      months: [0,1,2,3,4,6,9,12],
-      att: [3.09,2.03,0.95,0.78,0.53,1.25,4.52,2.32],
-      ciLo: [1.48,0.42,-0.66,-0.84,-1.07,-0.31,3.05,1.03],
-      ciHi: [4.70,3.64,2.56,2.39,2.12,2.80,5.99,3.61]
-    },
-    'IN': {
-      label: 'Indiana',
-      effectiveDate: 'Jul 1, 2023',
-      months: [0,1,2,3,4,6,9,12],
-      att: [1.64,1.65,1.16,1.22,0.82,-0.37,-0.10,-0.33],
-      ciLo: [0.24,0.30,-0.12,-0.04,-0.42,-1.66,-1.32,-1.56],
-      ciHi: [3.03,3.00,2.44,2.47,2.05,0.92,1.11,0.90]
-    },
-    'CO': {
-      label: 'Colorado',
-      effectiveDate: 'Aug 7, 2023',
-      months: [0,1,2,3,4,6,9,12],
-      att: [0.07,0.11,0.18,0.06,0.47,0.58,-0.86,-1.45],
-      ciLo: [-1.29,-1.20,-1.11,-1.21,-0.82,-0.75,-2.04,-2.74],
-      ciHi: [1.42,1.42,1.46,1.34,1.76,1.92,0.32,-0.17]
-    },
-    'NV': {
-      label: 'Nevada',
-      effectiveDate: 'Jul 1, 2024',
-      months: [0,1,2,3,4],
-      att: [1.91,1.60,-1.36,-1.25,-3.87],
-      ciLo: [0.63,0.28,-2.47,-2.38,-4.60],
-      ciHi: [3.18,2.93,-0.25,-0.12,-3.13]
+    'clear_rate': {
+      'IL': {
+        label: 'Illinois', effectiveDate: 'Jan 1, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [1.23,1.61,1.77,1.73,2.09,1.84,1.02,-0.13],
+        ciLo: [-0.61,-0.25,-0.01,-0.01,0.41,0.19,-0.43,-1.56],
+        ciHi: [3.07,3.46,3.56,3.47,3.78,3.48,2.48,1.29]
+      },
+      'OR': {
+        label: 'Oregon', effectiveDate: 'Jan 1, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [4.43,4.33,4.62,5.41,5.40,6.46,5.19,5.30],
+        ciLo: [2.67,2.52,2.85,3.68,3.71,4.82,3.68,3.85],
+        ciHi: [6.20,6.13,6.39,7.15,7.09,8.10,6.69,6.76]
+      },
+      'UT': {
+        label: 'Utah', effectiveDate: 'May 4, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [0.30,-0.33,-0.51,-1.13,-1.17,-1.98,-1.38,-0.92],
+        ciLo: [-1.35,-2.00,-2.16,-2.75,-2.76,-3.47,-2.84,-2.35],
+        ciHi: [1.94,1.35,1.14,0.50,0.43,-0.48,0.09,0.52]
+      },
+      'DE': {
+        label: 'Delaware', effectiveDate: 'Oct 10, 2022',
+        months: [0,1,2,3,4,6,9,12],
+        att: [-0.23,-0.91,-1.68,-2.05,-1.92,-2.44,-0.21,-1.50],
+        ciLo: [-1.81,-2.48,-3.24,-3.60,-3.45,-3.94,-1.64,-2.72],
+        ciHi: [1.36,0.66,-0.13,-0.50,-0.38,-0.94,1.22,-0.27]
+      },
+      'IN': {
+        label: 'Indiana', effectiveDate: 'Jul 1, 2023',
+        months: [0,1,2,3,4,6,9,12],
+        att: [0.49,0.53,-0.18,-0.33,-0.82,-2.04,-1.45,-1.76],
+        ciLo: [-0.93,-0.84,-1.48,-1.58,-2.04,-3.31,-2.67,-3.03],
+        ciHi: [1.91,1.90,1.12,0.91,0.40,-0.78,-0.23,-0.50]
+      },
+      'CO': {
+        label: 'Colorado', effectiveDate: 'Aug 7, 2023',
+        months: [0,1,2,3,4,6,9,12],
+        att: [-2.06,-2.25,-2.40,-2.41,-1.65,-1.96,-2.91,-3.23],
+        ciLo: [-3.44,-3.59,-3.69,-3.68,-2.94,-3.28,-4.13,-4.53],
+        ciHi: [-0.68,-0.90,-1.12,-1.14,-0.37,-0.63,-1.69,-1.92]
+      },
+      'NV': {
+        label: 'Nevada', effectiveDate: 'Jul 1, 2024',
+        months: [0,1,2,3,4],
+        att: [2.46,2.20,-0.80,-0.55,-2.73],
+        ciLo: [1.19,0.88,-1.89,-1.58,-3.43],
+        ciHi: [3.73,3.52,0.28,0.48,-2.02]
+      }
     }
   };
 
-  var currentState = 'IL';
+  var currentTimeState = 'IL';
+  var currentTimeOutcome = 'arrest_rate';
 
-  function renderTimeSeries(stateCode) {
-    currentState = stateCode;
-    var d = timeData[stateCode];
+  function renderTimeSeries(stateCode, outcome) {
+    currentTimeState = stateCode;
+    currentTimeOutcome = outcome;
+    var label = outcomeLabels[outcome];
+    var d = timeData[outcome][stateCode];
 
     // Show/hide NV warning
     document.getElementById('nv-warning').style.display = stateCode === 'NV' ? 'block' : 'none';
@@ -1345,7 +1575,7 @@ body {
 
     var layout = {
       title: {
-        text: d.label + ' &mdash; Arrest Clearance Effect Over Time',
+        text: d.label + ' \u2014 ' + label + ' Effect Over Time',
         font: { size: 15, family: fontFamily, color: '#1e293b' },
         x: 0.02, xanchor: 'left'
       },
@@ -1365,7 +1595,7 @@ body {
         gridcolor: '#f1f5f9'
       },
       yaxis: {
-        title: { text: 'Change in Arrest Clearance (pp)', font: { size: 12 } },
+        title: { text: 'Change in ' + label + ' (pp)', font: { size: 12 } },
         tickfont: { size: 11 },
         zeroline: true,
         zerolinecolor: '#475569',
@@ -1385,14 +1615,26 @@ body {
     Plotly.newPlot('time-chart', [traceBand, traceLine], layout, plotlyConfig);
   }
 
+  // ---- Time series state selector handler ----
   document.querySelectorAll('#time-state-selector .state-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      renderTimeSeries(this.getAttribute('data-state'));
+      renderTimeSeries(this.getAttribute('data-state'), currentTimeOutcome);
+    });
+  });
+
+  // ---- Time series outcome toggle handler ----
+  document.querySelectorAll('#time-outcome-toggle .outcome-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#time-outcome-toggle .outcome-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      currentTimeOutcome = this.getAttribute('data-outcome');
+      renderTimeSeries(currentTimeState, currentTimeOutcome);
     });
   });
 
   // ---- Initial renders ----
-  renderMap();
+  renderMap('clear_rate');
+  renderLawTable('clear_rate');
 
   // Deferred renders for hidden tabs
   var rendered = { overview: true };
@@ -1402,9 +1644,9 @@ body {
     rendered[tabId] = true;
     if (tabId === 'state-results') {
       renderHeatmap();
-      renderBarChart();
+      renderBarChart('arrest_rate');
     } else if (tabId === 'time-effects') {
-      renderTimeSeries('IL');
+      renderTimeSeries('IL', 'arrest_rate');
     }
   }
 

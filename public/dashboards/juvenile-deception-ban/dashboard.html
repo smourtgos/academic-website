@@ -476,24 +476,76 @@ body {
 .footer a { color: var(--blue-light); text-decoration: none; }
 .footer a:hover { text-decoration: underline; }
 
-/* Responsive */
+/* Responsive — Tablets */
 @media (max-width: 768px) {
   .navbar { padding: 0 1rem; }
+  .navbar-back { font-size: 0.75rem; }
   .header { padding: 1.5rem 1rem 1.25rem; }
   .header h1 { font-size: 1.3rem; }
-  .main { padding: 1.25rem 1rem 3rem; }
+  .main { padding: 1.25rem 0.75rem 3rem; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .tab-btn { padding: 0.75rem 0.85rem; font-size: 0.78rem; }
   .explain-box { padding: 1.25rem; font-size: 0.85rem; }
   .styled-table { font-size: 0.8rem; }
-  .styled-table thead th, .styled-table tbody td { padding: 0.6rem 0.65rem; }
+  .styled-table thead th, .styled-table tbody td { padding: 0.6rem 0.65rem; white-space: normal; }
   .result-cards { grid-template-columns: 1fr; }
+  .chart-container { padding: 1rem; }
+
+  /* Outcome toggle — wrap to grid */
+  .outcome-toggle { gap: 0.4rem; }
+  .outcome-btn { padding: 0.5rem 0.75rem; font-size: 0.78rem; min-height: 44px; }
+  .outcome-toggle-label { width: 100%; margin-bottom: 0.15rem; }
+
+  /* State selector — smaller buttons */
+  .state-selector { gap: 0.35rem; }
+  .state-btn { padding: 0.4rem 0.7rem; font-size: 0.78rem; min-height: 44px; }
+
+  /* RI results stack */
+  .ri-result { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .ri-label { min-width: auto; }
 }
 
+/* Responsive — Phones */
 @media (max-width: 480px) {
-  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-  .kpi-card { padding: 1rem; }
-  .kpi-card .kpi-value { font-size: 1.6rem; }
+  .navbar { height: 48px; }
+  .navbar-brand { font-size: 0.82rem; }
+  .navbar-brand svg { width: 15px; height: 15px; }
+  .navbar-back { display: none; }
+  .prelim-banner { font-size: 0.75rem; padding: 0.6rem 0.75rem; }
+  .header { padding: 1.25rem 0.75rem 1rem; }
+  .header h1 { font-size: 1.15rem; }
+  .header .subtitle { font-size: 0.82rem; }
+  .category-badge { font-size: 0.6rem; padding: 0.25rem 0.6rem; }
+  .tab-nav { top: 48px; }
+  .tab-btn { padding: 0.6rem 0.65rem; font-size: 0.72rem; }
+  .main { padding: 1rem 0.5rem 2rem; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .kpi-card { padding: 0.85rem; border-radius: 8px; }
+  .kpi-card .kpi-value { font-size: 1.5rem; }
+  .kpi-card .kpi-label { font-size: 0.7rem; }
+  .explain-box { padding: 1rem; font-size: 0.82rem; border-radius: 8px; }
+  .chart-container { padding: 0.75rem; border-radius: 8px; }
+  .chart-container .chart-title { font-size: 0.88rem; }
+  .chart-container .chart-subtitle { font-size: 0.75rem; }
+  .section-title { font-size: 1.1rem; }
+  .section-subtitle { font-size: 0.88rem; }
+  .styled-table { font-size: 0.72rem; }
+  .styled-table thead th { font-size: 0.68rem; padding: 0.5rem; }
+  .styled-table tbody td { padding: 0.5rem; white-space: normal; }
+  .table-footnote { font-size: 0.7rem; padding: 0.6rem 0.75rem; }
+  .result-card { padding: 1.25rem; border-radius: 8px; }
+  .result-card .rc-value { font-size: 1.8rem; }
+  .takeaway-box { padding: 1rem; font-size: 0.85rem; border-radius: 8px; }
+  .warning-box { font-size: 0.82rem; padding: 0.85rem 1rem; }
+  .footer { padding: 1.5rem 1rem; font-size: 0.75rem; }
+
+  /* Outcome toggle — full width buttons */
+  .outcome-toggle { gap: 0.35rem; }
+  .outcome-btn { flex: 1 1 auto; text-align: center; padding: 0.5rem 0.5rem; font-size: 0.72rem; min-height: 44px; }
+
+  /* State selector — compact grid */
+  .state-selector { gap: 0.3rem; }
+  .state-btn { flex: 1 1 calc(25% - 0.3rem); text-align: center; padding: 0.45rem 0.3rem; font-size: 0.72rem; min-height: 44px; }
 }
 </style>
 </head>
@@ -580,7 +632,7 @@ body {
   <div class="chart-container">
     <div class="chart-title" id="map-title">State Effects on Any Clearance Rate</div>
     <div class="chart-subtitle">Estimated change in percentage points after ban enactment. Gray states are controls.</div>
-    <div id="map-overview" style="width:100%;height:500px;"></div>
+    <div id="map-overview" style="width:100%;"></div>
   </div>
 
   <!-- State law details table -->
@@ -616,7 +668,7 @@ body {
   <div class="chart-container">
     <div class="chart-title">State-by-Outcome Heatmap</div>
     <div class="chart-subtitle">Average treatment effect on the treated (ATT) in percentage points, with significance markers.</div>
-    <div id="heatmap-state" style="width:100%;height:420px;"></div>
+    <div id="heatmap-state" style="width:100%;"></div>
   </div>
 
   <!-- Outcome toggle for bar chart -->
@@ -631,7 +683,7 @@ body {
   <div class="chart-container">
     <div class="chart-title" id="bar-title">Arrest Clearance Effects by State</div>
     <div class="chart-subtitle" id="bar-subtitle">Estimated change in arrest clearance rate (pp) with 95% confidence intervals.</div>
-    <div id="bar-arrest" style="width:100%;height:400px;"></div>
+    <div id="bar-arrest" style="width:100%;"></div>
   </div>
 
 </div>
@@ -665,7 +717,7 @@ body {
   </div>
 
   <div class="chart-container">
-    <div id="time-chart" style="width:100%;height:450px;"></div>
+    <div id="time-chart" style="width:100%;"></div>
   </div>
 
   <div class="warning-box" id="nv-warning" style="display:none;">
@@ -1012,14 +1064,27 @@ body {
     });
   });
 
+  // ---- Responsive helpers ----
+  function isMobile() { return window.innerWidth <= 768; }
+  function isPhone() { return window.innerWidth <= 480; }
+
+  function chartHeight(desktopH, tabletH, phoneH) {
+    if (isPhone()) return phoneH;
+    if (isMobile()) return tabletH;
+    return desktopH;
+  }
+
   // ---- Plotly defaults ----
-  var plotlyConfig = {
-    responsive: true,
-    displayModeBar: true,
-    modeBarButtonsToRemove: ['select2d','lasso2d','autoScale2d'],
-    displaylogo: false,
-    toImageButtonOptions: { format: 'png', scale: 2 }
-  };
+  function getPlotlyConfig() {
+    return {
+      responsive: true,
+      displayModeBar: !isMobile(),
+      modeBarButtonsToRemove: ['select2d','lasso2d','autoScale2d'],
+      displaylogo: false,
+      scrollZoom: false,
+      toImageButtonOptions: { format: 'png', scale: 2 }
+    };
+  }
 
   var fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
@@ -1160,6 +1225,9 @@ body {
       }
     }];
 
+    var mapH = chartHeight(500, 380, 300);
+    document.getElementById('map-overview').style.height = mapH + 'px';
+
     var layout = {
       geo: {
         scope: 'usa',
@@ -1170,12 +1238,13 @@ body {
         showframe: false,
         projection: { type: 'albers usa' }
       },
-      margin: { t: 10, b: 10, l: 10, r: 10 },
+      height: mapH,
+      margin: isMobile() ? { t: 5, b: 5, l: 5, r: 5 } : { t: 10, b: 10, l: 10, r: 10 },
       paper_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: fontFamily }
+      font: { family: fontFamily, size: isMobile() ? 10 : 12 }
     };
 
-    Plotly.newPlot('map-overview', data, layout, plotlyConfig);
+    Plotly.newPlot('map-overview', data, layout, getPlotlyConfig());
     document.getElementById('map-title').textContent = 'State Effects on ' + outcomeLabels[outcome] + ' Rate';
   }
 
@@ -1255,6 +1324,9 @@ body {
       hoverText.push(row);
     }
 
+    var heatH = chartHeight(420, 360, 320);
+    document.getElementById('heatmap-state').style.height = heatH + 'px';
+
     var data = [{
       type: 'heatmap',
       z: att,
@@ -1273,25 +1345,31 @@ body {
       zmin: -5,
       zmax: 5,
       colorbar: {
-        title: { text: 'ATT (pp)', font: { size: 11, family: fontFamily } },
-        thickness: 15,
-        tickfont: { size: 10, family: fontFamily }
+        title: { text: 'ATT (pp)', font: { size: isMobile() ? 9 : 11, family: fontFamily } },
+        thickness: isMobile() ? 10 : 15,
+        tickfont: { size: isMobile() ? 8 : 10, family: fontFamily }
       },
       xgap: 3,
       ygap: 3
     }];
 
+    // Adjust annotation font size for mobile
+    annotations.forEach(function(a) {
+      a.font.size = isMobile() ? 10 : 13;
+    });
+
     var layout = {
+      height: heatH,
       annotations: annotations,
-      margin: { t: 30, b: 80, l: 50, r: 80 },
+      margin: isMobile() ? { t: 20, b: 60, l: 40, r: 50 } : { t: 30, b: 80, l: 50, r: 80 },
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: { family: fontFamily },
-      xaxis: { side: 'bottom', tickfont: { size: 12 } },
-      yaxis: { tickfont: { size: 12 }, autorange: 'reversed' }
+      xaxis: { side: 'bottom', tickfont: { size: isMobile() ? 9 : 12 } },
+      yaxis: { tickfont: { size: isMobile() ? 10 : 12 }, autorange: 'reversed' }
     };
 
-    Plotly.newPlot('heatmap-state', data, layout, plotlyConfig);
+    Plotly.newPlot('heatmap-state', data, layout, getPlotlyConfig());
   }
 
   // ---- TAB 2: Bar chart ----
@@ -1319,6 +1397,9 @@ body {
     var errorYLow = values.map(function(v, i) { return v - ciLo[i]; });
     var errorYHigh = values.map(function(v, i) { return ciHi[i] - v; });
 
+    var barH = chartHeight(400, 340, 300);
+    document.getElementById('bar-arrest').style.height = barH + 'px';
+
     var data = [{
       type: 'bar',
       x: states,
@@ -1331,23 +1412,24 @@ body {
         arrayminus: errorYLow,
         color: '#475569',
         thickness: 1.5,
-        width: 6
+        width: isMobile() ? 4 : 6
       },
       hovertemplate: '<b>%{x}</b><br>ATT: %{y:.2f} pp<br>95% CI: [%{customdata[0]:.2f}, %{customdata[1]:.2f}]<extra></extra>',
       customdata: states.map(function(s, i) { return [ciLo[i], ciHi[i]]; })
     }];
 
     var layout = {
-      margin: { t: 20, b: 50, l: 60, r: 20 },
+      height: barH,
+      margin: isMobile() ? { t: 15, b: 40, l: 45, r: 10 } : { t: 20, b: 50, l: 60, r: 20 },
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: { family: fontFamily },
       xaxis: {
-        tickfont: { size: 13, color: '#1e293b' }
+        tickfont: { size: isMobile() ? 10 : 13, color: '#1e293b' }
       },
       yaxis: {
-        title: { text: 'Change in ' + label + ' Rate (pp)', font: { size: 12 } },
-        tickfont: { size: 11 },
+        title: { text: 'Change in ' + label + ' Rate (pp)', font: { size: isMobile() ? 10 : 12 } },
+        tickfont: { size: isMobile() ? 9 : 11 },
         zeroline: true,
         zerolinecolor: '#94a3b8',
         zerolinewidth: 1.5,
@@ -1361,7 +1443,7 @@ body {
       }]
     };
 
-    Plotly.newPlot('bar-arrest', data, layout, plotlyConfig);
+    Plotly.newPlot('bar-arrest', data, layout, getPlotlyConfig());
     document.getElementById('bar-title').textContent = label + ' Effects by State';
     document.getElementById('bar-subtitle').textContent = 'Estimated change in ' + label.toLowerCase() + ' rate (pp) with 95% confidence intervals.';
   }
@@ -1551,14 +1633,17 @@ body {
 
     var xLabels = d.months.map(function(m) { return 'Month ' + m; });
 
+    var timeH = chartHeight(450, 360, 320);
+    document.getElementById('time-chart').style.height = timeH + 'px';
+
     var traceLine = {
       x: xLabels,
       y: d.att,
       type: 'scatter',
       mode: 'lines+markers',
       name: 'ATT',
-      line: { color: '#3b82f6', width: 2.5 },
-      marker: { size: 7, color: '#3b82f6' },
+      line: { color: '#3b82f6', width: isMobile() ? 2 : 2.5 },
+      marker: { size: isMobile() ? 5 : 7, color: '#3b82f6' },
       hovertemplate: '<b>' + d.label + '</b><br>%{x}<br>ATT: %{y:.2f} pp<extra></extra>'
     };
 
@@ -1573,30 +1658,33 @@ body {
       hoverinfo: 'skip'
     };
 
+    var mobile = isMobile();
     var layout = {
+      height: timeH,
       title: {
         text: d.label + ' \u2014 ' + label + ' Effect Over Time',
-        font: { size: 15, family: fontFamily, color: '#1e293b' },
+        font: { size: mobile ? 12 : 15, family: fontFamily, color: '#1e293b' },
         x: 0.02, xanchor: 'left'
       },
       annotations: [{
         x: 1, y: 1.08, xref: 'paper', yref: 'paper',
         text: 'Ban effective: ' + d.effectiveDate,
         showarrow: false,
-        font: { size: 11, color: '#64748b', family: fontFamily },
+        font: { size: mobile ? 9 : 11, color: '#64748b', family: fontFamily },
         xanchor: 'right'
       }],
-      margin: { t: 60, b: 50, l: 60, r: 30 },
+      margin: mobile ? { t: 50, b: 40, l: 42, r: 10 } : { t: 60, b: 50, l: 60, r: 30 },
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: { family: fontFamily },
       xaxis: {
-        tickfont: { size: 11 },
-        gridcolor: '#f1f5f9'
+        tickfont: { size: mobile ? 9 : 11 },
+        gridcolor: '#f1f5f9',
+        tickangle: mobile ? -45 : 0
       },
       yaxis: {
-        title: { text: 'Change in ' + label + ' (pp)', font: { size: 12 } },
-        tickfont: { size: 11 },
+        title: { text: 'Change in ' + label + ' (pp)', font: { size: mobile ? 10 : 12 } },
+        tickfont: { size: mobile ? 9 : 11 },
         zeroline: true,
         zerolinecolor: '#475569',
         zerolinewidth: 1.5,
@@ -1612,7 +1700,7 @@ body {
       showlegend: false
     };
 
-    Plotly.newPlot('time-chart', [traceBand, traceLine], layout, plotlyConfig);
+    Plotly.newPlot('time-chart', [traceBand, traceLine], layout, getPlotlyConfig());
   }
 
   // ---- Time series state selector handler ----

@@ -961,7 +961,8 @@ input[type="range"]::-moz-range-thumb {
 <div class="tab-panel" id="panel-acceptability">
 
   <div class="explain-box">
-    <p><strong>How much risk is &ldquo;acceptable&rdquo;?</strong> There is no single answer&mdash;it depends on how you weigh the harm of convicting an innocent person against the harm of letting a guilty person go free. The value <strong>&lambda;</strong> represents your moral judgment: how many guilty people going free is equivalent in harm to one innocent person being wrongly convicted.</p>
+    <p><strong>How much risk is &ldquo;acceptable&rdquo;?</strong> It depends on how you weigh the harm of convicting an innocent person against the harm of letting a guilty person go free. The value <strong>&lambda;</strong> captures this trade-off.</p>
+    <p><strong>For example:</strong> If you believe wrongly convicting one innocent person is as bad as letting 10 guilty people go free, then your &lambda;&nbsp;=&nbsp;10. This is the famous &ldquo;Blackstone ratio.&rdquo; A higher &lambda; means you place greater weight on protecting the innocent&mdash;at &lambda;&nbsp;=&nbsp;20, you&rsquo;d accept 20 guilty going free to prevent one wrongful conviction.</p>
     <p>The maximum acceptable risk is given by: <strong>&tau;(&lambda;) = 1 / (1 + &lambda;)</strong></p>
   </div>
 
@@ -971,13 +972,9 @@ input[type="range"]::-moz-range-thumb {
       <span class="slider-value" id="val-ac-lambda">10</span>
     </div>
     <div class="slider-hint">Your maximum acceptable risk: <strong id="ac-threshold-display">9.09%</strong></div>
-    <input type="range" id="slider-ac-lambda" min="1" max="1000" step="1" value="10">
+    <input type="range" id="slider-ac-lambda" min="1" max="1000" step="1" value="334">
     <div class="slider-anchors">
       <span>1</span>
-      <span class="slider-anchor" data-ac-lambda="5">Volokh (5)</span>
-      <span class="slider-anchor" data-ac-lambda="10">Blackstone (10)</span>
-      <span class="slider-anchor" data-ac-lambda="20">Fortescue (20)</span>
-      <span class="slider-anchor" data-ac-lambda="100">100</span>
       <span>1000</span>
     </div>
   </div>
@@ -1172,6 +1169,14 @@ input[type="range"]::-moz-range-thumb {
 
   function computeThreshold(lambda) {
     return (1 / (1 + lambda)) * 100;
+  }
+
+  /* Log-scale slider mapping: raw slider value (1–1000) ↔ λ (1–1000 on log scale) */
+  function sliderToLambda(raw) {
+    return Math.round(Math.exp((raw - 1) / 999 * Math.log(1000)));
+  }
+  function lambdaToSlider(lambda) {
+    return Math.round(1 + Math.log(lambda) / Math.log(1000) * 999);
   }
 
   /* Generate posterior draws by sampling sensitivity/specificity around chosen values */
@@ -1403,7 +1408,7 @@ input[type="range"]::-moz-range-thumb {
     var h = chartHeight(420, 360, 300);
     el.style.height = h + 'px';
 
-    var currentLambda = parseInt(document.getElementById('slider-ac-lambda').value);
+    var currentLambda = sliderToLambda(parseInt(document.getElementById('slider-ac-lambda').value));
 
     // Generate smooth lambda series for plotting
     var lambdas = [];
@@ -1459,30 +1464,21 @@ input[type="range"]::-moz-range-thumb {
   // Acceptability curve slider
   var acSlider = document.getElementById('slider-ac-lambda');
   acSlider.addEventListener('input', function() {
-    var val = parseInt(this.value);
-    document.getElementById('val-ac-lambda').textContent = val;
-    document.getElementById('ac-threshold-display').textContent = computeThreshold(val).toFixed(2) + '%';
+    var lambda = sliderToLambda(parseInt(this.value));
+    document.getElementById('val-ac-lambda').textContent = lambda;
+    document.getElementById('ac-threshold-display').textContent = computeThreshold(lambda).toFixed(2) + '%';
     // Update ref card highlighting
     document.querySelectorAll('.ref-card').forEach(function(c) {
-      c.classList.toggle('active', parseInt(c.getAttribute('data-ref-lambda')) === val);
+      c.classList.toggle('active', parseInt(c.getAttribute('data-ref-lambda')) === lambda);
     });
     renderAcceptabilityCurve();
   });
 
-  // Acceptability lambda anchors
-  document.querySelectorAll('.slider-anchor[data-ac-lambda]').forEach(function(anchor) {
-    anchor.addEventListener('click', function() {
-      var val = parseInt(this.getAttribute('data-ac-lambda'));
-      acSlider.value = val;
-      acSlider.dispatchEvent(new Event('input'));
-    });
-  });
-
-  // Ref card clicks
+  // Ref card clicks — convert λ value to log-scale slider position
   document.querySelectorAll('.ref-card').forEach(function(card) {
     card.addEventListener('click', function() {
       var val = parseInt(this.getAttribute('data-ref-lambda'));
-      acSlider.value = val;
+      acSlider.value = lambdaToSlider(val);
       acSlider.dispatchEvent(new Event('input'));
     });
   });

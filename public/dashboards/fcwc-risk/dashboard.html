@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Risk of False Confession Wrongful Convictions</title>
+<meta property="og:title" content="The Risk of False Confession Wrongful Convictions" />
+<meta name="description" content="Interactive Bayesian framework for estimating how often lawful interrogation tactics contribute to wrongful convictions of the innocent." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1e293b;
+  --navy-light: #334155;
+  --navy-dark: #0f172a;
+  --blue: #3b82f6;
+  --blue-light: #60a5fa;
+  --blue-dark: #2563eb;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --red: #ef4444;
+  --red-light: #fca5a5;
+  --green: #22c55e;
+  --green-light: #dcfce7;
+  --green-dark: #166534;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --amber-dark: #92400e;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--gray-50);
+  color: var(--navy);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--navy-dark);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.navbar-brand {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.navbar-brand:hover { color: var(--blue-light); }
+.navbar-back {
+  color: var(--gray-400);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.navbar-back:hover { color: var(--white); }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  padding: 2.5rem 2rem 2rem;
+  color: var(--white);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.category-badge {
+  display: inline-block;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.header h1 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  max-width: 800px;
+}
+.header .subtitle {
+  font-size: 0.95rem;
+  color: var(--gray-300);
+  font-weight: 400;
+  max-width: 700px;
+  margin-bottom: 0.5rem;
+}
+.header .citation-line {
+  font-size: 0.82rem;
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* Tab navigation */
+.tab-nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  position: sticky;
+  top: 56px;
+  z-index: 999;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-nav::-webkit-scrollbar { height: 0; }
+.tab-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 1rem;
+  gap: 0;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 1.25rem;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--navy); background: var(--gray-50); }
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+/* Main content */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* KPI cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.kpi-card {
+  background: var(--navy);
+  color: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.kpi-card .kpi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+.kpi-card .kpi-sub {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  margin-top: 0.3rem;
+}
+.kpi-card .kpi-label {
+  font-size: 0.75rem;
+  color: var(--gray-300);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Dark explanatory boxes */
+.explain-box {
+  background: var(--navy);
+  color: var(--gray-200);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.explain-box p { margin-bottom: 0.75rem; }
+.explain-box p:last-child { margin-bottom: 0; }
+.explain-box strong { color: var(--white); font-weight: 600; }
+
+/* Section headings */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 2rem 0 1rem;
+}
+.section-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy-light);
+  margin: 1.5rem 0 0.75rem;
+}
+
+/* Chart containers */
+.chart-container {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid var(--gray-200);
+}
+.chart-container .chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.chart-container .chart-subtitle {
+  font-size: 0.82rem;
+  color: var(--gray-500);
+  margin-bottom: 1rem;
+}
+
+/* Tables */
+.styled-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.styled-table thead {
+  background: var(--navy);
+  color: var(--white);
+}
+.styled-table thead th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.styled-table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+.styled-table tbody tr:hover { background: var(--gray-50); }
+.styled-table tbody tr:last-child td { border-bottom: none; }
+
+/* Two-panel layout */
+.two-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Slider controls */
+.slider-group { margin-bottom: 1.5rem; }
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+}
+.slider-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+.slider-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+.slider-hint {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--gray-400);
+  margin-top: 0.25rem;
+}
+.slider-anchors {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--gray-500);
+  margin-top: 0.15rem;
+}
+.slider-anchor {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+.slider-anchor:hover { color: var(--blue); }
+
+/* Toggle buttons */
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.toggle-group-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+  display: block;
+}
+.toggle-group-hint {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.toggle-btn:hover { border-color: var(--blue-light); color: var(--blue); }
+.toggle-btn.active {
+  background: var(--blue);
+  color: var(--white);
+  border-color: var(--blue);
+  font-weight: 600;
+}
+
+/* Preset buttons */
+.preset-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-200);
+}
+.preset-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.preset-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.preset-btn:hover { border-color: var(--blue); color: var(--blue); }
+.preset-btn.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+/* Result display */
+.result-panel {
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.result-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--blue-light);
+  margin-bottom: 0.25rem;
+}
+.result-kpi-value {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+.result-description {
+  font-size: 0.88rem;
+  color: var(--gray-300);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.result-ci {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-bottom: 1rem;
+}
+.result-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.result-badge.acceptable {
+  background: var(--green);
+  color: var(--white);
+}
+.result-badge.exceeds {
+  background: var(--red);
+  color: var(--white);
+}
+.result-threshold {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 0.5rem;
+}
+.result-estimates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--navy-light);
+}
+.result-est {
+  text-align: center;
+}
+.result-est-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-400);
+}
+.result-est-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Acceptability reference cards */
+.ref-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.ref-card {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ref-card:hover { border-color: var(--blue-light); }
+.ref-card.active { border-color: var(--blue); background: rgba(59,130,246,0.04); }
+.ref-card-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+}
+.ref-card-lambda {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--blue);
+  margin-bottom: 0.5rem;
+}
+.ref-card-quote {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+.ref-card-threshold {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* Collapsible sections */
+.collapsible {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  transition: background 0.2s;
+  border-left: 4px solid var(--blue);
+}
+.collapsible-header:hover { background: var(--gray-50); }
+.collapsible-arrow {
+  transition: transform 0.3s;
+  color: var(--gray-400);
+}
+.collapsible.open .collapsible-arrow { transform: rotate(180deg); }
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+.collapsible.open .collapsible-body { max-height: 2000px; }
+.collapsible-content {
+  padding: 0 1.5rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+}
+.collapsible-content p { margin-bottom: 0.75rem; }
+.collapsible-content strong { color: var(--navy); }
+
+/* Formula box */
+.formula-box {
+  background: var(--navy);
+  color: var(--white);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.88rem;
+  text-align: center;
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+.formula-annotation {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  text-align: center;
+  font-family: var(--font);
+  font-style: italic;
+}
+
+/* Citation box */
+.citation-box {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-top: 2rem;
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+.citation-box .cite-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 2rem;
+}
+.footer a { color: var(--blue); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* Responsive — Tablets */
+@media (max-width: 768px) {
+  .navbar { padding: 0 1rem; }
+  .navbar-back { font-size: 0.75rem; }
+  .header { padding: 1.5rem 1rem 1.25rem; }
+  .header h1 { font-size: 1.3rem; }
+  .main { padding: 1.25rem 0.75rem 3rem; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .tab-btn { padding: 0.75rem 0.85rem; font-size: 0.78rem; }
+  .explain-box { padding: 1.25rem; font-size: 0.85rem; }
+  .two-panel { grid-template-columns: 1fr; }
+  .ref-cards { grid-template-columns: 1fr; }
+  .result-panel { margin-bottom: 1rem; }
+  .chart-container { padding: 1rem; }
+  .styled-table { font-size: 0.8rem; }
+  .styled-table thead th, .styled-table tbody td { padding: 0.6rem 0.65rem; white-space: normal; }
+  .toggle-btn { padding: 0.5rem 0.5rem; font-size: 0.78rem; min-height: 44px; }
+}
+
+/* Responsive — Phones */
+@media (max-width: 480px) {
+  .navbar { height: 48px; }
+  .navbar-brand { font-size: 0.82rem; }
+  .navbar-brand svg { width: 15px; height: 15px; }
+  .navbar-back { display: none; }
+  .header { padding: 1.25rem 0.75rem 1rem; }
+  .header h1 { font-size: 1.15rem; }
+  .header .subtitle { font-size: 0.82rem; }
+  .category-badge { font-size: 0.6rem; padding: 0.25rem 0.6rem; }
+  .tab-nav { top: 48px; }
+  .tab-btn { padding: 0.6rem 0.65rem; font-size: 0.72rem; }
+  .main { padding: 1rem 0.5rem 2rem; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .kpi-card { padding: 1rem; }
+  .kpi-card .kpi-value { font-size: 1.5rem; }
+  .kpi-card .kpi-label { font-size: 0.65rem; }
+  .explain-box { padding: 1rem; font-size: 0.82rem; }
+  .section-title { font-size: 1.1rem; }
+  .result-kpi-value { font-size: 2.2rem; }
+  .result-estimates { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .result-est-value { font-size: 1.1rem; }
+  .ref-card { padding: 1rem; }
+  .ref-card-lambda { font-size: 1.2rem; }
+  .toggle-btn { font-size: 0.72rem; min-height: 44px; }
+  .preset-btn { font-size: 0.72rem; padding: 0.4rem 0.75rem; }
+  .slider-label { font-size: 0.82rem; }
+  .collapsible-header { padding: 1rem 1.25rem; font-size: 0.92rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Scott M. Mourtgos, Ph.D.
+  </a>
+  <a href="/dashboards" class="navbar-back">&larr; Back to Dashboards</a>
+</nav>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <div class="category-badge">Interactive Analysis</div>
+    <h1>The Risk of False Confession Wrongful Convictions</h1>
+    <p class="subtitle">A Bayesian framework for estimating how often lawful interrogation tactics contribute to wrongful convictions of the innocent.</p>
+    <p class="citation-line">Based on Mourtgos &amp; Adams (2026), <em>Journal of Criminal Justice</em></p>
+  </div>
+</div>
+
+<!-- Tab navigation -->
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="findings">Key Findings</button>
+    <button class="tab-btn" data-tab="calculator">Risk Calculator</button>
+    <button class="tab-btn" data-tab="acceptability">Acceptability Curve</button>
+    <button class="tab-btn" data-tab="method">The Method</button>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+<!-- ===== TAB 1: KEY FINDINGS ===== -->
+<div class="tab-panel active" id="panel-findings">
+
+  <div class="explain-box">
+    <p><strong>What did this study find?</strong> Using Bayesian inverse probability simulation, this study estimates the population-level risk that a legally permissible interrogation tactic contributes to a false confession wrongful conviction (FCWC). Across a wide range of empirically plausible assumptions, the median estimated risk clusters near 1%.</p>
+    <p>This stands in contrast to figures of 8&ndash;25% often cited in the literature, which represent the proportion of <em>known wrongful convictions</em> that involved false confessions&mdash;a fundamentally different quantity that does not account for the vast majority of interrogations that produce no false confession.</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">~1.30%</div>
+      <div class="kpi-label">Single-Tactic Risk</div>
+      <div class="kpi-sub">Median posterior, &rho;=1.0</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">~2.51%</div>
+      <div class="kpi-label">Multi-Tactic Risk</div>
+      <div class="kpi-sub">~6 tactics per interrogation</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">97.5%</div>
+      <div class="kpi-label">Within Blackstone</div>
+      <div class="kpi-sub">Draws below &lambda;=10 threshold</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">~1.29%</div>
+      <div class="kpi-label">FCWC Base Rate</div>
+      <div class="kpi-sub">Posterior median estimate</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Posterior Distributions of FCWC Risk</h2>
+  <div class="chart-container">
+    <div class="chart-title">Estimated FCWC Risk Across Attribution Assumptions</div>
+    <div class="chart-subtitle">Three scenarios for the share of FCWCs attributable to police tactics (&rho;). Red dashed line = median.</div>
+    <div id="posterior-chart" style="width:100%;"></div>
+  </div>
+
+  <h2 class="section-title">Why Prior Estimates Are Misleading</h2>
+  <div class="styled-table-wrapper">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Estimate</th>
+          <th>What It Measures</th>
+          <th>Key Limitation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Bedau &amp; Radelet</td><td>14%</td><td>FC | WC</td><td>Outcome-selected cases only</td></tr>
+        <tr><td>Connors et al.</td><td>17.9%</td><td>FC | WC</td><td>Outcome-selected cases only</td></tr>
+        <tr><td>National Registry of Exonerations</td><td>~13%</td><td>FC | WC</td><td>Outcome-selected cases only</td></tr>
+        <tr><td>Innocence Project</td><td>25%</td><td>FC | WC</td><td>Outcome-selected cases only</td></tr>
+        <tr><td>Huff et al. / Cassell</td><td>8.4%</td><td>FC | WC</td><td>Outcome-selected cases only</td></tr>
+        <tr style="background: rgba(59,130,246,0.06); font-weight: 600;">
+          <td>This Study (&rho;=1.0)</td>
+          <td style="color: var(--blue);">1.30%</td>
+          <td>FCWC | T</td>
+          <td>Integrates base rates + full denominator</td>
+        </tr>
+        <tr style="background: rgba(59,130,246,0.06); font-weight: 600;">
+          <td>This Study (&rho;=0.75)</td>
+          <td style="color: var(--blue);">0.97%</td>
+          <td>FCWC | T</td>
+          <td>Integrates base rates + full denominator</td>
+        </tr>
+        <tr style="background: rgba(59,130,246,0.06); font-weight: 600;">
+          <td>This Study (&rho;=0.50)</td>
+          <td style="color: var(--blue);">0.65%</td>
+          <td>FCWC | T</td>
+          <td>Integrates base rates + full denominator</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size: 0.82rem; color: var(--gray-500); margin-top: -1rem; margin-bottom: 1rem;"><strong>FC | WC</strong> = false confessions among known wrongful convictions (outcome-selected). <strong>FCWC | T</strong> = probability a lawful tactic contributes to a false confession wrongful conviction (population-level).</p>
+
+</div>
+
+<!-- ===== TAB 2: RISK CALCULATOR ===== -->
+<div class="tab-panel" id="panel-calculator">
+
+  <div class="explain-box">
+    <p><strong>Explore the model.</strong> Adjust the assumptions below to see how the estimated risk of a false confession wrongful conviction changes. The calculation applies Bayes' theorem to combine the base rate of FCWCs with how often a given tactic appears in FCWC versus non-FCWC cases.</p>
+  </div>
+
+  <div class="two-panel">
+    <!-- Left: Controls -->
+    <div>
+      <div style="background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.25rem;">Set Your Assumptions</h3>
+
+        <!-- Mode toggle -->
+        <div style="margin-bottom: 1.25rem;">
+          <span class="toggle-group-label">Analysis Mode</span>
+          <div class="toggle-group" id="mode-toggle">
+            <button class="toggle-btn active" data-mode="single">Single Tactic</button>
+            <button class="toggle-btn" data-mode="multi">Multiple Tactics</button>
+          </div>
+        </div>
+
+        <!-- Base Rate -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">FCWC Base Rate</span>
+            <span class="slider-value" id="val-baserate">1.29%</span>
+          </div>
+          <div class="slider-hint">How common are false confession wrongful convictions among all cases?</div>
+          <input type="range" id="slider-baserate" min="0.1" max="5" step="0.01" value="1.29">
+          <div class="slider-range-labels"><span>0.1% (very rare)</span><span>5% (pessimistic)</span></div>
+        </div>
+
+        <!-- Sensitivity -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Sensitivity</span>
+            <span class="slider-value" id="val-sensitivity">0.50</span>
+          </div>
+          <div class="slider-hint">How often does this tactic appear in FCWC cases? Higher = stronger association with false confessions.</div>
+          <input type="range" id="slider-sensitivity" min="0.05" max="0.95" step="0.01" value="0.50">
+          <div class="slider-range-labels"><span>0.05 (weak link)</span><span>0.95 (very strong)</span></div>
+        </div>
+
+        <!-- Specificity -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Specificity</span>
+            <span class="slider-value" id="val-specificity">0.50</span>
+          </div>
+          <div class="slider-hint">How often is the tactic absent in non-FCWC cases? Higher = the tactic is distinctive to FCWC cases.</div>
+          <input type="range" id="slider-specificity" min="0.05" max="0.95" step="0.01" value="0.50">
+          <div class="slider-range-labels"><span>0.05 (used everywhere)</span><span>0.95 (FCWC-specific)</span></div>
+        </div>
+
+        <!-- Attribution rho -->
+        <div style="margin-bottom: 1.25rem;">
+          <span class="toggle-group-label">Police Attribution (&rho;)</span>
+          <span class="toggle-group-hint">What share of FCWCs are caused by police tactics?</span>
+          <div class="toggle-group" id="rho-toggle">
+            <button class="toggle-btn" data-rho="0.50">50%</button>
+            <button class="toggle-btn" data-rho="0.75">75%</button>
+            <button class="toggle-btn active" data-rho="1.00">100%</button>
+          </div>
+        </div>
+
+        <!-- Number of tactics (multi-tactic only) -->
+        <div class="slider-group" id="tactics-group" style="display:none;">
+          <div class="slider-header">
+            <span class="slider-label">Number of Tactics Used</span>
+            <span class="slider-value" id="val-tactics">6</span>
+          </div>
+          <div class="slider-hint">Typical interrogations use ~6 tactics (Leo, 1996). Risk increases logarithmically with each additional tactic.</div>
+          <input type="range" id="slider-tactics" min="1" max="10" step="1" value="6">
+          <div class="slider-range-labels"><span>1 tactic</span><span>10 tactics</span></div>
+        </div>
+
+        <!-- Lambda -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Harm Trade-off (&lambda;)</span>
+            <span class="slider-value" id="val-lambda">10</span>
+          </div>
+          <div class="slider-hint">How many guilty acquittals equal one wrongful conviction? Higher = more weight on protecting the innocent.</div>
+          <input type="range" id="slider-lambda" min="1" max="200" step="1" value="10">
+          <div class="slider-anchors">
+            <span>1</span>
+            <span class="slider-anchor" data-lambda="5">Volokh (5)</span>
+            <span class="slider-anchor" data-lambda="10">Blackstone (10)</span>
+            <span class="slider-anchor" data-lambda="20">Fortescue (20)</span>
+            <span>200</span>
+          </div>
+        </div>
+
+        <!-- Presets -->
+        <div class="preset-group">
+          <div style="width:100%;">
+            <div class="preset-label">Presets</div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="preset-btn active" data-preset="conservative">Conservative</button>
+              <button class="preset-btn" data-preset="moderate">Moderate</button>
+              <button class="preset-btn" data-preset="pessimistic">Pessimistic</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Results -->
+    <div>
+      <div class="result-panel">
+        <div class="result-kpi-label">Estimated Wrongful Conviction Risk</div>
+        <div class="result-kpi-value" id="result-value">1.30%</div>
+        <div class="result-description" id="result-description">With these assumptions, approximately 1 in 77 interrogations using this tactic would coincide with a false confession wrongful conviction.</div>
+        <div class="result-ci" id="result-ci">90% interval: 0.35% &ndash; 4.79%</div>
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap: wrap;">
+          <span class="result-badge acceptable" id="result-badge">Within Acceptable Range</span>
+          <span class="result-threshold" id="result-threshold">Your threshold (&lambda;=10): 9.09%</span>
+        </div>
+        <div class="result-estimates">
+          <div class="result-est">
+            <div class="result-est-label">Low Est.</div>
+            <div class="result-est-value" id="result-low">0.35%</div>
+          </div>
+          <div class="result-est">
+            <div class="result-est-label">Middle</div>
+            <div class="result-est-value" id="result-mid">1.30%</div>
+          </div>
+          <div class="result-est">
+            <div class="result-est-label">High Est.</div>
+            <div class="result-est-value" id="result-high">4.79%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-container" style="margin-top: 1.5rem;">
+        <div class="chart-title">Distribution of Simulated Outcomes</div>
+        <div class="chart-subtitle">Histogram of 1,000 posterior draws given your assumptions. Dashed line = your &lambda; threshold.</div>
+        <div id="calc-histogram" style="width:100%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: ACCEPTABILITY CURVE ===== -->
+<div class="tab-panel" id="panel-acceptability">
+
+  <div class="explain-box">
+    <p><strong>How much risk is &ldquo;acceptable&rdquo;?</strong> There is no single answer&mdash;it depends on how you weigh the harm of convicting an innocent person against the harm of letting a guilty person go free. The value <strong>&lambda;</strong> represents your moral judgment: how many guilty people going free is equivalent in harm to one innocent person being wrongly convicted.</p>
+    <p>The maximum acceptable risk is given by: <strong>&tau;(&lambda;) = 1 / (1 + &lambda;)</strong></p>
+  </div>
+
+  <div class="slider-group" style="max-width:600px; margin-bottom: 2rem;">
+    <div class="slider-header">
+      <span class="slider-label">Set Your &lambda; Value</span>
+      <span class="slider-value" id="val-ac-lambda">10</span>
+    </div>
+    <div class="slider-hint">Your maximum acceptable risk: <strong id="ac-threshold-display">9.09%</strong></div>
+    <input type="range" id="slider-ac-lambda" min="1" max="1000" step="1" value="10">
+    <div class="slider-anchors">
+      <span>1</span>
+      <span class="slider-anchor" data-ac-lambda="5">Volokh (5)</span>
+      <span class="slider-anchor" data-ac-lambda="10">Blackstone (10)</span>
+      <span class="slider-anchor" data-ac-lambda="20">Fortescue (20)</span>
+      <span class="slider-anchor" data-ac-lambda="100">100</span>
+      <span>1000</span>
+    </div>
+  </div>
+
+  <div class="ref-cards">
+    <div class="ref-card" data-ref-lambda="10">
+      <div class="ref-card-name">Blackstone</div>
+      <div class="ref-card-lambda">&lambda;=10</div>
+      <div class="ref-card-quote">&ldquo;Better that ten guilty persons escape than that one innocent suffer.&rdquo;</div>
+      <div class="ref-card-threshold">Threshold: 9.1%</div>
+    </div>
+    <div class="ref-card" data-ref-lambda="5">
+      <div class="ref-card-name">Volokh (Empirical)</div>
+      <div class="ref-card-lambda">&lambda;=5</div>
+      <div class="ref-card-quote">Based on survey research asking people about their actual preferences.</div>
+      <div class="ref-card-threshold">Threshold: 16.7%</div>
+    </div>
+    <div class="ref-card" data-ref-lambda="20">
+      <div class="ref-card-name">Fortescue</div>
+      <div class="ref-card-lambda">&lambda;=20</div>
+      <div class="ref-card-quote">&ldquo;One would much rather that twenty guilty persons should escape&hellip;&rdquo;</div>
+      <div class="ref-card-threshold">Threshold: 4.8%</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-title">Acceptability Curve</div>
+    <div class="chart-subtitle">Posterior probability that the tactic is &ldquo;acceptable&rdquo; as a function of &lambda;, for three attribution assumptions (&rho;).</div>
+    <div id="acceptability-chart" style="width:100%;"></div>
+  </div>
+
+</div>
+
+<!-- ===== TAB 4: THE METHOD ===== -->
+<div class="tab-panel" id="panel-method">
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      The Core Question
+      <svg class="collapsible-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div class="collapsible-body">
+      <div class="collapsible-content">
+        <p>When police use an interrogation tactic and obtain a confession, what is the chance that the confession is false and leads to a wrongful conviction?</p>
+        <p>Most existing research answers a different question: <strong>among known wrongful convictions, how many involved false confessions?</strong> That figure (8&ndash;25%) tells us about the composition of failures, not the probability that a given interrogation tactic produces one. The relevant denominator is not wrongful convictions alone, but all interrogations&mdash;including the vast majority that produce accurate confessions, no confession, or no charge.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      Why Base Rates Matter
+      <svg class="collapsible-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div class="collapsible-body">
+      <div class="collapsible-content">
+        <p>A medical analogy illustrates the importance of base rates. Consider a diagnostic test with 90% sensitivity and 95% specificity applied to a condition affecting 1% of the population. In a cohort of 10,000 people:</p>
+        <p>&bull; 100 have the condition; the test correctly identifies 90 of them.<br>
+           &bull; 9,900 do not; the test falsely flags 495 of them.<br>
+           &bull; Of 585 total positives, only 90 are true cases&mdash;<strong>just 15.4%</strong>.</p>
+        <p>Even a highly accurate test produces mostly false positives when the condition is rare. The same arithmetic applies to interrogation tactics: if FCWCs are infrequent, even assumptions positing relatively strong associations between tactics and FCWCs will yield modest posterior probabilities.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      The Outcome Selection Problem
+      <svg class="collapsible-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div class="collapsible-body">
+      <div class="collapsible-content">
+        <p>Many policy arguments about interrogation tactics rely on case compilations selected <em>because</em> they contain a false confession. This is a classic selection bias: only failures are observed, while the far larger pool of interrogations using the same tactics without producing false confessions remains unseen.</p>
+        <p>Analogous problems are well documented across disciplines: police narcotics dogs may appear highly successful based on hit rates yet coexist with false-positive rates approaching 85%. Credit scoring models appear accurate because outcomes are observed only for approved applicants. Medical screening accuracy is overstated when only positive results are followed up.</p>
+        <p>Without incorporating both successes and failures, risk cannot be meaningfully estimated.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      Bayes' Theorem Applied
+      <svg class="collapsible-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div class="collapsible-body">
+      <div class="collapsible-content">
+        <p>The posterior probability that the presence of a tactic is associated with an FCWC is:</p>
+        <div class="formula-box">
+          P(FCWC | T) = P(T | FCWC) &times; P(FCWC) / [ P(T | FCWC) &times; P(FCWC) + P(T | &not;FCWC) &times; (1 &minus; P(FCWC)) ]
+        </div>
+        <p class="formula-annotation">Where P(T | FCWC) = sensitivity, P(T | &not;FCWC) = 1 &minus; specificity, P(FCWC) = base rate &times; &rho;</p>
+        <p><strong>Sensitivity</strong> (P(T|FCWC)): How often the tactic appears in FCWC cases.<br>
+           <strong>Specificity</strong> (P(&not;T|&not;FCWC)): How often the tactic is absent in non-FCWC cases.<br>
+           <strong>Base rate</strong>: The prevalence of FCWCs, estimated at ~1.29% (posterior median).<br>
+           <strong>&rho;</strong>: The fraction of FCWCs attributable to police conduct (50%, 75%, or 100%).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      Multi-Tactic Extension
+      <svg class="collapsible-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div class="collapsible-body">
+      <div class="collapsible-content">
+        <p>In practice, interrogations rarely rely on a single technique. Observational research indicates that interrogators use an average of approximately six tactics per session (Leo, 1996). The multi-tactic model extends the single-tactic estimate using a logarithmic adjustment:</p>
+        <div class="formula-box">
+          P(FCWC | T, k tactics) = P(FCWC | T) &times; [1 + &alpha; &times; ln(k)]
+        </div>
+        <p class="formula-annotation">Where k = number of tactics, &alpha; is calibrated so that ~6 tactics approximately doubles the single-tactic risk.</p>
+        <p>A logarithmic formulation allows for diminishing marginal effects: as additional techniques are introduced, each contributes incrementally less to overall risk. This avoids implausible risk accumulation unsupported by existing evidence while still acknowledging the potential for additive effects.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="citation-box">
+    <div class="cite-label">Citation</div>
+    Mourtgos, S. M., &amp; Adams, I. T. (2026). Recalibrating the risk of false confession wrongful convictions: Interrogation tactics and inverse probability. <em>Journal of Criminal Justice, 103</em>, 102600. <a href="https://doi.org/10.1016/j.jcrimjus.2026.102600" target="_blank" rel="noopener">https://doi.org/10.1016/j.jcrimjus.2026.102600</a>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- Footer -->
+<div class="footer">
+  Interactive analysis by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina &nbsp;|&nbsp; All results are for educational purposes. Your assumptions significantly affect the outcomes.
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ========== Helpers ========== */
+  function isMobile() { return window.innerWidth <= 768; }
+  function isPhone() { return window.innerWidth <= 480; }
+  function chartHeight(desktopH, tabletH, phoneH) {
+    if (isPhone()) return phoneH;
+    if (isMobile()) return tabletH;
+    return desktopH;
+  }
+  function getPlotlyConfig() {
+    return {
+      responsive: true,
+      displayModeBar: !isMobile(),
+      modeBarButtonsToRemove: ['select2d','lasso2d','autoScale2d'],
+      displaylogo: false,
+      scrollZoom: false,
+      toImageButtonOptions: { format: 'png', scale: 2 }
+    };
+  }
+
+  /* ========== Tab navigation ========== */
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var tabPanels = document.querySelectorAll('.tab-panel');
+  var deferredRenders = {};
+
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      tabBtns.forEach(function(b) { b.classList.remove('active'); });
+      tabPanels.forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('panel-' + tabId).classList.add('active');
+      if (deferredRenders[tabId]) { deferredRenders[tabId](); deferredRenders[tabId] = null; }
+    });
+  });
+
+  /* ========== Collapsible sections ========== */
+  window.toggleCollapsible = function(header) {
+    header.parentElement.classList.toggle('open');
+  };
+
+  /* ========== Bayes computation ========== */
+  function computeFCWC(baseRatePct, sensitivity, specificity, rho) {
+    var br = (baseRatePct / 100) * rho;
+    var falsePositiveRate = 1 - specificity;
+    var numerator = sensitivity * br;
+    var denominator = numerator + falsePositiveRate * (1 - br);
+    return denominator > 0 ? (numerator / denominator) * 100 : 0;
+  }
+
+  function computeMultiTactic(singlePct, numTactics) {
+    if (numTactics <= 1) return singlePct;
+    // Calibrate alpha so that ln(6) * alpha ~ 1.0 (i.e., risk doubles at 6 tactics)
+    var alpha = 1.0 / Math.log(6);
+    return singlePct * (1 + alpha * Math.log(numTactics));
+  }
+
+  function computeThreshold(lambda) {
+    return (1 / (1 + lambda)) * 100;
+  }
+
+  /* Generate posterior draws by sampling sensitivity/specificity around chosen values */
+  function generateDraws(baseRatePct, sensitivity, specificity, rho, nDraws) {
+    var draws = [];
+    for (var i = 0; i < nDraws; i++) {
+      // Sample uniformly in a window around user values, clipped to [0.05, 0.95]
+      var sensRange = 0.3;
+      var specRange = 0.3;
+      var s = sensitivity + (Math.random() - 0.5) * sensRange;
+      var sp = specificity + (Math.random() - 0.5) * specRange;
+      s = Math.max(0.05, Math.min(0.95, s));
+      sp = Math.max(0.05, Math.min(0.95, sp));
+      // Also jitter the base rate slightly
+      var brJitter = baseRatePct * (0.85 + Math.random() * 0.30);
+      draws.push(computeFCWC(brJitter, s, sp, rho));
+    }
+    return draws.sort(function(a, b) { return a - b; });
+  }
+
+  /* ========== State ========== */
+  var state = {
+    mode: 'single',
+    baserate: 1.29,
+    sensitivity: 0.50,
+    specificity: 0.50,
+    rho: 1.00,
+    tactics: 6,
+    lambda: 10
+  };
+
+  var presets = {
+    conservative: { baserate: 1.29, sensitivity: 0.50, specificity: 0.50, rho: 1.00, lambda: 10 },
+    moderate: { baserate: 1.94, sensitivity: 0.60, specificity: 0.40, rho: 1.00, lambda: 10 },
+    pessimistic: { baserate: 2.59, sensitivity: 0.75, specificity: 0.30, rho: 1.00, lambda: 10 }
+  };
+
+  /* ========== Calculator update ========== */
+  function updateCalculator() {
+    var singleP = computeFCWC(state.baserate, state.sensitivity, state.specificity, state.rho);
+    var resultP = state.mode === 'multi' ? computeMultiTactic(singleP, state.tactics) : singleP;
+    var threshold = computeThreshold(state.lambda);
+    var acceptable = resultP < threshold;
+
+    // Generate draws
+    var draws = generateDraws(state.baserate, state.sensitivity, state.specificity, state.rho, 1000);
+    if (state.mode === 'multi') {
+      draws = draws.map(function(d) { return computeMultiTactic(d, state.tactics); });
+    }
+
+    var low = draws[Math.floor(draws.length * 0.05)];
+    var mid = draws[Math.floor(draws.length * 0.50)];
+    var high = draws[Math.floor(draws.length * 0.95)];
+
+    // Update display
+    document.getElementById('result-value').textContent = resultP.toFixed(2) + '%';
+    document.getElementById('result-mid').textContent = mid.toFixed(2) + '%';
+    document.getElementById('result-low').textContent = low.toFixed(2) + '%';
+    document.getElementById('result-high').textContent = high.toFixed(2) + '%';
+    document.getElementById('result-ci').textContent = '90% interval: ' + low.toFixed(2) + '% \u2013 ' + high.toFixed(2) + '%';
+
+    var oneInN = resultP > 0 ? Math.round(100 / resultP) : '---';
+    document.getElementById('result-description').textContent =
+      'With these assumptions, approximately 1 in ' + oneInN.toLocaleString() +
+      ' interrogations using ' + (state.mode === 'multi' ? state.tactics + ' tactics' : 'this tactic') +
+      ' would coincide with a false confession wrongful conviction.';
+
+    var badge = document.getElementById('result-badge');
+    badge.textContent = acceptable ? 'Within Acceptable Range' : 'Exceeds Threshold';
+    badge.className = 'result-badge ' + (acceptable ? 'acceptable' : 'exceeds');
+    document.getElementById('result-threshold').textContent =
+      'Your threshold (\u03bb=' + state.lambda + '): ' + threshold.toFixed(1) + '%';
+
+    // Update slider displays
+    document.getElementById('val-baserate').textContent = state.baserate.toFixed(2) + '%';
+    document.getElementById('val-sensitivity').textContent = state.sensitivity.toFixed(2);
+    document.getElementById('val-specificity').textContent = state.specificity.toFixed(2);
+    document.getElementById('val-lambda').textContent = state.lambda;
+    document.getElementById('val-tactics').textContent = state.tactics;
+
+    // Render histogram
+    renderCalcHistogram(draws, threshold);
+  }
+
+  function renderCalcHistogram(draws, threshold) {
+    var el = document.getElementById('calc-histogram');
+    var h = chartHeight(300, 260, 220);
+    el.style.height = h + 'px';
+    var trace = {
+      x: draws,
+      type: 'histogram',
+      nbinsx: 40,
+      marker: { color: 'rgba(59,130,246,0.6)', line: { color: 'rgba(59,130,246,0.9)', width: 1 } },
+      hovertemplate: '%{x:.2f}%<extra></extra>'
+    };
+    var thresholdLine = {
+      x: [threshold, threshold],
+      y: [0, 200],
+      mode: 'lines',
+      line: { color: '#ef4444', width: 2, dash: 'dash' },
+      name: '\u03bb threshold',
+      hoverinfo: 'skip',
+      showlegend: false
+    };
+    var layout = {
+      margin: { t: 10, r: 20, b: 40, l: 45 },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      font: { family: 'Inter, sans-serif', size: isMobile() ? 10 : 12, color: '#64748b' },
+      xaxis: { title: { text: 'FCWC Risk (%)', font: { size: isMobile() ? 10 : 12 } }, gridcolor: '#e2e8f0' },
+      yaxis: { title: { text: 'Frequency', font: { size: isMobile() ? 10 : 12 } }, gridcolor: '#e2e8f0' },
+      annotations: [{
+        x: threshold, y: 0.95, xref: 'x', yref: 'paper',
+        text: 'Your threshold', showarrow: false,
+        font: { color: '#ef4444', size: 10 }
+      }],
+      bargap: 0.05,
+      showlegend: false
+    };
+    Plotly.react(el, [trace, thresholdLine], layout, getPlotlyConfig());
+  }
+
+  /* ========== Wire up calculator controls ========== */
+  // Sliders
+  ['baserate','sensitivity','specificity','lambda','tactics'].forEach(function(key) {
+    var el = document.getElementById('slider-' + key);
+    if (!el) return;
+    el.addEventListener('input', function() {
+      state[key] = parseFloat(this.value);
+      // Clear preset buttons
+      document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('active'); });
+      updateCalculator();
+    });
+  });
+
+  // Mode toggle
+  document.querySelectorAll('#mode-toggle .toggle-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#mode-toggle .toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      state.mode = this.getAttribute('data-mode');
+      document.getElementById('tactics-group').style.display = state.mode === 'multi' ? 'block' : 'none';
+      updateCalculator();
+    });
+  });
+
+  // Rho toggle
+  document.querySelectorAll('#rho-toggle .toggle-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#rho-toggle .toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      state.rho = parseFloat(this.getAttribute('data-rho'));
+      updateCalculator();
+    });
+  });
+
+  // Lambda anchors
+  document.querySelectorAll('.slider-anchor[data-lambda]').forEach(function(anchor) {
+    anchor.addEventListener('click', function() {
+      var val = parseInt(this.getAttribute('data-lambda'));
+      state.lambda = val;
+      document.getElementById('slider-lambda').value = val;
+      updateCalculator();
+    });
+  });
+
+  // Presets
+  document.querySelectorAll('.preset-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      var p = presets[this.getAttribute('data-preset')];
+      Object.keys(p).forEach(function(k) {
+        state[k] = p[k];
+        var sl = document.getElementById('slider-' + k);
+        if (sl) sl.value = p[k];
+      });
+      // Reset rho toggle
+      document.querySelectorAll('#rho-toggle .toggle-btn').forEach(function(b) {
+        b.classList.toggle('active', parseFloat(b.getAttribute('data-rho')) === state.rho);
+      });
+      updateCalculator();
+    });
+  });
+
+  /* ========== Tab 1: Posterior density chart ========== */
+  function renderPosteriorChart() {
+    var el = document.getElementById('posterior-chart');
+    var h = chartHeight(450, 380, 320);
+    el.style.height = h + 'px';
+
+    // Generate approximate density curves for ρ=0.5, 0.75, 1.0
+    function makeDensity(median, hdiLow, hdiHigh, nPoints) {
+      // Use a log-normal approximation
+      var logMedian = Math.log(median);
+      var sigma = (Math.log(hdiHigh) - Math.log(hdiLow)) / (2 * 1.96);
+      if (sigma <= 0) sigma = 0.3;
+      var xs = [], ys = [];
+      for (var i = 0; i < nPoints; i++) {
+        var x = 0.01 + (i / nPoints) * 12;
+        var logx = Math.log(x);
+        var exponent = -Math.pow(logx - logMedian, 2) / (2 * sigma * sigma);
+        var density = (1 / (x * sigma * Math.sqrt(2 * Math.PI))) * Math.exp(exponent);
+        xs.push(x);
+        ys.push(density);
+      }
+      return { xs: xs, ys: ys };
+    }
+
+    var d1 = makeDensity(0.65, 0.18, 2.43, 300);
+    var d2 = makeDensity(0.97, 0.27, 3.61, 300);
+    var d3 = makeDensity(1.30, 0.35, 4.79, 300);
+
+    var traces = [
+      { x: d1.xs, y: d1.ys, name: '\u03c1 = 0.5 (50%)', fill: 'tozeroy', fillcolor: 'rgba(96,165,250,0.15)',
+        line: { color: '#60a5fa', width: 2 }, hovertemplate: '%{x:.2f}%<extra>\u03c1=0.5</extra>' },
+      { x: d2.xs, y: d2.ys, name: '\u03c1 = 0.75 (75%)', fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.15)',
+        line: { color: '#3b82f6', width: 2 }, hovertemplate: '%{x:.2f}%<extra>\u03c1=0.75</extra>' },
+      { x: d3.xs, y: d3.ys, name: '\u03c1 = 1.0 (100%)', fill: 'tozeroy', fillcolor: 'rgba(37,99,235,0.15)',
+        line: { color: '#2563eb', width: 2 }, hovertemplate: '%{x:.2f}%<extra>\u03c1=1.0</extra>' }
+    ];
+
+    var layout = {
+      margin: { t: 20, r: 30, b: 50, l: 55 },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      font: { family: 'Inter, sans-serif', size: isMobile() ? 10 : 12, color: '#64748b' },
+      xaxis: { title: { text: 'Posterior Probability (%)', font: { size: isMobile() ? 10 : 13 } }, gridcolor: '#e2e8f0', range: [0, 10] },
+      yaxis: { title: { text: 'Density', font: { size: isMobile() ? 10 : 13 } }, gridcolor: '#e2e8f0', showticklabels: false },
+      legend: { x: 0.65, y: 0.95, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: 11 } },
+      shapes: [
+        { type: 'line', x0: 0.65, x1: 0.65, y0: 0, y1: 1, yref: 'paper', line: { color: '#60a5fa', width: 1.5, dash: 'dash' } },
+        { type: 'line', x0: 0.97, x1: 0.97, y0: 0, y1: 1, yref: 'paper', line: { color: '#3b82f6', width: 1.5, dash: 'dash' } },
+        { type: 'line', x0: 1.30, x1: 1.30, y0: 0, y1: 1, yref: 'paper', line: { color: '#2563eb', width: 1.5, dash: 'dash' } }
+      ]
+    };
+    Plotly.newPlot(el, traces, layout, getPlotlyConfig());
+  }
+
+  /* ========== Tab 3: Acceptability Curve ========== */
+  function renderAcceptabilityCurve() {
+    var el = document.getElementById('acceptability-chart');
+    var h = chartHeight(420, 360, 300);
+    el.style.height = h + 'px';
+
+    var currentLambda = parseInt(document.getElementById('slider-ac-lambda').value);
+
+    // For each rho, compute fraction of draws below threshold at each lambda
+    // We pre-compute these from the paper's results
+    // The paper reports specific acceptance probabilities at certain lambda values
+    // We interpolate with: acceptance = fraction of posterior below tau(lambda)
+    // Using the paper's HDI values to approximate the CDF
+    function acceptanceProb(lambda, median, hdiLow, hdiHigh) {
+      var threshold = 100 / (1 + lambda);
+      // Log-normal CDF approximation
+      var logMedian = Math.log(median);
+      var sigma = (Math.log(hdiHigh) - Math.log(hdiLow)) / (2 * 1.96);
+      if (sigma <= 0) sigma = 0.3;
+      var logThreshold = Math.log(threshold);
+      var z = (logThreshold - logMedian) / sigma;
+      // Standard normal CDF approximation (Abramowitz and Stegun)
+      var t = 1 / (1 + 0.2316419 * Math.abs(z));
+      var d = 0.3989422804 * Math.exp(-z * z / 2);
+      var p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      return z >= 0 ? 1 - p : p;
+    }
+
+    var lambdas = [];
+    for (var l = 2; l <= 1000; l += (l < 50 ? 1 : l < 200 ? 5 : 20)) {
+      lambdas.push(l);
+    }
+
+    var rhoConfigs = [
+      { median: 0.65, low: 0.18, high: 2.43, name: '\u03c1 = 0.5 (50%)', color: '#60a5fa' },
+      { median: 0.97, low: 0.27, high: 3.61, name: '\u03c1 = 0.75 (75%)', color: '#3b82f6' },
+      { median: 1.30, low: 0.35, high: 4.79, name: '\u03c1 = 1.0 (100%)', color: '#2563eb' }
+    ];
+
+    var traces = rhoConfigs.map(function(rc) {
+      var ys = lambdas.map(function(l) { return acceptanceProb(l, rc.median, rc.low, rc.high) * 100; });
+      return {
+        x: lambdas, y: ys, name: rc.name, mode: 'lines',
+        line: { color: rc.color, width: 2.5 },
+        hovertemplate: '\u03bb=%{x}: %{y:.1f}% acceptable<extra>' + rc.name + '</extra>'
+      };
+    });
+
+    var currentThreshold = computeThreshold(currentLambda);
+
+    var layout = {
+      margin: { t: 20, r: 30, b: 55, l: 55 },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      font: { family: 'Inter, sans-serif', size: isMobile() ? 10 : 12, color: '#64748b' },
+      xaxis: {
+        title: { text: '\u03bb (Harm Trade-off Value)', font: { size: isMobile() ? 10 : 13 } },
+        type: 'log', gridcolor: '#e2e8f0',
+        tickvals: [2, 5, 10, 20, 50, 100, 200, 500, 1000],
+        ticktext: ['2', '5', '10', '20', '50', '100', '200', '500', '1000']
+      },
+      yaxis: {
+        title: { text: 'Posterior Pr(acceptable) %', font: { size: isMobile() ? 10 : 13 } },
+        gridcolor: '#e2e8f0', range: [0, 105]
+      },
+      legend: { x: 0.6, y: 0.35, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: 11 } },
+      shapes: [{
+        type: 'line', x0: currentLambda, x1: currentLambda, y0: 0, y1: 100,
+        line: { color: '#ef4444', width: 2, dash: 'dot' }
+      }],
+      annotations: [{
+        x: Math.log10(currentLambda), y: 103, xref: 'x', yref: 'y',
+        text: 'Your \u03bb=' + currentLambda, showarrow: false,
+        font: { color: '#ef4444', size: 11, weight: 600 }
+      }]
+    };
+    Plotly.react(el, traces, layout, getPlotlyConfig());
+  }
+
+  // Acceptability curve slider
+  var acSlider = document.getElementById('slider-ac-lambda');
+  acSlider.addEventListener('input', function() {
+    var val = parseInt(this.value);
+    document.getElementById('val-ac-lambda').textContent = val;
+    document.getElementById('ac-threshold-display').textContent = computeThreshold(val).toFixed(2) + '%';
+    // Update ref card highlighting
+    document.querySelectorAll('.ref-card').forEach(function(c) {
+      c.classList.toggle('active', parseInt(c.getAttribute('data-ref-lambda')) === val);
+    });
+    renderAcceptabilityCurve();
+  });
+
+  // Acceptability lambda anchors
+  document.querySelectorAll('.slider-anchor[data-ac-lambda]').forEach(function(anchor) {
+    anchor.addEventListener('click', function() {
+      var val = parseInt(this.getAttribute('data-ac-lambda'));
+      acSlider.value = val;
+      acSlider.dispatchEvent(new Event('input'));
+    });
+  });
+
+  // Ref card clicks
+  document.querySelectorAll('.ref-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var val = parseInt(this.getAttribute('data-ref-lambda'));
+      acSlider.value = val;
+      acSlider.dispatchEvent(new Event('input'));
+    });
+  });
+
+  /* ========== Initial render ========== */
+  renderPosteriorChart();
+  updateCalculator();
+  deferredRenders['acceptability'] = renderAcceptabilityCurve;
+
+  /* ========== Resize handler ========== */
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      renderPosteriorChart();
+      updateCalculator();
+      if (document.getElementById('panel-acceptability').classList.contains('active')) {
+        renderAcceptabilityCurve();
+      }
+    }, 250);
+  });
+
+})();
+</script>
+</body>
+</html>

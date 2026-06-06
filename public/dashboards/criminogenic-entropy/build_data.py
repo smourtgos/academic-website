@@ -234,16 +234,9 @@ with open(OUT_JS, "w") as f:
     json.dump(DATA, f, ensure_ascii=False, separators=(",", ":"))
     f.write(";\n")
 
-# copy source CSVs for the "download the data" link
-os.makedirs(OUT_DATA_DIR, exist_ok=True)
-for rel in ["results/model/factor_loadings.csv", "results/model/crime_loadings.csv",
-            "results/model/standardization_params.csv", "results/model/latent_entropy_series.csv",
-            "data/clean/analysis_dataset_expanded.csv", "tables/table3_prediction_metrics.csv",
-            "tables/table5b_direction_accuracy.csv",
-            "results/forecasting/scenario_crime_projections.csv",
-            "results/forecasting/scenario_entropy_projections.csv",
-            "results/forecasting/forecast_validation_2024.csv"]:
-    shutil.copy(p(rel), os.path.join(OUT_DATA_DIR, os.path.basename(rel)))
+# NOTE: source CSVs are intentionally NOT copied into a public data/ folder — the raw
+# analysis CSVs are not to be exposed publicly yet (pre-publication). The dashboard runs
+# entirely off the embedded data.js. (Re-add a copy step here if downloads are wanted later.)
 
 # --------------------------------------------------------------------- self-checks
 print("data.js written:", OUT_JS, "(%d bytes)" % os.path.getsize(OUT_JS))

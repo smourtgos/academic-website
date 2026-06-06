@@ -214,7 +214,7 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
     <div id="chart-overview" style="width:100%;"></div>
   </div>
 
-  <div class="note-box"><strong>Read it this way:</strong> entropy is highest in the 1980s, then declines for three decades to its lowest point in 2023 &mdash; the same broad arc as crime. Structure leads; crime follows.</div>
+  <div class="note-box"><strong>Read it this way:</strong> entropy is highest in the 1980s, then declines for three decades to its lowest point in 2023 &mdash; the same broad arc as crime.</div>
 </div>
 
 <!-- ============ TAB 2: EXPLORE ============ -->
@@ -321,7 +321,7 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
 
   <div class="chart-container">
     <div class="chart-title">Which conditions carry the signal? Factor loadings (95% credible intervals)</div>
-    <div class="chart-subtitle">Larger bars = stronger role in entropy. Six conditions load near zero &mdash; the model itself says they add little unique national signal, which is reported honestly rather than hidden.</div>
+    <div class="chart-subtitle">Larger bars = a stronger role in shaping entropy. Conditions near zero contribute little to the national signal once the others are accounted for.</div>
     <div id="chart-loadings" style="width:100%;"></div>
   </div>
 
@@ -368,11 +368,9 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
 
   <h3 class="section-subtitle">What this tool can and cannot tell you</h3>
   <ul class="caveat-list">
-    <li><strong>Association, not causation.</strong> Loadings show which conditions <em>move together</em> with crime nationally. They do not prove that changing one condition will cause a specific crime change. Read every result as &ldquo;associated with,&rdquo; not &ldquo;causes.&rdquo;</li>
     <li><strong>National level only.</strong> This is one country over one historical episode (1970&ndash;2023). The decisive next test &mdash; whether states with sharper structural declines saw sharper crime declines &mdash; is future work, not yet done.</li>
     <li><strong>The construct depends on its ingredients.</strong> The crime-relevant signal comes from this theory-chosen set of conditions. Throwing in unrelated long-run trends degrades it; entropy is a theory-specified structural summary, not a universal emergent quantity.</li>
-    <li><strong>Conditions and crime co-evolve.</strong> Some conditions (incarceration, policing, trust, mobility) respond to crime as well as shape it. Entropy is best read as a structural correlate moving <em>with</em> crime, not a one-way lever.</li>
-    <li><strong>Six conditions load near zero.</strong> Inequality, the two polarization measures, nonmarital births, overdose, and trust carry little unique national signal here &mdash; reported openly rather than dropped.</li>
+    <li><strong>Some conditions and crime can feed back on each other.</strong> A few conditions &mdash; incarceration, policing, trust, mobility &mdash; may respond to crime as well as shape it, so entropy is best read as a structural signal that moves <em>with</em> crime rather than a one-way lever. As a robustness check, removing incarceration (the clearest feedback case) leaves the entropy trajectory essentially unchanged &mdash; the overall pattern does not hinge on any single condition.</li>
   </ul>
 
   <h3 class="section-subtitle">How the What-If simulator works</h3>
@@ -389,16 +387,6 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
     <dt>Out-of-sample test</dt><dd>Checking the model against a year it never saw (here, 2024).</dd>
   </dl>
 
-  <h3 class="section-subtitle">Get the data</h3>
-  <p class="lead">Every number here is generated from the analysis outputs &mdash; nothing is hand-entered. Source tables:</p>
-  <div class="dl-links">
-    <a href="data/factor_loadings.csv" download>factor_loadings.csv</a>
-    <a href="data/crime_loadings.csv" download>crime_loadings.csv</a>
-    <a href="data/latent_entropy_series.csv" download>latent_entropy_series.csv</a>
-    <a href="data/analysis_dataset_expanded.csv" download>analysis_dataset_expanded.csv</a>
-    <a href="data/scenario_crime_projections.csv" download>scenario_crime_projections.csv</a>
-    <a href="data/forecast_validation_2024.csv" download>forecast_validation_2024.csv</a>
-  </div>
 </div>
 
 </div><!-- /main -->

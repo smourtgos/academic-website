@@ -1,0 +1,10 @@
+method,crime_type,n_predictions,n_correct,direction_accuracy
+ARIMA,murder_rate,33,19,0.5758
+Entropy Model,murder_rate,33,19,0.5758
+Covariate Regression,murder_rate,32,17,0.5312
+Entropy Model,property_crime_rate,33,28,0.8485
+Covariate Regression,property_crime_rate,32,25,0.7812
+ARIMA,property_crime_rate,33,24,0.7273
+Entropy Model,violent_crime_rate,33,24,0.7273
+ARIMA,violent_crime_rate,33,22,0.6667
+Covariate Regression,violent_crime_rate,32,21,0.6562

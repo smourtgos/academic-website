@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
 """
-build_data.py  —  generator for the Criminogenic Entropy dashboard.
+build_entropy_data.py  —  generator for the Criminogenic Entropy dashboard.
 
-Reads the canonical, code-generated CSV outputs of the JQC-submitted analysis
-(Entropy_Revision_2026/) and emits `data.js` (window.ENTROPY_DATA = {...}) plus a
-data/ copy of the source CSVs. NO hand-typed statistics: every number the dashboard
-shows originates here, from the analysis outputs.
+Lives OUTSIDE public/ (this scripts/ folder is not web-served) so the analysis
+path and methodology are not exposed on the live site. Reads the canonical,
+code-generated CSV outputs of the JQC-submitted analysis (Entropy_Revision_2026/)
+and writes the dashboard's `data.js` (window.ENTROPY_DATA = {...}). NO hand-typed
+statistics: every number the dashboard shows originates here. Raw CSVs are NOT
+copied to a public folder (pre-publication).
 
-Stdlib only (no pandas/numpy). Run:
-    python3 build_data.py [path/to/Entropy_Revision_2026]
+Stdlib only (no pandas/numpy). Run from anywhere:
+    python3 scripts/build_entropy_data.py [path/to/Entropy_Revision_2026]
 
 Author-facing text (plain-language labels, units, descriptions, glossary) is the
 only authored content; all quantities come from the CSVs.
 """
 
-import csv, json, math, os, shutil, sys
+import csv, json, math, os, sys
 
 # ----------------------------------------------------------------------------- paths
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_SRC = "/Users/s.mourtgos/Documents/Projects/2026/Entropy Theory of Crime/Entropy_Revision_2026"
 SRC = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SRC
-OUT_JS = os.path.join(HERE, "data.js")
-OUT_DATA_DIR = os.path.join(HERE, "data")
+# data.js lives in the (web-served) dashboard folder; this script does not.
+OUT_JS = os.path.normpath(os.path.join(HERE, "..", "public", "dashboards", "criminogenic-entropy", "data.js"))
 
 def p(*a): return os.path.join(SRC, *a)
 def readcsv(rel):

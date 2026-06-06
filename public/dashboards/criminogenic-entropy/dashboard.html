@@ -206,7 +206,7 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
 
   <div class="chart-container">
     <div class="chart-title">Criminogenic entropy tracks crime, 1970&ndash;2023</div>
-    <div class="chart-subtitle">All three series shown as standardized scores so their <em>shapes</em> can be compared. The shaded band is the 95% credible interval for entropy.</div>
+    <div class="chart-subtitle" id="overview-subtitle">All three series shown as standardized scores so their <em>shapes</em> can be compared. The shaded band is the 95% credible interval for entropy.</div>
     <div class="btn-row" id="overview-toggle">
       <button class="toggle-btn active" data-mode="z">Standardized overlay</button>
       <button class="toggle-btn" data-mode="rate">Actual crime rates</button>
@@ -214,7 +214,7 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
     <div id="chart-overview" style="width:100%;"></div>
   </div>
 
-  <div class="note-box"><strong>Read it this way:</strong> entropy is highest in the 1980s, then declines for three decades to its lowest point in 2023 &mdash; the same broad arc as crime. The 2020 spike (covered under &ldquo;How It Predicts&rdquo;) sits <em>above</em> the structural trend: a short shock, not a structural reversal.</div>
+  <div class="note-box"><strong>Read it this way:</strong> entropy is highest in the 1980s, then declines for three decades to its lowest point in 2023 &mdash; the same broad arc as crime. Structure leads; crime follows.</div>
 </div>
 
 <!-- ============ TAB 2: EXPLORE ============ -->
@@ -310,7 +310,7 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
 <!-- ============ TAB 4: PREDICT ============ -->
 <div class="tab-panel" id="panel-predict">
   <h2 class="section-title">How well does it predict &mdash; and what it can&rsquo;t do</h2>
-  <p class="lead">Using structural conditions alone (no past crime fed in), the entropy model reconstructs the national crime series with high accuracy for property and violent crime. Homicide is the exception &mdash; and that exception is informative.</p>
+  <p class="lead">Using structural conditions alone (no past crime fed in), the entropy model reconstructs the national crime series with high accuracy for both property and violent crime.</p>
 
   <div class="styled-table-wrapper">
     <table class="styled-table">
@@ -318,24 +318,11 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
       <tbody id="metrics-tbody"></tbody>
     </table>
   </div>
-  <div class="note-box"><strong>Why homicide is shown separately.</strong> Homicide is dominated by lethal-means and short-run shocks that a slow structural index does not capture, so it was kept out of the paper&rsquo;s core quantitative results. It is reported here only to be transparent about the model&rsquo;s limits.</div>
 
   <div class="chart-container">
     <div class="chart-title">Which conditions carry the signal? Factor loadings (95% credible intervals)</div>
     <div class="chart-subtitle">Larger bars = stronger role in entropy. Six conditions load near zero &mdash; the model itself says they add little unique national signal, which is reported honestly rather than hidden.</div>
     <div id="chart-loadings" style="width:100%;"></div>
-  </div>
-
-  <div class="section-subtitle">The 2020 spike: structural change vs. temporary shock</div>
-  <div class="explain-box"><p>In 2020, homicide jumped sharply &mdash; but criminogenic entropy kept <em>falling</em>. The structural conditions did not reverse. The model therefore reads 2020 as a <strong>shock layered on top of a still-compressing system</strong>, not a structural turning point &mdash; consistent with crime settling back toward the structural trend afterward.</p></div>
-  <div class="chart-container">
-    <div class="chart-title">Actual vs. structural prediction around 2020</div>
-    <div class="chart-subtitle">The model under-predicts the 2020&ndash;21 homicide jump (the shock); violent crime stays much closer to the structural path.</div>
-    <div class="btn-row" id="shock-toggle">
-      <button class="toggle-btn active" data-crime="murder_rate">Homicide</button>
-      <button class="toggle-btn" data-crime="violent_crime_rate">Violent</button>
-    </div>
-    <div id="chart-shock" style="width:100%;"></div>
   </div>
 
   <div class="section-subtitle">Held-out test: predicting 2024 before it was known</div>
@@ -516,16 +503,21 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
           { x: years, y: zscore(pro), name: 'Property crime (z)', line: { color: COL.property, width: 2, dash: 'dot' } }
         ];
         layout = baseLayout({ yaxis: { title: 'Standardized score (z)' } });
+        layout.height = chartH(540, 420); // taller so the rise-and-fall hump reads clearly
+        document.getElementById('overview-subtitle').innerHTML = 'All three series shown as standardized scores so their <em>shapes</em> can be compared. The shaded band is the 95% credible interval for entropy.';
       } else {
+        // Property and violent on separate axes so both are readable (violent is much lower than property).
         traces = [
-          { x: years, y: em, name: 'Criminogenic entropy', yaxis: 'y2', line: { color: COL.entropy, width: 3 } },
-          { x: years, y: vio, name: 'Violent (per 100k)', line: { color: COL.violent, width: 2 } },
-          { x: years, y: pro, name: 'Property (per 100k)', line: { color: COL.property, width: 2 } }
+          { x: years, y: pro, name: 'Property crime', line: { color: COL.property, width: 3 } },
+          { x: years, y: vio, name: 'Violent crime', yaxis: 'y2', line: { color: COL.violent, width: 3 } }
         ];
-        layout = baseLayout({ yaxis: { title: 'Crime rate per 100,000' },
-          yaxis2: { title: 'Entropy', overlaying: 'y', side: 'right', gridcolor: 'transparent', zeroline: false } });
+        layout = baseLayout({
+          margin: { t: 16, r: 66, b: 44, l: 64 },
+          yaxis: { title: 'Property rate /100k', titlefont: { color: COL.property }, tickfont: { color: COL.property } },
+          yaxis2: { title: 'Violent rate /100k', overlaying: 'y', side: 'right', titlefont: { color: COL.violent }, tickfont: { color: COL.violent }, gridcolor: 'transparent', zeroline: false } });
+        layout.height = chartH(440, 360);
+        document.getElementById('overview-subtitle').innerHTML = 'Actual rates per 100,000. Property (left axis) and violent (right axis) are on <em>separate</em> scales so both trends are visible &mdash; violent crime is far lower than property crime.';
       }
-      layout.height = chartH(440, 360);
       Plotly.react(el, traces, layout, cfg());
     }
     document.getElementById('overview-toggle').querySelectorAll('.toggle-btn').forEach(function (b) {
@@ -704,8 +696,8 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
 
   /* ========== TAB 4: PREDICT ========== */
   deferred['predict'] = function () {
-    // metrics table (Entropy Model only)
-    var order = ['property_crime_rate', 'violent_crime_rate', 'murder_rate'];
+    // metrics table (Entropy Model only; homicide excluded — dropped from the paper's quantitative results)
+    var order = ['property_crime_rate', 'violent_crime_rate'];
     var tb = document.getElementById('metrics-tbody');
     tb.innerHTML = order.map(function (k) { var m = D.metrics[k];
       return '<tr><td>' + CR[k] + '</td><td>' + fmt(m.mape, 2) + '%</td><td>' + fmt(m.corr, 3) + '</td><td>' + (m.dir * 100).toFixed(0) + '%</td></tr>'; }).join('');
@@ -722,25 +714,9 @@ input[type="range"].compress::-moz-range-thumb { background: var(--compress); }
       yaxis: { automargin: true }, margin: { t: 8, r: 16, b: 44, l: 8 }, hovermode: 'closest' });
     l.height = chartH(460, 420); Plotly.newPlot(el, [tr], l, cfg());
 
-    // 2020 shock
-    var shockCrime = 'murder_rate';
-    function renderShock() {
-      var el2 = document.getElementById('chart-shock'); var s = D.shock2020[shockCrime];
-      var traces = [
-        { x: s.map(function (d) { return d.year; }), y: s.map(function (d) { return d.actual; }), name: 'Actual', line: { color: COL.murder, width: 3 }, mode: 'lines+markers' },
-        { x: s.map(function (d) { return d.year; }), y: s.map(function (d) { return d.pred; }), name: 'Structural prediction', line: { color: COL.entropy, width: 2, dash: 'dash' }, mode: 'lines+markers' }
-      ];
-      var l2 = baseLayout({ yaxis: { title: CR[shockCrime] + ' per 100,000' } }); l2.height = chartH(320, 280);
-      Plotly.react(el2, traces, l2, cfg());
-    }
-    document.getElementById('shock-toggle').querySelectorAll('.toggle-btn').forEach(function (b) {
-      b.addEventListener('click', function () { document.querySelectorAll('#shock-toggle .toggle-btn').forEach(function (x) { x.classList.remove('active'); });
-        this.classList.add('active'); shockCrime = this.getAttribute('data-crime'); renderShock(); }); });
-    renderShock();
-
     // 2024 validation
     var vb = document.getElementById('val-tbody');
-    vb.innerHTML = D.validation2024.map(function (v) {
+    vb.innerHTML = D.validation2024.filter(function (v) { return v.crime !== 'murder_rate'; }).map(function (v) {
       return '<tr><td>' + CR[v.crime] + '</td><td>' + Math.round(v.actual).toLocaleString() + '</td><td>' +
         Math.round(v.pred).toLocaleString() + ' (' + Math.round(v.lo).toLocaleString() + '&ndash;' + Math.round(v.hi).toLocaleString() + ')</td><td>' +
         (v.inCI ? '<span class="tag-in">&#10003; inside</span>' : 'outside') + '</td></tr>'; }).join('');

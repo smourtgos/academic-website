@@ -150,18 +150,21 @@ crime = {c: {int(num(row["year"])): num(row.get(c)) for row in ds}
 
 # --------------------------------------------- prediction metrics (Entropy Model ONLY)
 # Author preference: NO ARIMA / covariate-regression benchmarks shown.
+# Homicide is EXCLUDED from reported results (dropped from the paper's quantitative results).
+REPORTED = ("property_crime_rate", "violent_crime_rate")
 metrics = {}
 for row in readcsv("tables/table3_prediction_metrics.csv"):
-    if row["method"] == "Entropy Model":
+    if row["method"] == "Entropy Model" and row["crime_type"] in REPORTED:
         metrics[row["crime_type"]] = dict(mape=num(row["MAPE"]), corr=num(row["correlation"]),
                                            rmse=num(row["RMSE"]), mae=num(row["MAE"]))
 for row in readcsv("tables/table5b_direction_accuracy.csv"):
-    if row["method"] == "Entropy Model":
+    if row["method"] == "Entropy Model" and row["crime_type"] in REPORTED:
         metrics.setdefault(row["crime_type"], {})["dir"] = num(row["direction_accuracy"])
 
 # ------------------------------------------------------------------ 2024 validation
 val2024 = []
 for row in readcsv("results/forecasting/forecast_validation_2024.csv"):
+    if row["crime_type"] not in REPORTED: continue   # exclude homicide
     val2024.append(dict(crime=row["crime_type"], actual=num(row["actual_2024"]),
                         pred=num(row["predicted_mean"]), lo=num(row["predicted_q025"]),
                         hi=num(row["predicted_q975"]), inCI=row["in_95_ci"].strip().upper()=="TRUE",
@@ -181,14 +184,6 @@ for row in readcsv("results/forecasting/scenario_crime_projections.csv"):
         dict(year=int(num(row["year"])), mean=num(row["pred_mean"]),
              lo=num(row["pred_q025"]), hi=num(row["pred_q975"])))
 
-# --------------------------------------------------- 2020 shock (Entropy Model, levels)
-shock = {}
-for row in readcsv("results/prediction/shock_2020_comparison.csv"):
-    if row["method"] != "Entropy Model": continue
-    ct = row["crime_type"]
-    shock.setdefault(ct, []).append(dict(year=int(num(row["year"])),
-        actual=math.exp(num(row["actual"])), pred=math.exp(num(row["predicted"]))))
-for ct in shock: shock[ct].sort(key=lambda d: d["year"])
 
 # ----------------------------------------------------------------- indicator objects
 def nice_range(vals, dec):
@@ -231,7 +226,6 @@ DATA = dict(
     validation2024=val2024,
     contributions={k: [r(contrib[k][i], 6) for i in range(len(years))] for k in keys},
     scenarios=dict(names=scen_names, entropy=scen_E, crime=scen_crime),
-    shock2020=shock,
 )
 
 with open(OUT_JS, "w") as f:

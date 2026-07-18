@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seeing Confessions Clearly: Diagnosticity, Risk, and Signal Detection</title>
+<meta property="og:title" content="Seeing Confessions Clearly" />
+<meta name="description" content="A method that gets fewer confessions is not the same thing as a method that gets better ones - and diagnosticity cannot tell the two apart. An interactive look at how interrogation methods are scored." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #1e293b; --navy-light: #334155; --navy-dark: #0f172a;
+  --blue: #3b82f6; --blue-light: #60a5fa; --blue-dark: #2563eb;
+  --white: #ffffff; --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1; --gray-400: #94a3b8; --gray-500: #64748b; --gray-600: #475569; --gray-700: #334155;
+  --red: #ef4444; --red-light: #fca5a5; --green: #22c55e; --green-light: #dcfce7; --green-dark: #166534;
+  --amber: #f59e0b; --amber-light: #fef3c7; --amber-dark: #92400e;
+  --innocent: #0072B2; --guilty: #D55E00;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--gray-50); color: var(--navy); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* Navbar */
+.navbar { background: var(--navy-dark); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.navbar-brand { color: var(--white); font-weight: 600; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+.navbar-brand:hover { color: var(--blue-light); }
+.navbar-back { color: var(--gray-400); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+.navbar-back:hover { color: var(--white); }
+
+/* Header */
+.header { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%); padding: 2.5rem 2rem 2rem; color: var(--white); }
+.header-inner { max-width: 1200px; margin: 0 auto; }
+.category-badge { display: inline-block; background: var(--blue); color: var(--white); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; padding: 0.3rem 0.8rem; border-radius: 4px; text-transform: uppercase; margin-bottom: 1rem; }
+.header h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800; line-height: 1.2; margin-bottom: 0.75rem; max-width: 850px; }
+.header .subtitle { font-size: 0.95rem; color: var(--gray-300); font-weight: 400; max-width: 760px; margin-bottom: 0.5rem; }
+.header .citation-line { font-size: 0.82rem; color: var(--gray-400); font-style: italic; }
+.header .citation-line a { color: var(--blue-light); }
+
+/* Tab navigation */
+.tab-nav { background: var(--white); border-bottom: 1px solid var(--gray-200); position: sticky; top: 56px; z-index: 999; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tab-nav::-webkit-scrollbar { height: 0; }
+.tab-nav-inner { max-width: 1200px; margin: 0 auto; display: flex; padding: 0 1rem; gap: 0; }
+.tab-btn { background: none; border: none; padding: 1rem 1.25rem; font-family: var(--font); font-size: 0.85rem; font-weight: 500; color: var(--gray-500); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.tab-btn:hover { color: var(--navy); background: var(--gray-50); }
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+/* Main */
+.main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fade 0.3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* KPI cards */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.kpi-card { background: var(--navy); color: var(--white); padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.kpi-card .kpi-value { font-size: 2rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.25rem; }
+.kpi-card .kpi-label { font-size: 0.75rem; color: var(--gray-300); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.kpi-card .kpi-sub { font-size: 0.72rem; color: var(--gray-400); margin-top: 0.3rem; }
+
+/* Explain + note boxes */
+.explain-box { background: var(--navy); color: var(--gray-200); padding: 1.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; font-size: 0.92rem; line-height: 1.7; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.explain-box p { margin-bottom: 0.75rem; } .explain-box p:last-child { margin-bottom: 0; }
+.explain-box strong { color: var(--white); font-weight: 600; }
+.note-box { background: var(--amber-light); border: 1px solid #fcd34d; color: var(--amber-dark); border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.84rem; line-height: 1.55; margin-bottom: 1.5rem; }
+.note-box strong { color: #78350f; }
+
+/* Section headings */
+.section-title { font-size: 1.3rem; font-weight: 700; color: var(--navy); margin: 2rem 0 1rem; }
+.section-title:first-child { margin-top: 0; }
+.section-subtitle { font-size: 1rem; font-weight: 600; color: var(--navy-light); margin: 1.5rem 0 0.75rem; }
+.lead { font-size: 0.95rem; color: var(--gray-600); margin-bottom: 1.5rem; max-width: 820px; }
+
+/* Chart containers */
+.chart-container { background: var(--white); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--gray-200); }
+.chart-container .chart-title { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; }
+.chart-container .chart-subtitle { font-size: 0.82rem; color: var(--gray-500); margin-bottom: 1rem; }
+
+/* Tables */
+.styled-table-wrapper { overflow-x: auto; margin-bottom: 1rem; border-radius: 12px; border: 1px solid var(--gray-200); background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.styled-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.styled-table thead { background: var(--navy); color: var(--white); }
+.styled-table thead th { padding: 0.85rem 1rem; text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.styled-table tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--gray-100); font-variant-numeric: tabular-nums; }
+.styled-table tbody tr { transition: background 0.25s; }
+.styled-table tbody tr:hover { background: var(--gray-50); }
+.styled-table tbody tr:last-child td { border-bottom: none; }
+.styled-table tbody tr.highlight { background: #fff7ed; }
+.rank-pill { display: inline-block; min-width: 1.6rem; text-align: center; font-size: 0.72rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); margin-left: 0.35rem; }
+.rank-pill.first { background: var(--green-light); color: var(--green-dark); }
+.rank-pill.last { background: #fee2e2; color: #991b1b; }
+
+/* Simulator layout */
+.sim-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 1.5rem; align-items: start; }
+.panel { background: var(--white); border-radius: 12px; padding: 1.4rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--gray-200); margin-bottom: 1.5rem; }
+.panel-title { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.25rem; }
+.panel-hint { font-size: 0.78rem; color: var(--gray-500); margin-bottom: 1rem; }
+
+/* Sliders */
+.slider-group { margin-bottom: 1.2rem; }
+.slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.15rem; }
+.slider-label { font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+.slider-value { font-size: 1rem; font-weight: 700; color: var(--blue); font-variant-numeric: tabular-nums; }
+.slider-hint { font-size: 0.72rem; color: var(--gray-500); margin-bottom: 0.4rem; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--gray-200); border-radius: 3px; outline: none; cursor: pointer; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--blue); cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: transform 0.15s; }
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); cursor: pointer; border: none; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+input[type="range"]:disabled { opacity: 0.45; cursor: not-allowed; }
+input[type="range"]:disabled::-webkit-slider-thumb { background: var(--gray-400); cursor: not-allowed; }
+.slider-range-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--gray-400); margin-top: 0.2rem; }
+
+/* Lock control */
+.lock-row { display: flex; align-items: flex-start; gap: 0.6rem; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 0.7rem 0.85rem; margin-bottom: 1.1rem; }
+.lock-row input { margin-top: 0.25rem; width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; flex-shrink: 0; }
+.lock-row label { font-size: 0.8rem; font-weight: 600; color: var(--navy); cursor: pointer; }
+.lock-row .lock-sub { font-size: 0.72rem; color: var(--gray-500); font-weight: 400; display: block; margin-top: 0.15rem; }
+.lock-banner { display: none; background: var(--amber-light); border: 1px solid #fcd34d; color: var(--amber-dark); border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 0.8rem; line-height: 1.5; margin-bottom: 1.1rem; }
+.lock-banner.on { display: block; }
+
+/* Preset / toggle buttons */
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.5rem; }
+.mini-label { font-size: 0.72rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin: 0.3rem 0; }
+.chip-btn { padding: 0.4rem 0.8rem; border: 1px solid var(--gray-200); border-radius: 6px; background: var(--white); font-family: var(--font); font-size: 0.76rem; font-weight: 500; color: var(--gray-600); cursor: pointer; transition: all 0.18s; }
+.chip-btn:hover { border-color: var(--blue); color: var(--blue); }
+.chip-btn.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+.toggle-btn { flex: 1; padding: 0.5rem 0.7rem; border: 1px solid var(--gray-200); border-radius: 8px; background: var(--white); font-family: var(--font); font-size: 0.8rem; font-weight: 500; color: var(--gray-600); cursor: pointer; text-align: center; transition: all 0.2s; }
+.toggle-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); font-weight: 600; }
+.big-btn { padding: 0.75rem 1.3rem; border: none; border-radius: 8px; background: var(--blue); color: var(--white); font-family: var(--font); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.big-btn:hover { background: var(--blue-dark); }
+.big-btn.secondary { background: var(--gray-200); color: var(--navy); }
+.big-btn.secondary:hover { background: var(--gray-300); }
+
+/* Result panel */
+.result-panel { background: var(--navy); color: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+.result-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-light); margin-bottom: 0.25rem; }
+.result-value { font-size: 2.6rem; font-weight: 800; line-height: 1.05; }
+.result-value.undefined-val { font-size: 1.9rem; color: var(--amber); }
+.result-delta { font-size: 0.9rem; color: var(--gray-300); margin-top: 0.2rem; }
+.result-disclaimer { font-size: 0.76rem; color: var(--gray-400); line-height: 1.5; margin-top: 0.7rem; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 0.7rem; }
+.result-disclaimer strong { color: var(--red-light); }
+.result-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.2rem; }
+.result-mini { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 1rem; text-align: center; }
+.result-mini .rm-value { font-size: 1.7rem; font-weight: 800; }
+.result-mini .rm-label { font-size: 0.7rem; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.04em; }
+.changed-line { background: var(--white); border: 1px solid var(--gray-200); border-left: 4px solid var(--blue); border-radius: 8px; padding: 0.85rem 1.05rem; font-size: 0.88rem; color: var(--gray-700); line-height: 1.6; margin-bottom: 1.5rem; }
+.changed-line strong { color: var(--navy); }
+
+/* Reference cards */
+.ref-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.ref-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1.1rem 1.2rem; }
+.ref-card .rc-name { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+.ref-card .rc-value { font-size: 1.6rem; font-weight: 800; color: var(--blue); line-height: 1.1; }
+.ref-card .rc-sub { font-size: 0.78rem; color: var(--gray-500); margin-top: 0.35rem; line-height: 1.5; }
+
+/* Callout */
+.callout { background: var(--white); border: 1px solid var(--gray-200); border-left: 4px solid var(--red); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+.callout .co-title { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+.callout p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.7; margin-bottom: 0.6rem; }
+.callout p:last-child { margin-bottom: 0; }
+.callout strong { color: var(--navy); }
+.crosslink { background: var(--white); border: 1px solid var(--gray-200); border-left: 4px solid var(--blue); border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+.crosslink .cl-title { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+.crosslink p { font-size: 0.88rem; color: var(--gray-600); line-height: 1.7; margin-bottom: 0.6rem; }
+.crosslink a { color: var(--blue-dark); font-weight: 600; text-decoration: none; }
+.crosslink a:hover { text-decoration: underline; }
+
+/* Simulation strip */
+.sim-run-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-bottom: 1rem; }
+.sim-readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 1.2rem; }
+.sim-stat { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 0.9rem 1rem; text-align: center; }
+.sim-stat .ss-value { font-size: 1.5rem; font-weight: 800; color: var(--navy); line-height: 1.1; }
+.sim-stat .ss-value.bad { color: var(--red); }
+.sim-stat .ss-label { font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.25rem; }
+.draw-card { border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.6; border: 1px solid var(--gray-200); background: var(--white); }
+.draw-card.undefined-draw { background: #fef2f2; border-color: #fecaca; color: #991b1b; font-weight: 600; }
+.draw-card.undefined-draw strong { color: #7f1d1d; }
+
+/* Collapsibles */
+.collapsible { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+.collapsible-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; font-size: 1rem; font-weight: 600; color: var(--navy); transition: background 0.2s; border-left: 4px solid var(--blue); }
+.collapsible-header:hover { background: var(--gray-50); }
+.collapsible-arrow { transition: transform 0.3s; color: var(--gray-400); }
+.collapsible.open .collapsible-arrow { transform: rotate(180deg); }
+.collapsible-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+.collapsible.open .collapsible-body { max-height: 3000px; }
+.collapsible-content { padding: 0 1.5rem 1.5rem; font-size: 0.9rem; color: var(--gray-600); line-height: 1.7; }
+.collapsible-content p { margin-bottom: 0.75rem; }
+.collapsible-content strong { color: var(--navy); }
+.collapsible-content ul { margin: 0 0 0.75rem 1.2rem; }
+.collapsible-content li { margin-bottom: 0.4rem; }
+
+/* Formula box */
+.formula-box { background: var(--navy); color: var(--white); padding: 1.25rem 1.5rem; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.88rem; text-align: center; margin: 1rem 0; line-height: 1.8; }
+.formula-annotation { font-size: 0.75rem; color: var(--gray-500); text-align: center; font-style: italic; margin-top: -0.5rem; margin-bottom: 1rem; }
+
+/* Citation box */
+.citation-box { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 1rem 1.25rem; margin-top: 2rem; font-size: 0.82rem; color: var(--gray-600); line-height: 1.6; }
+.citation-box .cite-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); margin-bottom: 0.5rem; }
+.citation-box a { color: var(--blue-dark); }
+
+/* Glossary */
+.gloss dt { font-weight: 700; color: var(--navy); margin-top: 0.9rem; font-size: 0.9rem; }
+.gloss dd { color: var(--gray-600); font-size: 0.88rem; margin-left: 0; }
+.caveat-list { list-style: none; }
+.caveat-list li { background: var(--white); border: 1px solid var(--gray-200); border-left: 4px solid var(--amber); border-radius: 8px; padding: 0.9rem 1.1rem; margin-bottom: 0.8rem; font-size: 0.9rem; }
+.caveat-list li strong { color: var(--navy); }
+
+/* Footer */
+.footer { background: var(--navy-dark); color: var(--gray-400); text-align: center; padding: 1.5rem 2rem; font-size: 0.82rem; }
+.footer a { color: var(--blue-light); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+@media (max-width: 880px) { .sim-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .navbar { padding: 0 1rem; } .header { padding: 2rem 1rem 1.5rem; } .main { padding: 1.5rem 1rem 3rem; }
+  .tab-btn { padding: 0.8rem 0.85rem; font-size: 0.78rem; } .result-value { font-size: 2.1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Scott M. Mourtgos, Ph.D.
+  </a>
+  <a href="/dashboards" class="navbar-back">&larr; Back to Dashboards</a>
+</nav>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <div class="category-badge">Interactive Analysis</div>
+    <h1>Seeing Confessions Clearly</h1>
+    <p class="subtitle">A method that gets <em>fewer</em> confessions is not the same thing as a method that gets <em>better</em> ones &mdash; and the score the field uses to rank interrogation methods cannot tell the two apart.</p>
+    <p class="citation-line">Scott M. Mourtgos, Pete Blair &amp; Ian T. Adams &middot; Working paper &nbsp;|&nbsp; <a href="https://github.com/smourtgos/diagnosticity-reproduction" target="_blank" rel="noopener">Data and code</a><!-- PREPRINT_LINK: add the preprint URL here once posted --></p>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-nav"><div class="tab-nav-inner">
+  <button class="tab-btn active" data-tab="reversal">The Reversal</button>
+  <button class="tab-btn" data-tab="dials">The Two Dials</button>
+  <button class="tab-btn" data-tab="room">What It&rsquo;s Worth in Your Room</button>
+  <button class="tab-btn" data-tab="trust">Can You Trust the Number?</button>
+  <button class="tab-btn" data-tab="about">Under the Hood</button>
+</div></div>
+
+<div class="main">
+
+<!-- ============ TAB 1: THE REVERSAL ============ -->
+<div class="tab-panel active" id="panel-reversal">
+  <div class="explain-box">
+    <p><strong>Four interrogation approaches, one study, two different answers.</strong></p>
+    <p>Researchers score interrogation methods with a number called <em>diagnosticity</em> &mdash; how much more often guilty suspects confess than innocent ones. By that score, asking straight out with no tactic at all is the clear winner.</p>
+    <p>But ask a different question &mdash; which approach is actually best at <em>telling a guilty suspect from an innocent one</em> &mdash; and no tactic drops to third. Minimization, which the score ranks third, wins.</p>
+    <p>Both answers come from the same four numbers. This dashboard is about why they disagree, and which one you should care about.</p>
+  </div>
+
+  <div class="kpi-grid" id="reversal-kpis"></div>
+
+  <div class="section-title">The same four conditions, sorted two ways</div>
+  <p class="lead">Data from Russano and colleagues (2005), the study that introduced this scoring method. Click the buttons to re-sort. Watch where <strong>No tactic</strong> lands.</p>
+
+  <div class="btn-row" id="sort-toggle" style="margin-bottom:1rem;">
+    <button class="chip-btn active" data-sort="diag">Sort by Diagnosticity</button>
+    <button class="chip-btn" data-sort="dprime">Sort by Separation</button>
+    <button class="chip-btn" data-sort="crit">Sort by Threshold</button>
+  </div>
+
+  <div class="styled-table-wrapper">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Interrogation approach</th>
+          <th>Of 100 guilty,<br>how many confessed</th>
+          <th>Of 100 innocent,<br>how many confessed</th>
+          <th>Diagnosticity</th>
+          <th>Separation</th>
+          <th>Threshold</th>
+        </tr>
+      </thead>
+      <tbody id="reversal-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="note-box">
+    <strong>Read the last two columns together.</strong> The diagnosticity order and the threshold order are <em>identical</em>, method for method. The diagnosticity order and the separation order are not. That is the whole finding: the score is tracking how hard it was to get anyone to talk, not how well the method sorted the guilty from the innocent.
+  </div>
+
+  <div class="callout" style="border-left-color: var(--blue);">
+    <div class="co-title">The courthouse metal detector</div>
+    <p>Every courthouse has one, and it has two completely separate things going on. First, how good the machine is &mdash; whether it can tell a handgun from a belt buckle. Second, where the sensitivity is set &mdash; how much metal it takes before it beeps.</p>
+    <p>Turn the sensitivity down and the machine almost never beeps. When it does, it is usually something real, so the <em>proportion</em> of alarms that are genuine goes way up. You have not bought a better machine. You have bought a quieter one &mdash; and you are now walking guns past it.</p>
+    <p><strong>Diagnosticity is that proportion. It goes up when you turn the sensitivity down.</strong></p>
+  </div>
+
+  <div class="note-box">
+    <strong>On the source study.</strong> Before this paper was circulated, the authors shared it with Dr. Melissa B. Russano and Dr. Christian A. Meissner, two of the authors of the 2005 study reanalyzed here. They reviewed it and confirmed the paradigm is accurately described. They also noted that, to the extent the manuscript implies they present diagnosticity as a measure of posterior probability, they disagree. That is accepted: Russano and colleagues did not present diagnosticity as a probability. The concern here is with how the ratio gets <em>interpreted</em> downstream.
+  </div>
+</div>
+
+<!-- ============ TAB 2: THE TWO DIALS ============ -->
+<div class="tab-panel" id="panel-dials">
+  <div class="explain-box">
+    <p><strong>Any interrogation method has two separate properties. Diagnosticity blends them into one number.</strong></p>
+    <p><em>Separation</em> is how far apart guilty and innocent suspects are &mdash; the method's actual ability to tell them apart. <em>Threshold</em> is how hard it is to get a confession out of anyone at all, guilty or innocent. Separation is a skill. Threshold is a setting.</p>
+    <p>Move the two sliders below. Watch what happens to diagnosticity when you change <em>only the threshold</em>.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-title">The two dials</div>
+        <div class="panel-hint">Drag either one. Everything on the right updates live.</div>
+
+        <div class="lock-row">
+          <input type="checkbox" id="lock-dprime">
+          <label for="lock-dprime">Lock separation
+            <span class="lock-sub">Freeze the method's actual accuracy so it cannot change. Then move the threshold anyway.</span>
+          </label>
+        </div>
+        <div class="lock-banner" id="lock-banner">
+          <strong>Separation is locked.</strong> The method's ability to tell guilty from innocent literally cannot change while this is on. Now move the threshold and watch diagnosticity anyway.
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Separation</span>
+            <span class="slider-value" id="val-dprime">1.45</span>
+          </div>
+          <div class="slider-hint">How far apart are guilty and innocent suspects? This is the method's real ability to tell them apart.</div>
+          <input type="range" id="slider-dprime" min="0" max="4" step="0.001" value="1.454">
+          <div class="slider-range-labels"><span>0 &mdash; coin flip</span><span>4 &mdash; near perfect</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Confession threshold</span>
+            <span class="slider-value" id="val-c">Tight (+0.83)</span>
+          </div>
+          <div class="slider-hint">How hard is it to get a confession out of anyone at all? This is a setting, not a skill.</div>
+          <input type="range" id="slider-c" min="-1.5" max="2.5" step="0.001" value="0.828">
+          <div class="slider-range-labels"><span>Loose &mdash; almost anyone talks</span><span>Tight &mdash; almost nobody talks</span></div>
+        </div>
+
+        <div class="mini-label">Try this</div>
+        <div class="btn-row" id="preset-row">
+          <button class="chip-btn" data-preset="policies">Same method, two policies</button>
+          <button class="chip-btn" data-preset="score">Same score, three methods</button>
+        </div>
+        <div class="mini-label">Jump to a real condition</div>
+        <div class="btn-row" id="russano-row"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="result-panel">
+        <div class="result-label">Diagnosticity</div>
+        <div class="result-value" id="result-diag">7.67</div>
+        <div class="result-delta" id="result-delta">Separation 1.45 &middot; Threshold +0.83</div>
+        <div class="result-pair">
+          <div class="result-mini">
+            <div class="rm-value" id="rm-tcr">46</div>
+            <div class="rm-label">of 100 guilty confess</div>
+          </div>
+          <div class="result-mini">
+            <div class="rm-value" id="rm-fcr">6</div>
+            <div class="rm-label">of 100 innocent confess</div>
+          </div>
+        </div>
+        <div class="result-disclaimer" id="result-disclaimer"></div>
+      </div>
+
+      <div class="changed-line" id="changed-line">Move a slider to see what changed.</div>
+
+      <div class="chart-container">
+        <div class="chart-title">The two groups, and where the line falls</div>
+        <div class="chart-subtitle">Everything to the right of the dashed line confessed. Blue is innocent suspects, orange is guilty. <strong>Separation</strong> moves the humps apart; <strong>threshold</strong> slides the line.</div>
+        <div id="chart-dist" style="height:300px;"></div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">The map</div>
+        <div class="chart-subtitle">The dark curve is every threshold setting for a method of <em>this</em> separation. The dashed gold line is diagnosticity &mdash; its steepness <em>is</em> the score. Slide the threshold and the dot travels along the curve while the gold line pivots.</div>
+        <div id="chart-roc" style="height:380px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Flip it around: the two rates are not independent</div>
+  <p class="lead">On the companion dashboard, <em>The Risk of False Confession Wrongful Convictions</em>, you set sensitivity and specificity with two separate sliders. Those are the same two rates shown here &mdash; and they are not free to move independently. Any pair you can name is produced by exactly one combination of separation and threshold. The dials above are just a different set of coordinates for the same point.</p>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <div class="panel-title">Drag the rates instead</div>
+      <div class="panel-hint">Now you set the two confession rates, and the two dials move on their own.</div>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-label">Of 100 guilty, how many confess</span>
+          <span class="slider-value" id="val-btcr">46</span>
+        </div>
+        <input type="range" id="slider-btcr" min="1" max="99" step="1" value="46">
+      </div>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-label">Of 100 innocent, how many confess</span>
+          <span class="slider-value" id="val-bfcr">6</span>
+        </div>
+        <input type="range" id="slider-bfcr" min="1" max="99" step="1" value="6">
+      </div>
+      <div class="btn-row">
+        <button class="chip-btn" id="bridge-demo">Show me: raise both rates</button>
+      </div>
+    </div>
+    <div>
+      <div class="ref-cards" style="grid-template-columns:1fr 1fr;">
+        <div class="ref-card">
+          <div class="rc-name">Separation</div>
+          <div class="rc-value" id="bridge-dprime">1.45</div>
+          <div class="rc-sub">implied by these two rates</div>
+        </div>
+        <div class="ref-card">
+          <div class="rc-name">Threshold</div>
+          <div class="rc-value" id="bridge-c">+0.83</div>
+          <div class="rc-sub">implied by these two rates</div>
+        </div>
+      </div>
+      <div class="changed-line" id="bridge-line">Two sliders you can move independently quietly assume you can gain on one without paying on the other. For a fixed method, you cannot.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 3: WHAT IT'S WORTH IN YOUR ROOM ============ -->
+<div class="tab-panel" id="panel-room">
+  <div class="explain-box">
+    <p><strong>Diagnosticity is an odds multiplier, not a risk.</strong></p>
+    <p>A diagnosticity of 7.67 means guilty suspects confess about 7.7 times as often as innocent ones. It does <em>not</em> mean a confession is 7.7 times more likely to be true. To get from one to the other you need to know something the score does not contain: how many of the people being interrogated actually did it.</p>
+    <p>Laboratory studies fix that number at 50 out of 100 by design, because they assign equal numbers of guilty and innocent participants. Your room is not the laboratory.</p>
+  </div>
+
+  <div class="sim-grid">
+    <div class="panel">
+      <div class="panel-title">Your interrogation room</div>
+      <div class="panel-hint">The diagnosticity below carries over from The Two Dials.</div>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-label">Of every 100 people you interrogate, how many actually did it</span>
+          <span class="slider-value" id="val-g">50</span>
+        </div>
+        <div class="slider-hint">50 is the laboratory's number, built in by design. It is not a finding about the field.</div>
+        <input type="range" id="slider-g" min="5" max="99" step="1" value="50">
+        <div class="slider-range-labels"><span>5 &mdash; wide net</span><span>99 &mdash; near certainty going in</span></div>
+      </div>
+      <div class="mini-label">Diagnosticity in use</div>
+      <div class="btn-row" id="room-diag-row"></div>
+    </div>
+    <div>
+      <div class="result-panel">
+        <div class="result-label">Chance this confession is false</div>
+        <div class="result-value" id="room-value">11.5%</div>
+        <div class="result-delta" id="room-gloss">approximately 1 in 9</div>
+        <div class="result-disclaimer" id="room-disclaimer"></div>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">Same score, different room</div>
+        <div class="chart-subtitle">The curve is one fixed diagnosticity. Only the room changes. The grey diamond marks the laboratory's built-in 50.</div>
+        <div id="chart-base" style="height:320px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Same score, five times the innocent people</div>
+  <p class="lead">Because diagnosticity is a ratio, it throws away the count. These two techniques score identically.</p>
+  <div class="ref-cards">
+    <div class="ref-card">
+      <div class="rc-name">Low-pressure technique</div>
+      <div class="rc-value">D = 5</div>
+      <div class="rc-sub">2 of 100 innocent suspects confess &middot; <strong>20 false confessions per 1,000 innocent people interrogated</strong></div>
+    </div>
+    <div class="ref-card">
+      <div class="rc-name">High-pressure technique</div>
+      <div class="rc-value">D = 5</div>
+      <div class="rc-sub">10 of 100 innocent suspects confess &middot; <strong>100 false confessions per 1,000 innocent people interrogated</strong></div>
+    </div>
+  </div>
+  <div class="note-box">
+    A ratio throws away the count. Two methods can post identical scores while one of them puts <strong>five times as many innocent people</strong> in the position of having confessed. For policy, that difference is the whole question.
+  </div>
+
+  <div class="crosslink">
+    <div class="cl-title">Where does that number come from?</div>
+    <p>Setting the share of guilty suspects is the hardest and most consequential input on this page &mdash; and most published false-confession statistics get its role backwards. That is the entire subject of the companion dashboard.</p>
+    <p><a href="/dashboards/fcwc-risk/dashboard.html">The Risk of False Confession Wrongful Convictions &rarr;</a></p>
+  </div>
+</div>
+
+<!-- ============ TAB 4: CAN YOU TRUST THE NUMBER? ============ -->
+<div class="tab-panel" id="panel-trust">
+  <div class="explain-box">
+    <p><strong>Diagnosticity divides by the false confession rate &mdash; a small number measured on a small group.</strong></p>
+    <p>That makes it jumpy. Run the same study twice and you can get very different scores. Run it and have <em>no</em> innocent participant confess, and the score does not exist at all: you cannot divide by zero.</p>
+    <p>Press the button. Each press runs the same experiment again &mdash; 37 guilty and 37 innocent suspects, at the real <em>No tactic</em> rates.</p>
+  </div>
+
+  <div class="sim-run-row">
+    <button class="big-btn" id="btn-run-one">Run the study again</button>
+    <button class="big-btn secondary" id="btn-run-many">Run it 1,000 times</button>
+    <button class="big-btn secondary" id="btn-reset">Reset</button>
+    <span style="font-size:0.82rem;color:var(--gray-500);">Suspects per group:</span>
+    <div class="btn-row" id="n-toggle" style="margin:0;">
+      <button class="chip-btn" data-n="20">20</button>
+      <button class="chip-btn active" data-n="37">37</button>
+      <button class="chip-btn" data-n="80">80</button>
+      <button class="chip-btn" data-n="200">200</button>
+    </div>
+  </div>
+
+  <div class="draw-card" id="draw-card">The true diagnosticity for this condition is <strong>7.67</strong>. Press &ldquo;Run the study again&rdquo; and see what a single study would have reported.</div>
+
+  <div class="sim-readout">
+    <div class="sim-stat"><div class="ss-value" id="ss-runs">0</div><div class="ss-label">studies run</div></div>
+    <div class="sim-stat"><div class="ss-value bad" id="ss-undef">0</div><div class="ss-label">score undefined</div></div>
+    <div class="sim-stat"><div class="ss-value" id="ss-median">&mdash;</div><div class="ss-label">median score</div></div>
+    <div class="sim-stat"><div class="ss-value" id="ss-range">&mdash;</div><div class="ss-label">middle 95% of scores</div></div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-title">Every study you have run</div>
+    <div class="chart-subtitle">Each dot is one run of the same experiment. The black line is the true value, 7.67. Red marks at the bottom are runs where no innocent participant confessed and the score could not be computed at all.</div>
+    <div id="chart-sim" style="height:300px;"></div>
+  </div>
+
+  <div class="note-box" id="trust-note">
+    At 37 per group &mdash; the size of the original study &mdash; the score is <strong>undefined in about 10% of runs</strong>. When it can be computed at all, it averages <strong>9.21</strong> against a true value of <strong>7.67</strong>. Separation, computed from exactly the same simulated data, is defined every single time.
+  </div>
+
+  <div class="callout">
+    <div class="co-title">A cross-examination question</div>
+    <p>One published study reported a diagnosticity of <strong>87.0</strong>. Not one innocent participant in that condition confessed &mdash; so the true value of the ratio was <em>undefined</em>. The 87 appears to come from substituting 1% for the observed 0%.</p>
+    <p><strong>If someone hands you a diagnosticity figure, ask what the false confession rate was. If it was zero, that number was chosen, not measured.</strong></p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: UNDER THE HOOD ============ -->
+<div class="tab-panel" id="panel-about">
+  <p class="lead">Everything below is the technical machinery behind the rest of the dashboard. None of it is needed to use the tool &mdash; it is here so the work can be checked.</p>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">The formulas<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>Write TCR for the true confession rate (the share of guilty suspects who confess) and FCR for the false confession rate (the share of innocent suspects who confess). Write <em>z</em>( ) for the standard normal quantile &mdash; the z-score that cuts off a given share of a bell curve.</p>
+      <div class="formula-box">
+        Diagnosticity&nbsp; D = TCR / FCR<br>
+        Separation&nbsp; d&prime; = z(TCR) &minus; z(FCR)<br>
+        Threshold&nbsp; c = &minus;&frac12; [ z(TCR) + z(FCR) ]
+      </div>
+      <p class="formula-annotation">and running it backwards: TCR = &Phi;(d&prime;/2 &minus; c), FCR = &Phi;(&minus;d&prime;/2 &minus; c)</p>
+      <p>Diagnosticity is the slope of the line from the origin to the point (FCR, TCR). Moving the threshold slides that point along a fixed accuracy curve, which changes the slope. That is the entire mechanism this dashboard demonstrates.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">What we assume, and why it matters<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>Each condition in the source study gives exactly <strong>one</strong> operating point &mdash; a single pair of rates. Reading that point as a separation and a threshold requires a measurement model. We use the standard equal-variance Gaussian signal detection model: both the guilty and innocent groups are treated as bell curves of the same width.</p>
+      <p>With one point per condition, the data cannot trace the shape of the curve, and <strong>cannot test that assumption</strong>. So separation and threshold here are model-implied quantities, not directly observed ones.</p>
+      <p>That is a real limitation and we state it plainly. The honest comparison, though, is this: using diagnosticity as if it were a criterion-free measure of a method's accuracy requires a <em>stronger</em> assumption &mdash; that the slope of the line from the origin does not depend on the threshold &mdash; and that assumption is almost never stated at all. Here it is at least visible.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">When nobody innocent confesses<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>If no innocent participant confesses, the observed false confession rate is zero and diagnosticity divides by zero. It is <strong>undefined</strong> &mdash; not infinitely good. This dashboard prints &ldquo;undefined&rdquo; rather than an infinity symbol for exactly that reason.</p>
+      <p>Separation has a standard, principled repair for the same situation: add one half to every cell before computing the rates (the log-linear correction). Applied to the published condition with a zero false confession rate, that yields a finite, high separation of roughly 2.5 to 2.9, depending on which standard correction you use. The ranking survives all of them.</p>
+      <p>A similar correction could be applied to diagnosticity to make it finite. It would not fix the real problem: the corrected ratio would still be tied to a single operating point, and would still rank methods by a mixture of separation and threshold.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">How the simulation works<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>The &ldquo;Run the study again&rdquo; button draws a fresh sample of guilty and innocent suspects from the real <em>No tactic</em> rates (46% and 6%) and recomputes both scores from the simulated counts. It is the same procedure as the paper's Monte Carlo, which used 50,000 replications.</p>
+      <p>At 37 per group the ratio is undefined in <strong>10.3%</strong> of replications; at 20 per group, <strong>28.5%</strong>; at 80, <strong>0.8%</strong>; at 200, effectively never. Among the replications where it can be computed at 37 per group, the mean is <strong>9.21</strong> against a true value of <strong>7.67</strong>, and the upper 2.5% tail reaches <strong>21</strong>.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">Does the reversal survive sampling error?<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>The four conditions are small, so the reversal could in principle be a fluke of four point estimates. The paper checks this by drawing each condition's rates from the posterior distributions implied by its cell counts and re-ranking 50,000 times.</p>
+      <p>The diagnosticity ordering differs from the separation ordering in <strong>87%</strong> of draws. The probability that Minimization genuinely out-separates No tactic is <strong>0.70</strong>. No tactic ranks first on diagnosticity in <strong>65%</strong> of draws, but first on separation in only <strong>17%</strong>.</p>
+      <p>So the disagreement is not an artifact of treating four rounded percentages as exact. It persists once sampling uncertainty is accounted for.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">Where the spread in diagnosticity comes from<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>Across the four conditions, observed diagnosticity spans a <strong>3.79-fold</strong> range from lowest to highest. Two counterfactuals ask where that spread comes from:</p>
+      <ul>
+        <li>Hold separation fixed at its average and let <em>only the threshold</em> vary: the spread is still <strong>3.76-fold</strong>.</li>
+        <li>Hold the threshold fixed at its average and let <em>only separation</em> vary: the spread collapses to <strong>1.60-fold</strong>.</li>
+      </ul>
+      <p>Nearly all of what diagnosticity registers as variation across these conditions travels with the threshold rather than with the ability to tell guilty from innocent.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">Glossary<span class="collapsible-arrow">&#9662;</span></div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <dl class="gloss">
+        <dt>Diagnosticity (D)</dt>
+        <dd>The true confession rate divided by the false confession rate. Formally a likelihood ratio &mdash; the same kind of number a DNA analyst reports. It multiplies odds; it is not itself a probability.</dd>
+        <dt>Separation (d&prime;)</dt>
+        <dd>How far apart the guilty and innocent groups sit on the underlying scale. Larger means the method distinguishes them better. Called <em>discriminability</em> or <em>d-prime</em> in the literature.</dd>
+        <dt>Threshold (c)</dt>
+        <dd>Where the line for confessing falls. Positive is tight (few confessions of any kind); negative is loose. Called the <em>response criterion</em>.</dd>
+        <dt>True confession rate (TCR)</dt>
+        <dd>Of guilty suspects, the share who confess. A hit rate.</dd>
+        <dt>False confession rate (FCR)</dt>
+        <dd>Of innocent suspects, the share who confess. A false alarm rate.</dd>
+        <dt>The map</dt>
+        <dd>What the literature calls ROC space: false confession rate across the bottom, true confession rate up the side. Every threshold setting for one method traces a curve.</dd>
+      </dl>
+    </div></div>
+  </div>
+
+  <ul class="caveat-list" style="margin-top:1.5rem;">
+    <li><strong>This is a measurement argument, not a policy verdict.</strong> Nothing here says which interrogation method anyone should use. It says the number used to rank them cannot support the ranking.</li>
+    <li><strong>Laboratory paradigms are not interrogations.</strong> Whether a cheating-paradigm confession indexes real interrogation-induced false confession, or something closer to compliance with an accusation, is a separate and unsettled question.</li>
+    <li><strong>The four conditions are small.</strong> Roughly 37 suspects per group. Their estimates carry real sampling error &mdash; which is itself one of the paper's points.</li>
+  </ul>
+
+  <div class="citation-box">
+    <div class="cite-label">Cite</div>
+    Mourtgos, S. M., Blair, P., &amp; Adams, I. T. <em>Seeing Confessions Clearly: Diagnosticity, Risk, and Signal Detection.</em> Working paper.
+    Underlying study reanalyzed: Russano, M. B., Meissner, C. A., Narchet, F. M., &amp; Kassin, S. M. (2005). Investigating true and false confessions within a novel experimental paradigm. <em>Psychological Science, 16</em>(6), 481&ndash;486.
+    &nbsp;|&nbsp; <a href="https://github.com/smourtgos/diagnosticity-reproduction" target="_blank" rel="noopener">Data and code</a>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  Interactive analysis by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina &nbsp;|&nbsp; Based on the working paper &ldquo;Seeing Confessions Clearly&rdquo; (Mourtgos, Blair &amp; Adams). Figures are model-implied and intended for educational and exploratory use.
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ========== Math helpers ========== */
+
+  function normalCDF(z) {
+    // Abramowitz & Stegun approximation
+    var t = 1 / (1 + 0.2316419 * Math.abs(z));
+    var d = 0.3989422804 * Math.exp(-z * z / 2);
+    var p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+    return z >= 0 ? 1 - p : p;
+  }
+
+  function normalInv(p) {
+    // Acklam (2003) rational approximation to the inverse standard normal CDF
+    var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+             1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+    var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+             6.680131188771972e+01, -1.328068155288572e+01];
+    var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+             -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+    var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
+             3.754408661907416e+00];
+    var pLow = 0.02425, q, r;
+    if (!(p > 0)) { return -Infinity; }
+    if (!(p < 1)) { return Infinity; }
+    if (p < pLow) {
+      q = Math.sqrt(-2 * Math.log(p));
+      return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+             ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+    }
+    if (p <= 1 - pLow) {
+      q = p - 0.5; r = q * q;
+      return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+             (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+    }
+    q = Math.sqrt(-2 * Math.log(1 - p));
+    return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+            ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+  }
+
+  function normalPDF(x, mu) {
+    var z = x - mu;
+    return 0.3989422804 * Math.exp(-z * z / 2);
+  }
+
+  function dPrime(tcr, fcr)    { return normalInv(tcr) - normalInv(fcr); }
+  function criterion(tcr, fcr) { return -0.5 * (normalInv(tcr) + normalInv(fcr)); }
+  function tcrFrom(d, c)       { return normalCDF(d / 2 - c); }
+  function fcrFrom(d, c)       { return normalCDF(-d / 2 - c); }
+
+  function diagnosticity(tcr, fcr) {
+    return fcr > 0 ? tcr / fcr : Infinity;
+  }
+
+  function postInnocent(D, g) {
+    if (!isFinite(D)) { return g > 0 ? 0 : 1; }   // guards Infinity * 0 = NaN
+    var den = D * g + (1 - g);
+    return den > 0 ? (1 - g) / den : 1;
+  }
+
+  function loglinearRates(xHit, nSignal, xFa, nNoise) {
+    // Hautus (1995) log-linear correction: add 0.5 to every cell
+    return { hr: (xHit + 0.5) / (nSignal + 1), far: (xFa + 0.5) / (nNoise + 1) };
+  }
+
+  function fmtDiag(D) {
+    if (!isFinite(D)) { return 'undefined'; }
+    if (D >= 10000) { return '10,000+'; }
+    if (D >= 100) { return Math.round(D).toLocaleString('en-US'); }
+    return D.toFixed(2);
+  }
+
+  function freqGloss(p) {
+    if (!isFinite(p) || p <= 0) { return 'essentially never, under these assumptions'; }
+    if (p >= 0.5) { return 'about ' + Math.round(p * 10) + ' in every 10'; }
+    var n = Math.round(1 / p);
+    if (n > 1000000) { return 'fewer than 1 in a million'; }
+    return 'approximately 1 in ' + n.toLocaleString('en-US');
+  }
+
+  function pctText(p) {
+    var v = p * 100;
+    if (v <= 0) { return '0%'; }
+    if (v < 0.01) { return 'under 0.01%'; }
+    if (v < 0.1) { return v.toFixed(2) + '%'; }
+    return v.toFixed(1) + '%';
+  }
+
+  function threshWord(c) {
+    if (c >= 0.55) { return 'Tight'; }
+    if (c >= 0.15) { return 'Firm'; }
+    if (c > -0.15) { return 'Neutral'; }
+    if (c > -0.55) { return 'Loose'; }
+    return 'Very loose';
+  }
+
+  function signed(v, dec) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(dec); }
+
+  /* ========== Data: Russano et al. (2005) Table 1, verbatim ==========
+     Only TCR and FCR are stored. Separation, threshold, and diagnosticity are
+     derived at runtime, which makes this table a live self-test of normalInv(). */
+  var RUSSANO = [
+    { label: 'No tactic',           tcr: 0.46, fcr: 0.06 },
+    { label: 'Deal',                tcr: 0.72, fcr: 0.14 },
+    { label: 'Minimization',        tcr: 0.81, fcr: 0.18 },
+    { label: 'Minimization + deal', tcr: 0.87, fcr: 0.43 }
+  ];
+  var i;
+  for (i = 0; i < RUSSANO.length; i++) {
+    RUSSANO[i].d = dPrime(RUSSANO[i].tcr, RUSSANO[i].fcr);
+    RUSSANO[i].c = criterion(RUSSANO[i].tcr, RUSSANO[i].fcr);
+    RUSSANO[i].D = diagnosticity(RUSSANO[i].tcr, RUSSANO[i].fcr);
+  }
+
+  function rankOf(arr, key, item) {
+    var sorted = arr.slice().sort(function (a, b) { return b[key] - a[key]; });
+    return sorted.indexOf(item) + 1;
+  }
+
+  /* ========== Shared Plotly config ========== */
+  function cfg() {
+    return { responsive: true, displayModeBar: false, displaylogo: false, scrollZoom: false };
+  }
+  function baseLayout(extra) {
+    var l = {
+      font: { family: 'Inter, sans-serif', size: 12, color: '#64748b' },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      margin: { t: 16, r: 20, b: 52, l: 60 },
+      showlegend: false,
+      hovermode: 'closest',
+      xaxis: { gridcolor: '#e2e8f0', zeroline: false, fixedrange: true },
+      yaxis: { gridcolor: '#e2e8f0', zeroline: false, fixedrange: true }
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function (k) {
+        if (typeof extra[k] === 'object' && l[k] && !Array.isArray(extra[k])) {
+          Object.keys(extra[k]).forEach(function (kk) { l[k][kk] = extra[k][kk]; });
+        } else { l[k] = extra[k]; }
+      });
+    }
+    return l;
+  }
+
+  /* ========== Tab navigation (deferred renders) ========== */
+  var deferred = {};
+  document.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = this.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('panel-' + id).classList.add('active');
+      if (deferred[id]) { deferred[id](); deferred[id] = null; }
+    });
+  });
+
+  window.toggleCollapsible = function (header) {
+    header.parentElement.classList.toggle('open');
+  };
+
+  /* ========== TAB 1: The Reversal ========== */
+  (function () {
+    var tbody = document.getElementById('reversal-tbody');
+    var kpis = document.getElementById('reversal-kpis');
+    var sortKey = 'D';
+
+    function pill(rank) {
+      var cls = rank === 1 ? ' first' : (rank === 4 ? ' last' : '');
+      return '<span class="rank-pill' + cls + '">' + rank + '</span>';
+    }
+
+    function draw() {
+      var rows = RUSSANO.slice().sort(function (a, b) { return b[sortKey] - a[sortKey]; });
+      var html = '', r, j;
+      for (j = 0; j < rows.length; j++) {
+        r = rows[j];
+        html += '<tr' + (r.label === 'No tactic' ? ' class="highlight"' : '') + '>' +
+          '<td><strong>' + r.label + '</strong></td>' +
+          '<td>' + Math.round(r.tcr * 100) + '</td>' +
+          '<td>' + Math.round(r.fcr * 100) + '</td>' +
+          '<td>' + r.D.toFixed(2) + pill(rankOf(RUSSANO, 'D', r)) + '</td>' +
+          '<td>' + r.d.toFixed(2) + pill(rankOf(RUSSANO, 'd', r)) + '</td>' +
+          '<td>' + threshWord(r.c) + ' (' + signed(r.c, 2) + ')' + pill(rankOf(RUSSANO, 'c', r)) + '</td>' +
+          '</tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    function card(v, l, s) {
+      return '<div class="kpi-card"><div class="kpi-value">' + v + '</div>' +
+             '<div class="kpi-label">' + l + '</div><div class="kpi-sub">' + s + '</div></div>';
+    }
+    var nt = RUSSANO[0], mn = RUSSANO[2];
+    kpis.innerHTML =
+      card(nt.D.toFixed(2) + ' → ' + mn.D.toFixed(2), 'What diagnosticity says',
+           'No tactic beats Minimization') +
+      card('#1 → #3', 'Where no tactic actually ranks', 'on telling guilty from innocent') +
+      card('+1.00', 'How well the score tracks the threshold', 'a perfect match, method for method') +
+      card('+0.20', 'How well it tracks separation', 'barely any relationship');
+
+    document.querySelectorAll('#sort-toggle .chip-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('#sort-toggle .chip-btn').forEach(function (x) { x.classList.remove('active'); });
+        this.classList.add('active');
+        var s = this.getAttribute('data-sort');
+        sortKey = s === 'diag' ? 'D' : (s === 'dprime' ? 'd' : 'c');
+        draw();
+      });
+    });
+    draw();
+  })();
+
+  /* ========== TAB 2: The Two Dials ========== */
+  // 3-decimal defaults so the opening state reproduces Russano "No tactic"
+  // (D = 7.67) exactly, matching the table on the first tab.
+  var state = { dprime: 1.454, c: 0.828, locked: false };
+  var startD = null, prev = null, dialsTouched = false;
+  var rocReady = false, distReady = false, frameQueued = false;
+
+  var DIST_X = (function () { var xs = [], x; for (x = -5.5; x <= 5.5001; x += 0.05) { xs.push(x); } return xs; })();
+
+  function tailXY(mu, c) {
+    var xs = [c], ys = [normalPDF(c, mu)], k;
+    for (k = 0; k < DIST_X.length; k++) {
+      if (DIST_X[k] > c) { xs.push(DIST_X[k]); ys.push(normalPDF(DIST_X[k], mu)); }
+    }
+    xs.push(5.5); ys.push(normalPDF(5.5, mu));
+    return { x: xs, y: ys };
+  }
+
+  function densXY(mu) {
+    var ys = [], k;
+    for (k = 0; k < DIST_X.length; k++) { ys.push(normalPDF(DIST_X[k], mu)); }
+    return ys;
+  }
+
+  function isoRocXY(d, cNow) {
+    // sweep the criterion; forward CDF only, so no inverse is needed at the corners.
+    // cNow is spliced in so the operating point is a literal vertex of the curve.
+    var grid = [], xs = [], ys = [], k, cc;
+    var lo = -5.5, hi = 5.5, n = 220;
+    for (k = 0; k <= n; k++) { grid.push(hi + (lo - hi) * k / n); }
+    grid.push(cNow);
+    grid.sort(function (a, b) { return b - a; });
+    for (k = 0; k < grid.length; k++) {
+      cc = grid[k];
+      xs.push(fcrFrom(d, cc));
+      ys.push(tcrFrom(d, cc));
+    }
+    return { x: xs, y: ys };
+  }
+
+  function rayEnd(D) {
+    if (!isFinite(D)) { return [0, 1]; }   // FCR = 0: ray collapses onto the TCR axis
+    if (D <= 0) { return [1, 0]; }
+    return D >= 1 ? [1 / D, 1] : [1, D];
+  }
+
+  function drawDist() {
+    var d = state.dprime, c = state.c;
+    var ti = tailXY(-d / 2, c), tg = tailXY(d / 2, c);
+    var data = [
+      { x: ti.x, y: ti.y, type: 'scatter', mode: 'lines', fill: 'tozeroy',
+        fillcolor: 'rgba(0,114,178,0.35)', line: { width: 0 }, hoverinfo: 'skip' },
+      { x: tg.x, y: tg.y, type: 'scatter', mode: 'lines', fill: 'tozeroy',
+        fillcolor: 'rgba(213,94,0,0.30)', line: { width: 0 }, hoverinfo: 'skip' },
+      { x: DIST_X, y: densXY(-d / 2), type: 'scatter', mode: 'lines',
+        line: { color: '#0072B2', width: 2.5 }, name: 'Innocent', hoverinfo: 'skip' },
+      { x: DIST_X, y: densXY(d / 2), type: 'scatter', mode: 'lines',
+        line: { color: '#D55E00', width: 2.5 }, name: 'Guilty', hoverinfo: 'skip' },
+      { x: [c, c], y: [0, 0.44], type: 'scatter', mode: 'lines',
+        line: { color: '#1e293b', width: 2, dash: 'dash' }, hoverinfo: 'skip' }
+    ];
+    var layout = baseLayout({
+      xaxis: { range: [-5.5, 5.5], title: { text: 'How much the evidence points at this person' }, showticklabels: false },
+      yaxis: { range: [0, 0.46], showticklabels: false, title: { text: '' } },
+      annotations: [
+        { x: -3.2, y: 0.40, text: 'Innocent', showarrow: false, font: { color: '#0072B2', size: 12 } },
+        { x: 3.2, y: 0.40, text: 'Guilty', showarrow: false, font: { color: '#D55E00', size: 12 } },
+        { x: c, y: 0.455, text: 'confessed →', showarrow: false, xanchor: 'left',
+          font: { color: '#1e293b', size: 11 } }
+      ]
+    });
+    if (!distReady) { Plotly.newPlot('chart-dist', data, layout, cfg()); distReady = true; }
+    else { Plotly.react('chart-dist', data, layout, cfg()); }
+  }
+
+  function drawRoc() {
+    var d = state.dprime, c = state.c;
+    var tcr = tcrFrom(d, c), fcr = fcrFrom(d, c), D = diagnosticity(tcr, fcr);
+    var iso = isoRocXY(d, c), re = rayEnd(D);
+    var data = [
+      { x: [0, 1], y: [0, 1], type: 'scatter', mode: 'lines',
+        line: { color: '#cbd5e1', width: 1, dash: 'dot' }, hoverinfo: 'skip' },
+      { x: iso.x, y: iso.y, type: 'scatter', mode: 'lines',
+        line: { color: '#1e293b', width: 2.5 }, hoverinfo: 'skip' },
+      { x: [0, re[0]], y: [0, re[1]], type: 'scatter', mode: 'lines',
+        line: { color: '#f59e0b', width: 2, dash: 'dash' }, hoverinfo: 'skip' },
+      { x: RUSSANO.map(function (r) { return r.fcr; }),
+        y: RUSSANO.map(function (r) { return r.tcr; }),
+        text: RUSSANO.map(function (r) { return r.label; }),
+        type: 'scatter', mode: 'markers',
+        marker: { size: 8, color: '#94a3b8' },
+        hovertemplate: '%{text}<extra></extra>' },
+      { x: [fcr], y: [tcr], type: 'scatter', mode: 'markers',
+        marker: { size: 16, color: '#ef4444', line: { color: '#ffffff', width: 2 } },
+        hovertemplate: 'Of 100 innocent: %{x:.0%}<br>Of 100 guilty: %{y:.0%}<extra></extra>' }
+    ];
+    var layout = baseLayout({
+      xaxis: { range: [0, 1], dtick: 0.2, tickformat: '.0%',
+               title: { text: 'Of innocent suspects, share who confess' } },
+      yaxis: { range: [0, 1], dtick: 0.2, tickformat: '.0%',
+               title: { text: 'Of guilty suspects, share who confess' } }
+    });
+    if (!rocReady) { Plotly.newPlot('chart-roc', data, layout, cfg()); rocReady = true; }
+    else { Plotly.react('chart-roc', data, layout, cfg()); }
+  }
+
+  function drawCharts() { drawDist(); drawRoc(); }
+
+  // Plotly sizes to the container, so nothing may draw while this tab is hidden.
+  var chartsEnabled = false;
+  deferred.dials = function () { chartsEnabled = true; drawCharts(); };
+
+  function scheduleCharts() {
+    if (!chartsEnabled) { return; }
+    if (frameQueued) { return; }
+    frameQueued = true;
+    window.requestAnimationFrame(function () { frameQueued = false; drawCharts(); });
+  }
+
+  function render() {
+    var d = state.dprime, c = state.c;
+    var tcr = tcrFrom(d, c), fcr = fcrFrom(d, c), D = diagnosticity(tcr, fcr);
+    if (startD === null) { startD = D; }
+
+    document.getElementById('result-diag').textContent = fmtDiag(D);
+    document.getElementById('result-diag').className =
+      'result-value' + (isFinite(D) ? '' : ' undefined-val');
+    document.getElementById('result-delta').textContent =
+      'Separation ' + d.toFixed(2) + '  ·  Threshold ' + signed(c, 2);
+    document.getElementById('rm-tcr').textContent = Math.round(tcr * 100);
+    document.getElementById('rm-fcr').textContent = Math.round(fcr * 100);
+
+    document.getElementById('result-disclaimer').innerHTML =
+      'Diagnosticity ' + fmtDiag(D) + ' means guilty suspects confess about <strong>' +
+      (isFinite(D) ? D.toFixed(1) + '&times;</strong> as often' : 'infinitely more often</strong>') +
+      ' as innocent ones. It does <strong>not</strong> mean a confession is that much more likely to be true.';
+
+    // the "what changed" sentence
+    var line = document.getElementById('changed-line');
+    if (prev) {
+      var dChanged = Math.abs(d - prev.d) > 1e-9;
+      var cChanged = Math.abs(c - prev.c) > 1e-9;
+      var dirD = D > prev.D ? 'rose' : (D < prev.D ? 'fell' : 'did not move');
+      if (cChanged && !dChanged) {
+        line.innerHTML = 'You made confessions <strong>' + (c > prev.c ? 'harder' : 'easier') +
+          '</strong> to get. The method is exactly as good at telling guilty from innocent as it was &mdash; ' +
+          'but diagnosticity ' + dirD + ' from <strong>' + fmtDiag(prev.D) + '</strong> to <strong>' +
+          fmtDiag(D) + '</strong>.';
+      } else if (dChanged && !cChanged) {
+        line.innerHTML = 'You changed the method itself. Separation went from <strong>' +
+          prev.d.toFixed(2) + '</strong> to <strong>' + d.toFixed(2) + '</strong>, and diagnosticity ' +
+          dirD + ' to <strong>' + fmtDiag(D) + '</strong>.';
+      } else if (dChanged && cChanged) {
+        line.innerHTML = 'Both dials moved. Separation is now <strong>' + d.toFixed(2) +
+          '</strong> and the threshold is <strong>' + signed(c, 2) + '</strong>; diagnosticity is <strong>' +
+          fmtDiag(D) + '</strong>.';
+      }
+    }
+    prev = { d: d, c: c, D: D };
+
+    document.getElementById('val-dprime').textContent = d.toFixed(2);
+    document.getElementById('val-c').textContent = threshWord(c) + ' (' + signed(c, 2) + ')';
+
+    // Only push into Tab 3 once the user has actually moved a dial, so opening
+    // the page does not clobber Tab 3's own default selection.
+    if (roomSync && dialsTouched) { roomSync(D); }
+    scheduleCharts();
+  }
+
+  ['dprime', 'c'].forEach(function (key) {
+    var el = document.getElementById('slider-' + key);
+    if (!el) { return; }
+    el.addEventListener('input', function () {
+      state[key] = parseFloat(this.value);
+      dialsTouched = true;
+      document.querySelectorAll('#preset-row .chip-btn, #russano-row .chip-btn')
+        .forEach(function (b) { b.classList.remove('active'); });
+      render();
+    });
+  });
+
+  document.getElementById('lock-dprime').addEventListener('change', function () {
+    state.locked = this.checked;
+    document.getElementById('slider-dprime').disabled = this.checked;
+    document.getElementById('lock-banner').classList.toggle('on', this.checked);
+  });
+
+  function setDials(d, c) {
+    if (!state.locked) {
+      state.dprime = d;
+      document.getElementById('slider-dprime').value = d;
+    }
+    state.c = c;
+    document.getElementById('slider-c').value = c;
+    render();
+  }
+
+  // Russano preset chips
+  (function () {
+    var row = document.getElementById('russano-row'), html = '', j;
+    for (j = 0; j < RUSSANO.length; j++) {
+      html += '<button class="chip-btn" data-idx="' + j + '">' + RUSSANO[j].label + '</button>';
+    }
+    row.innerHTML = html;
+    row.querySelectorAll('.chip-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var r = RUSSANO[parseInt(this.getAttribute('data-idx'), 10)];
+        document.querySelectorAll('#preset-row .chip-btn, #russano-row .chip-btn')
+          .forEach(function (x) { x.classList.remove('active'); });
+        this.classList.add('active');
+        if (state.locked) {
+          document.getElementById('lock-dprime').checked = false;
+          state.locked = false;
+          document.getElementById('slider-dprime').disabled = false;
+          document.getElementById('lock-banner').classList.remove('on');
+        }
+        dialsTouched = true;
+        setDials(Math.round(r.d * 1000) / 1000, Math.round(r.c * 1000) / 1000);
+      });
+    });
+  })();
+
+  // Animated presets
+  var animTimer = null;
+  function animateTo(steps, idx) {
+    if (animTimer) { clearTimeout(animTimer); }
+    if (idx >= steps.length) { return; }
+    setDials(steps[idx][0], steps[idx][1]);
+    animTimer = setTimeout(function () { animateTo(steps, idx + 1); }, 700);
+  }
+
+  document.querySelectorAll('#preset-row .chip-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('#preset-row .chip-btn, #russano-row .chip-btn')
+        .forEach(function (x) { x.classList.remove('active'); });
+      this.classList.add('active');
+      var p = this.getAttribute('data-preset');
+      if (p === 'policies') {
+        // lock separation at 1.5 and sweep the threshold: D goes 2.41 -> 7.93
+        document.getElementById('lock-dprime').checked = false;
+        state.locked = false;
+        document.getElementById('slider-dprime').disabled = false;
+        document.getElementById('lock-banner').classList.remove('on');
+        setDials(1.5, -0.4);
+        document.getElementById('lock-dprime').checked = true;
+        state.locked = true;
+        document.getElementById('slider-dprime').disabled = true;
+        document.getElementById('lock-banner').classList.add('on');
+        animateTo([[1.5, -0.4], [1.5, 0.0], [1.5, 0.4], [1.5, 0.8]], 1);
+      } else if (p === 'score') {
+        // three separations that all sit on the D = 4.5 ray
+        document.getElementById('lock-dprime').checked = false;
+        state.locked = false;
+        document.getElementById('slider-dprime').disabled = false;
+        document.getElementById('lock-banner').classList.remove('on');
+        animateTo([[1, criterion(0.320114, 0.071137)],
+                   [2, criterion(0.871897, 0.193755)],
+                   [3, criterion(0.986955, 0.219323)]], 0);
+      }
+    });
+  });
+
+  /* ========== TAB 2 bridge: drag the rates, watch the dials ========== */
+  (function () {
+    var bt = document.getElementById('slider-btcr'), bf = document.getElementById('slider-bfcr');
+    function upd() {
+      var tcr = parseFloat(bt.value) / 100, fcr = parseFloat(bf.value) / 100;
+      document.getElementById('val-btcr').textContent = bt.value;
+      document.getElementById('val-bfcr').textContent = bf.value;
+      var d = dPrime(tcr, fcr), c = criterion(tcr, fcr);
+      document.getElementById('bridge-dprime').textContent = d.toFixed(2);
+      document.getElementById('bridge-c').textContent = signed(c, 2);
+    }
+    bt.addEventListener('input', upd);
+    bf.addEventListener('input', upd);
+    document.getElementById('bridge-demo').addEventListener('click', function () {
+      bt.value = 87; bf.value = 43; upd();
+      document.getElementById('bridge-line').innerHTML =
+        'Both rates went <strong>up</strong> &mdash; from 46/6 to 87/43. More true confessions. ' +
+        'And separation <strong>fell</strong>, from 1.45 to 1.30. More true confessions is not the same ' +
+        'as a better method. Whether the method improved depends entirely on what the false confession ' +
+        'rate did at the same time.';
+    });
+    upd();
+  })();
+
+  /* ========== TAB 3: What It's Worth in Your Room ========== */
+  var roomSync = null;
+  (function () {
+    var gEl = document.getElementById('slider-g');
+    var roomD = RUSSANO[0].D;
+    var baseReady = false, roomChartEnabled = false;
+    var G_GRID = (function () { var gs = [], g; for (g = 0.01; g <= 0.9901; g += 0.005) { gs.push(g); } return gs; })();
+
+    function drawBase() {
+      if (!roomChartEnabled) { return; }   // container has no width while the tab is hidden
+      var g = parseFloat(gEl.value) / 100;
+      var ys = G_GRID.map(function (gg) { return postInnocent(roomD, gg); });
+      var data = [
+        { x: G_GRID, y: ys, type: 'scatter', mode: 'lines',
+          line: { color: '#ef4444', width: 3 }, hoverinfo: 'skip' },
+        { x: [0.5], y: [postInnocent(roomD, 0.5)], type: 'scatter', mode: 'markers',
+          marker: { size: 11, color: '#94a3b8', symbol: 'diamond' },
+          hovertemplate: 'The laboratory’s built-in 50<extra></extra>' },
+        { x: [g], y: [postInnocent(roomD, g)], type: 'scatter', mode: 'markers',
+          marker: { size: 15, color: '#ef4444', line: { color: '#fff', width: 2 } },
+          hovertemplate: '%{y:.1%} of confessions false<extra></extra>' }
+      ];
+      var layout = baseLayout({
+        xaxis: { range: [0, 1], tickformat: '.0%',
+                 title: { text: 'Share of those interrogated who actually did it' } },
+        yaxis: { range: [0, 1], tickformat: '.0%',
+                 title: { text: 'Chance a confession is false' } }
+      });
+      if (!baseReady) { Plotly.newPlot('chart-base', data, layout, cfg()); baseReady = true; }
+      else { Plotly.react('chart-base', data, layout, cfg()); }
+    }
+
+    function updRoom() {
+      var g = parseFloat(gEl.value) / 100;
+      var p = postInnocent(roomD, g);
+      document.getElementById('val-g').textContent = gEl.value;
+      document.getElementById('room-value').textContent = pctText(p);
+      document.getElementById('room-gloss').textContent = freqGloss(p);
+      document.getElementById('room-disclaimer').innerHTML =
+        'Using diagnosticity <strong>' + fmtDiag(roomD) + '</strong>. At the laboratory’s 50, the same ' +
+        'method gives ' + pctText(postInnocent(roomD, 0.5)) + '. The score never moved. Only the room did.';
+      drawBase();
+    }
+
+    gEl.addEventListener('input', updRoom);
+
+    // chips to pick which condition's diagnosticity is in play
+    (function () {
+      var row = document.getElementById('room-diag-row'), html = '', j;
+      for (j = 0; j < RUSSANO.length; j++) {
+        html += '<button class="chip-btn' + (j === 0 ? ' active' : '') + '" data-idx="' + j + '">' +
+                RUSSANO[j].label + ' (D = ' + RUSSANO[j].D.toFixed(2) + ')</button>';
+      }
+      row.innerHTML = html;
+      row.querySelectorAll('.chip-btn').forEach(function (b) {
+        b.addEventListener('click', function () {
+          row.querySelectorAll('.chip-btn').forEach(function (x) { x.classList.remove('active'); });
+          this.classList.add('active');
+          roomD = RUSSANO[parseInt(this.getAttribute('data-idx'), 10)].D;
+          updRoom();
+        });
+      });
+    })();
+
+    roomSync = function (D) {
+      if (!isFinite(D)) { return; }
+      roomD = D;
+      document.querySelectorAll('#room-diag-row .chip-btn').forEach(function (x) { x.classList.remove('active'); });
+      updRoom();
+    };
+
+    deferred.room = function () { roomChartEnabled = true; updRoom(); };
+    updRoom();
+  })();
+
+  /* ========== TAB 4: Can You Trust the Number? ========== */
+  (function () {
+    var n = 37, runs = [], undef = 0, simReady = false;
+    var TRUE_TCR = 0.46, TRUE_FCR = 0.06, TRUE_D = TRUE_TCR / TRUE_FCR;
+
+    function rbinom(nn, p) {
+      var k = 0, j;
+      for (j = 0; j < nn; j++) { if (Math.random() < p) { k++; } }
+      return k;
+    }
+
+    function runOne() {
+      var xh = rbinom(n, TRUE_TCR), xf = rbinom(n, TRUE_FCR);
+      var D = xf > 0 ? (xh / n) / (xf / n) : Infinity;
+      var lc = loglinearRates(xh, n, xf, n);
+      return { xh: xh, xf: xf, D: D, d: dPrime(lc.hr, lc.far) };
+    }
+
+    function pushRun(r) {
+      runs.push(r);
+      if (!isFinite(r.D)) { undef++; }
+    }
+
+    function stats() {
+      var def = runs.filter(function (r) { return isFinite(r.D); })
+                    .map(function (r) { return r.D; }).sort(function (a, b) { return a - b; });
+      if (!def.length) { return null; }
+      return {
+        median: def[Math.floor(def.length * 0.5)],
+        lo: def[Math.floor(def.length * 0.025)],
+        hi: def[Math.min(def.length - 1, Math.floor(def.length * 0.975))]
+      };
+    }
+
+    function drawSim() {
+      var xs = [], ys = [], ux = [], uy = [], j;
+      for (j = 0; j < runs.length; j++) {
+        if (isFinite(runs[j].D)) { xs.push(j + 1); ys.push(runs[j].D); }
+        else { ux.push(j + 1); uy.push(0); }
+      }
+      var maxY = Math.max(25, ys.length ? Math.max.apply(null, ys) * 1.1 : 25);
+      var data = [
+        { x: [0, Math.max(10, runs.length + 1)], y: [TRUE_D, TRUE_D], type: 'scatter', mode: 'lines',
+          line: { color: '#1e293b', width: 2 }, hoverinfo: 'skip' },
+        { x: xs, y: ys, type: 'scatter', mode: 'markers',
+          marker: { size: 7, color: '#3b82f6', opacity: 0.6 },
+          hovertemplate: 'Study %{x}: score %{y:.2f}<extra></extra>' },
+        { x: ux, y: uy, type: 'scatter', mode: 'markers',
+          marker: { size: 9, color: '#ef4444', symbol: 'x' },
+          hovertemplate: 'Study %{x}: undefined<extra></extra>' }
+      ];
+      var layout = baseLayout({
+        xaxis: { range: [0, Math.max(10, runs.length + 1)], title: { text: 'Study number' } },
+        yaxis: { range: [-maxY * 0.06, maxY], title: { text: 'Reported diagnosticity' } },
+        annotations: [{ x: Math.max(10, runs.length + 1), y: TRUE_D, text: 'true value 7.67',
+                        showarrow: false, xanchor: 'right', yanchor: 'bottom',
+                        font: { color: '#1e293b', size: 11 } }]
+      });
+      if (!simReady) { Plotly.newPlot('chart-sim', data, layout, cfg()); simReady = true; }
+      else { Plotly.react('chart-sim', data, layout, cfg()); }
+    }
+
+    function updSim(last) {
+      var s = stats();
+      document.getElementById('ss-runs').textContent = runs.length;
+      document.getElementById('ss-undef').textContent = undef +
+        (runs.length ? ' (' + Math.round(100 * undef / runs.length) + '%)' : '');
+      document.getElementById('ss-median').textContent = s ? s.median.toFixed(2) : '—';
+      document.getElementById('ss-range').textContent = s ? s.lo.toFixed(1) + ' – ' + s.hi.toFixed(1) : '—';
+
+      var card = document.getElementById('draw-card');
+      if (last) {
+        if (!isFinite(last.D)) {
+          card.className = 'draw-card undefined-draw';
+          card.innerHTML = '<strong>UNDEFINED.</strong> In this run, ' + last.xh + ' of ' + n +
+            ' guilty suspects confessed and <strong>none</strong> of the ' + n + ' innocent ones did. ' +
+            'The score divides by zero, so it does not exist. Separation, from the same data, is ' +
+            last.d.toFixed(2) + ' &mdash; perfectly computable.';
+        } else {
+          card.className = 'draw-card';
+          card.innerHTML = 'This run: <strong>' + last.xh + ' of ' + n + '</strong> guilty confessed, <strong>' +
+            last.xf + ' of ' + n + '</strong> innocent confessed. Reported diagnosticity: <strong>' +
+            last.D.toFixed(2) + '</strong> (true value 7.67). Separation: ' + last.d.toFixed(2) + '.';
+        }
+      }
+      drawSim();
+    }
+
+    document.getElementById('btn-run-one').addEventListener('click', function () {
+      var r = runOne(); pushRun(r); updSim(r);
+    });
+    document.getElementById('btn-run-many').addEventListener('click', function () {
+      var j, r = null;
+      for (j = 0; j < 1000; j++) { r = runOne(); pushRun(r); }
+      updSim(r);
+    });
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      runs = []; undef = 0;
+      document.getElementById('draw-card').className = 'draw-card';
+      document.getElementById('draw-card').innerHTML =
+        'The true diagnosticity for this condition is <strong>7.67</strong>. Press &ldquo;Run the study again&rdquo; to begin.';
+      updSim(null);
+    });
+    document.querySelectorAll('#n-toggle .chip-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('#n-toggle .chip-btn').forEach(function (x) { x.classList.remove('active'); });
+        this.classList.add('active');
+        n = parseInt(this.getAttribute('data-n'), 10);
+        runs = []; undef = 0;
+        updSim(null);
+      });
+    });
+
+    deferred.trust = function () { updSim(null); };
+  })();
+
+  /* ========== Boot ========== */
+  render();
+  window.addEventListener('resize', (function () {
+    var t = null;
+    return function () {
+      if (t) { clearTimeout(t); }
+      t = setTimeout(function () {
+        ['chart-dist', 'chart-roc', 'chart-base', 'chart-sim'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el && el.data) { Plotly.Plots.resize(el); }
+        });
+      }, 150);
+    };
+  })());
+})();
+</script>
+
+</body>
+</html>

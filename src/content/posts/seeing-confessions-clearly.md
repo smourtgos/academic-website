@@ -2,56 +2,123 @@
 title: "Seeing Confessions Clearly: Why the Standard Score for Interrogation Methods Rewards Silence"
 subtitle: "A method that gets fewer confessions is not the same thing as a method that gets better ones"
 date: 2026-07-18
-summary: "For two decades, interrogation research has graded techniques with a single ratio: true confessions divided by false confessions. That ratio cannot tell the difference between a method that is better at separating guilty from innocent suspects and one that simply makes confessing harder for everyone. An interactive dashboard lets you see the problem in about fifteen seconds."
+summary: "For two decades, interrogation research has graded techniques with a single ratio: true confessions divided by false confessions. That ratio cannot tell the difference between a method that is better at separating guilty from innocent suspects and one that simply makes confessing harder for everyone. An interactive dashboard demonstrates the problem."
 tags: ["false confessions", "interrogation", "signal detection theory", "measurement"]
 featured: true
 ---
 
-Imagine two interrogation methods. The first is genuinely better at telling a guilty suspect from an innocent one. The second is no better at all — it just makes everyone, guilty and innocent alike, less willing to talk.
+Imagine two interrogation methods.
 
-The score the field uses to rank interrogation methods can rate the second one higher.
+The first is genuinely better at distinguishing guilty suspects from innocent ones. The second is no better at telling them apart. It simply makes everyone, guilty and innocent alike, less willing to confess.
+
+The score commonly used to rank interrogation methods can make the second method look better.
 
 ## The measure
 
-That score is called **diagnosticity**. It is simple: take the share of guilty suspects who confess and divide it by the share of innocent suspects who confess. A method where guilty suspects confess far more often than innocent ones gets a high number, and a high number is treated as evidence that the method produces more trustworthy confessions.
+That score is called diagnosticity. The calculation is simple: divide the percentage of guilty suspects who confess by the percentage of innocent suspects who confess.
 
-The measure entered this literature through the cheating paradigm introduced by Russano and colleagues in 2005 — the first design that included both guilty and innocent participants, and therefore the first that could compute the ratio at all. It has been used ever since to rank techniques, to compare families of methods in meta-analyses, and to argue for interrogation policy.
+Suppose 60 percent of guilty suspects confess and 10 percent of innocent suspects confess. The diagnosticity is 6. Guilty suspects confessed six times as often as innocent suspects.
 
-Our paper argues it is the wrong statistic, and that the problem is not subtle.
+A high diagnosticity score is often treated as evidence that an interrogation method produces more trustworthy confessions.
+
+The measure entered the confession literature about twenty years ago. Researchers have since used diagnosticity to rank interrogation techniques, compare groups of methods in meta-analyses, and support policy recommendations.
+
+Our paper argues that diagnosticity is the wrong statistic for those purposes. The problem is not a minor technical detail. It can change which method appears to work best.
 
 ## Two dials, one number
 
-Any test that produces a yes-or-no answer has two separate properties.
+Any test that produces a yes-or-no answer has two separate features.
 
-The first is how well it **separates** the two groups — whether it can actually tell guilty from innocent. That is the thing you care about.
+The first is separation. How well does the test distinguish between the two groups? In this setting, how well does the interrogation method separate guilty suspects from innocent ones?
 
-The second is where the **threshold** sits — how much it takes before anyone confesses at all. That is a setting, not a skill.
+That is the ability we care about.
 
-Diagnosticity blends them. And the blending is not a minor contamination: in the Russano data, the ranking produced by diagnosticity matches the ranking by threshold *exactly*, method for method. It matches the ranking by separation hardly at all.
+The second is the threshold. How much pressure or evidence does it take before anyone confesses? A high threshold produces fewer confessions from both guilty and innocent suspects. A low threshold produces more confessions from both groups.
 
-The consequence is the reversal at the center of the paper. The **No tactic** condition — simply asking, with no technique applied — posts the highest diagnosticity of the four conditions, 7.67. It also ranks only **third** of four on actually separating guilty suspects from innocent ones. It looks best because it produced the fewest confessions of any kind, not because it sorted people correctly.
+The threshold is not the same thing as accuracy.
 
-Think of the metal detector at a courthouse. It has two things going on: how good the machine is at telling a handgun from a belt buckle, and where the sensitivity dial is set. Turn the sensitivity down and it almost never beeps — so a higher *proportion* of the beeps you do get are real. You have not bought a better machine. You have bought a quieter one, and you are now walking guns past it.
+Diagnosticity combines separation and threshold into a single number. As a result, the score can change even when a method's ability to distinguish guilty suspects from innocent ones stays exactly the same.
+
+This is not just a theoretical possibility. In the work that first published this measure, the ranking produced by diagnosticity matches the ranking produced by threshold exactly, method for method. It barely matches the ranking based on actual separation.
+
+That produces the reversal at the center of our paper.
+
+The No tactic condition, in which the experimenter simply asked for a confession without using an interrogation technique, had the highest diagnosticity of the four conditions: 7.67.
+
+But it ranked only third out of four in its ability to separate guilty participants from innocent participants.
+
+It looked best because it produced the fewest confessions of any kind, not because it did the best job of sorting guilty people from innocent ones.
+
+Think about a metal detector at a courthouse.
+
+Two things matter. One is how well the machine can distinguish a handgun from a belt buckle. The other is where the sensitivity dial is set.
+
+Turn the sensitivity down and the machine will almost never beep. A larger share of the few alarms it does produce may involve real weapons. But the machine has not become better at detecting weapons. It has simply become quieter, and more weapons may now pass through unnoticed.
+
+Diagnosticity can reward an interrogation method for becoming quieter in much the same way.
 
 ## Two more problems
 
-**Diagnosticity is not a risk.** A diagnosticity of 7.67 means guilty suspects confess about 7.7 times as often as innocent ones. It does not mean a confession is 7.7 times more likely to be true. Getting to that second statement requires knowing something the ratio does not contain: how many of the people being interrogated actually did it. Laboratory studies fix that at 50-50 by design, because they assign equal numbers of guilty and innocent participants. That is a design convenience, not a finding about the field.
+Diagnosticity has two additional weaknesses.
 
-**And it is fragile.** The ratio divides by the false confession rate — a small number estimated from a small group. At the sample sizes this literature actually uses, roughly 37 people per group, the score is *undefined* in about one run in ten, because no innocent participant confessed and you cannot divide by zero. When it can be computed, it runs high. One published study reports a diagnosticity of 87.0 for a condition in which no innocent participant confessed at all; the value appears to come from substituting one percent for the observed zero.
+First, diagnosticity is not the probability that a confession is true.
 
-That last point has a practical edge. **If someone hands you a diagnosticity figure, ask what the false confession rate was. If it was zero, that number was chosen, not measured.**
+A diagnosticity of 7.67 means that guilty suspects confessed about 7.7 times as often as innocent suspects. It does not mean that a confession is 7.7 times more likely to be true than false.
+
+To determine how likely a confession is to be true, we also need to know how many of the people being interrogated are actually guilty. That information is called the base rate.
+
+Laboratory studies usually assign equal numbers of participants to the guilty and innocent conditions. That means the laboratory base rate is 50 percent by design. Half the participants are guilty and half are innocent.
+
+That is useful for conducting an experiment, but it tells us nothing about the percentage of real-world suspects who are actually guilty. Diagnosticity leaves that information out, so it cannot by itself tell us the risk that a confession is false.
+
+Second, diagnosticity is statistically fragile.
+
+The calculation divides the true confession rate by the false confession rate. The false confession rate is often a very small number estimated from a small group of innocent participants.
+
+At the sample sizes commonly used in this literature, about 37 people per group, diagnosticity is undefined in roughly one out of every ten repeated experiments. This happens when no innocent participant confesses. The false confession rate is then zero, and division by zero is impossible.
+
+Even when the score can be calculated, it tends to be too high.
+
+One published study reported a diagnosticity of 87.0 for a condition in which no innocent participant confessed. Because the observed false confession rate was zero, the reported value appears to have been produced by replacing that zero with an assumed rate of 1 percent.
+
+That point has a simple practical lesson.
+
+When someone reports a diagnosticity score, ask what the false confession rate was. If no innocent participant confessed, the diagnosticity value was not directly measured. It depended on a number chosen by the researcher.
 
 ## The replacement is already in the data
 
-The useful part is that fixing this requires no new studies. Every experiment with both guilty and innocent participants already reports the two quantities needed: a true confession rate and a false confession rate. Those are a hit rate and a false alarm rate — exactly the inputs signal detection theory has used for seventy years. From them you can report separation and threshold as distinct numbers, and say which one actually differs between two methods.
+The good news is that fixing the problem does not require new experiments.
 
-Eyewitness identification research went through this same reckoning fifteen years ago, over the same statistic, and largely abandoned it for procedure comparisons. The confession literature can make the same move at very little cost.
+Every study that includes both guilty and innocent participants already reports the two pieces of information we need: the true confession rate and the false confession rate.
 
-None of this settles whether laboratory confession paradigms capture what happens in real interrogation rooms. That is a separate and unresolved question. The narrower claim is that even granting the laboratory setup entirely on its own terms, the field's preferred summary confuses accuracy with threshold, omits the base rate needed for any risk statement, and behaves badly at the sample sizes actually in use.
+In signal detection theory, these are called the hit rate and the false alarm rate. Researchers have used these measures for decades to separate two different questions:
+
+1. How well does a test distinguish one group from another?
+2. Where is the threshold for producing a positive response?
+
+Using the same approach in confession research would allow researchers to report separation and threshold as two distinct numbers. We could then tell whether one interrogation method is genuinely better at distinguishing guilty suspects from innocent ones, or whether it simply makes everyone more or less likely to confess.
+
+Eyewitness identification researchers faced the same problem with diagnosticity about fifteen years ago. Many researchers in that field have moved away from using the ratio to compare identification procedures.
+
+The confession literature can make the same change at very little cost because the necessary information is already being collected.
+
+None of this answers the larger question of whether laboratory confession experiments accurately capture what happens in real interrogation rooms. That remains a separate and unresolved issue.
+
+Our claim is narrower.
+
+Even if we accept the laboratory experiments entirely on their own terms, the field's preferred summary measure has three serious problems. It confuses accuracy with threshold, leaves out the base rate needed to interpret the risk that a confession is false, and behaves poorly at the small sample sizes commonly used in the research.
 
 ## See it yourself
 
-The dashboard below is the argument in interactive form. The centerpiece has two sliders and a checkbox that **freezes** the method's separation so it cannot change. Lock it, then drag the threshold, and watch diagnosticity move anyway.
+The dashboard below turns the argument into an interactive demonstration.
+
+Its main display includes two sliders and a checkbox that holds the method's ability to separate guilty participants from innocent participants constant.
+
+Check the box to lock separation. Then move the threshold slider.
+
+The method's actual ability to distinguish guilty from innocent participants will not change, but its diagnosticity score will.
+
+That is the problem.
 
 <div style="text-align: center; margin: 30px 0;">
 <a href="/dashboards/diagnosticity-sdt/dashboard.html" style="background-color: #2a6496; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; display: inline-block; font-weight: bold;">
@@ -59,8 +126,8 @@ Open the Interactive Dashboard
 </a>
 </div>
 
-Data and code to reproduce every figure and number in the paper are at [github.com/smourtgos/diagnosticity-reproduction](https://github.com/smourtgos/diagnosticity-reproduction).
+Replication data and code for the paper are available at [github.com/smourtgos/diagnosticity-reproduction](https://github.com/smourtgos/diagnosticity-reproduction).
 
 ---
 
-*Working paper: Mourtgos, S. M., Blair, P., & Adams, I. T., "Seeing Confessions Clearly: Diagnosticity, Risk, and Signal Detection." Before circulating it we shared the manuscript with Dr. Melissa B. Russano and Dr. Christian A. Meissner, two authors of the 2005 study reanalyzed here; they confirmed the paradigm is accurately described. They also noted that they do not regard themselves as having presented diagnosticity as a posterior probability, and we agree — the concern here is with how the ratio gets interpreted downstream.*
+*Before posting the preprint, we shared the manuscript with Doctors Russano and Meissner and invited their feedback. They noted that, to the extent the manuscript could be read as implying that Russano et al. (2005) presented diagnosticity as a measure of posterior probability, they disagreed and did not regard that as an accurate characterization of their work. We agree. As we make explicit in the paper, Russano et al. (2005) did not present diagnosticity as a posterior probability. Our concern instead arises when diagnosticity is used to draw conclusions about applied risk. They bear no responsibility for the arguments advanced here, and any remaining errors are our own.*

@@ -23,7 +23,7 @@ A high diagnosticity score is often treated as evidence that an interrogation me
 
 The measure entered the confession literature about twenty years ago. Researchers have since used diagnosticity to rank interrogation techniques, compare groups of methods in meta-analyses, and support policy recommendations.
 
-Our paper argues that diagnosticity is the wrong statistic for those purposes. The problem is not a minor technical detail. It can change which method appears to work best.
+[Our paper](https://www.crimrxiv.com/pub/emake4tt) argues that diagnosticity is the wrong statistic for those purposes. The problem is not a minor technical detail. It can change which method appears to work best.
 
 ## Two dials, one number
 
@@ -161,7 +161,7 @@ Open the Interactive Dashboard
 </a>
 </div>
 
-Replication data and code for the paper are available at [github.com/smourtgos/diagnosticity-reproduction](https://github.com/smourtgos/diagnosticity-reproduction).
+The preprint is posted at [crimrxiv.com/pub/emake4tt](https://www.crimrxiv.com/pub/emake4tt). Replication data and code for the paper are available at [github.com/smourtgos/diagnosticity-reproduction](https://github.com/smourtgos/diagnosticity-reproduction).
 
 ---
 

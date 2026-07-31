@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Do Laboratory False Confession Paradigms Measure?</title>
+<meta property="og:title" content="What Do Laboratory False Confession Paradigms Measure?" />
+<meta name="description" content="Interactive walkthrough of a calibration meta-analysis of 41 laboratory false confession studies: 41% of innocent participants confess, 37% with no interrogation at all. What do those numbers actually measure?" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1e293b;
+  --navy-light: #334155;
+  --navy-dark: #0f172a;
+  --blue: #3b82f6;
+  --blue-light: #60a5fa;
+  --blue-dark: #2563eb;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --red: #ef4444;
+  --red-light: #fca5a5;
+  --green: #22c55e;
+  --green-light: #dcfce7;
+  --green-dark: #166534;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --amber-dark: #92400e;
+  --violet: #7c3aed;
+  --teal: #0d9488;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--gray-50);
+  color: var(--navy);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--navy-dark);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.navbar-brand {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.navbar-brand:hover { color: var(--blue-light); }
+.navbar-back {
+  color: var(--gray-400);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.navbar-back:hover { color: var(--white); }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  padding: 2.75rem 2rem 2.25rem;
+  color: var(--white);
+}
+.header-inner { max-width: 1200px; margin: 0 auto; }
+.category-badge {
+  display: inline-block;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.header h1 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  max-width: 850px;
+}
+.header .subtitle {
+  font-size: 0.98rem;
+  color: var(--gray-300);
+  font-weight: 400;
+  max-width: 780px;
+  margin-bottom: 0.9rem;
+}
+.header .byline {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+}
+.header .byline a { color: var(--blue-light); text-decoration: none; }
+.header .byline a:hover { text-decoration: underline; }
+
+/* Stat band */
+.stat-band {
+  background: var(--navy-dark);
+  border-top: 1px solid rgba(148,163,184,0.15);
+  padding: 1.1rem 2rem;
+}
+.stat-band-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+.stat-band .stat { text-align: center; }
+.stat-band .stat-value {
+  font-size: clamp(1.3rem, 2.4vw, 1.85rem);
+  font-weight: 800;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+.stat-band .stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-top: 0.15rem;
+}
+
+/* Main + sections */
+.main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem 3rem; }
+.section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  padding: 2rem;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+}
+.section-kicker {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-dark);
+  background: #eff6ff;
+  border-radius: 4px;
+  padding: 0.25rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--navy-dark);
+  margin-bottom: 0.6rem;
+}
+.section-lede {
+  color: var(--gray-600);
+  font-size: 0.97rem;
+  max-width: 820px;
+  margin-bottom: 1.4rem;
+}
+.section p.body-text {
+  color: var(--gray-600);
+  font-size: 0.93rem;
+  max-width: 860px;
+  margin: 1rem 0 0;
+}
+.section p.body-text strong { color: var(--navy-dark); }
+
+/* Callout tiles */
+.tile-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem;
+  margin: 1.25rem 0;
+}
+.tile {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+.tile .tile-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.tile .tile-label {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  font-weight: 500;
+  margin-top: 0.1rem;
+}
+.tile.accent { border-left: 4px solid var(--blue); }
+.tile.warn { border-left: 4px solid var(--amber); }
+.tile.bad  { border-left: 4px solid var(--red); }
+
+/* Paradigm cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+.p-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.1rem 1.15rem;
+  background: var(--white);
+  border-top: 4px solid var(--gray-300);
+}
+.p-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin-bottom: 0.2rem;
+}
+.p-card .p-cite { font-size: 0.75rem; color: var(--gray-400); margin-bottom: 0.5rem; }
+.p-card p { font-size: 0.86rem; color: var(--gray-600); }
+.p-card .p-chips { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+.chip.solid { color: var(--white); }
+
+/* Caveat strip */
+.caveat {
+  margin-top: 1.25rem;
+  background: var(--amber-light);
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.88rem;
+  color: var(--amber-dark);
+}
+.caveat strong { font-weight: 700; }
+
+/* Charts */
+.chart-wrap { width: 100%; min-height: 300px; overflow: hidden; }
+.chart-note {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-top: 0.5rem;
+  max-width: 860px;
+}
+
+/* Tabs */
+.tab-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+.tab-btn {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab-btn:hover { background: var(--gray-200); }
+.tab-btn.active { background: var(--navy-dark); color: var(--white); border-color: var(--navy-dark); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Scorecard */
+.scorecard { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.scorecard th, .scorecard td {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+  vertical-align: top;
+}
+.scorecard thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  border-bottom: 2px solid var(--gray-300);
+}
+.scorecard td.verdict { white-space: nowrap; font-weight: 700; }
+.verdict-yes { color: var(--green-dark); }
+.verdict-no { color: var(--red); }
+.scorecard .data-cell { color: var(--navy-dark); font-weight: 600; }
+.scorecard .data-sub { display: block; font-weight: 400; color: var(--gray-500); font-size: 0.8rem; }
+.table-scroll { overflow-x: auto; }
+
+/* Interactive controls */
+.control-panel {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.2rem;
+}
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy-dark);
+  margin-bottom: 0.5rem;
+}
+.control-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--blue-dark);
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--blue-dark);
+  cursor: pointer;
+  height: 1.4rem;
+}
+.control-hint { font-size: 0.78rem; color: var(--gray-500); margin-top: 0.35rem; }
+.readout-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem;
+  margin: 1.1rem 0;
+}
+.readout {
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+}
+.readout .readout-value {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  color: var(--navy-dark);
+}
+.readout .readout-label { font-size: 0.8rem; color: var(--gray-500); margin-top: 0.2rem; }
+.readout.hero { background: var(--navy-dark); border-color: var(--navy-dark); }
+.readout.hero .readout-value { color: var(--white); }
+.readout.hero .readout-label { color: var(--gray-400); }
+
+/* Practice cards */
+.practice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.practice-card {
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--blue);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+  background: var(--gray-50);
+}
+.practice-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.45rem; }
+.practice-card p { font-size: 0.86rem; color: var(--gray-600); }
+.offer-panel {
+  margin-top: 1.1rem;
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--green);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+  background: #f0fdf4;
+}
+.offer-panel h3 { font-size: 0.95rem; font-weight: 700; color: var(--green-dark); margin-bottom: 0.45rem; }
+.offer-panel p { font-size: 0.86rem; color: var(--gray-700); }
+
+/* Robustness details */
+details.robust {
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--white);
+  padding: 0;
+  margin-bottom: 1.75rem;
+  overflow: hidden;
+}
+details.robust summary {
+  cursor: pointer;
+  padding: 1.1rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy-dark);
+  background: var(--gray-50);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+details.robust summary::-webkit-details-marker { display: none; }
+details.robust summary::after {
+  content: "+";
+  margin-left: auto;
+  font-size: 1.2rem;
+  color: var(--gray-400);
+  font-weight: 400;
+}
+details.robust[open] summary::after { content: "\2212"; }
+.robust-body { padding: 1rem 1.5rem 1.3rem; }
+.robust-body ul { list-style: none; }
+.robust-body li {
+  font-size: 0.88rem;
+  color: var(--gray-600);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.robust-body li:last-child { border-bottom: none; }
+.robust-body li strong { color: var(--navy-dark); }
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--gray-200);
+  background: var(--white);
+  padding: 1.6rem 2rem 2rem;
+  font-size: 0.83rem;
+  color: var(--gray-500);
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer a { color: var(--blue-dark); text-decoration: none; overflow-wrap: anywhere; }
+.footer a:hover { text-decoration: underline; }
+.footer .footer-cite { margin-bottom: 0.5rem; }
+.footer, .robust-body { overflow-wrap: break-word; }
+
+@media (max-width: 720px) {
+  .stat-band-inner { grid-template-columns: repeat(2, 1fr); row-gap: 0.9rem; }
+  .stat-band-inner .stat:last-child { grid-column: span 2; }
+  .section { padding: 1.35rem 1.1rem; }
+  .navbar { padding: 0 1.1rem; }
+  .header { padding: 2rem 1.1rem 1.75rem; }
+  .stat-band { padding: 1rem 1.1rem; }
+  .footer { padding: 1.4rem 1.1rem 1.75rem; }
+  .main { padding: 1.75rem 0.85rem 2.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Scott M. Mourtgos, Ph.D.
+  </a>
+  <a href="/dashboards" class="navbar-back">&larr; Back to Dashboards</a>
+</nav>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <span class="category-badge">Calibration Meta-Analysis</span>
+    <h1>What Do Laboratory False Confession Paradigms Measure?</h1>
+    <p class="subtitle">
+      Across 41 studies and 3,682 participants, 41% of innocent people &ldquo;confessed&rdquo; to something
+      they did not do &mdash; including 37% who were never interrogated at all. This page walks through
+      what those numbers do, and do not, tell us about real interrogation rooms.
+    </p>
+    <p class="byline">
+      Scott M. Mourtgos &amp; Ian T. Adams &middot; <em>Journal of Quantitative Criminology</em> (in press)
+      &middot; Interactive companion to the peer-reviewed article
+    </p>
+  </div>
+</header>
+
+<!-- Stat band -->
+<div class="stat-band" aria-label="Key study statistics">
+  <div class="stat-band-inner">
+    <div class="stat"><div class="stat-value" data-count="41">0</div><div class="stat-label">Studies</div></div>
+    <div class="stat"><div class="stat-value" data-count="99">0</div><div class="stat-label">Experimental conditions</div></div>
+    <div class="stat"><div class="stat-value" data-count="3682" data-comma="1">0</div><div class="stat-label">Participants</div></div>
+    <div class="stat"><div class="stat-value" data-count="41" data-suffix="%">0</div><div class="stat-label">Pooled false confession rate</div></div>
+    <div class="stat"><div class="stat-value">3&ndash;93%</div><div class="stat-label">95% prediction interval</div></div>
+  </div>
+</div>
+
+<main class="main">
+<!-- STEP 1: The setup -->
+<section class="section" id="setup">
+  <span class="section-kicker">Step 1 &middot; The setup</span>
+  <h2 class="section-title">What happens in these experiments</h2>
+  <p class="section-lede">
+    For three decades, researchers have studied false confessions by accusing innocent people of minor
+    transgressions in the laboratory. Four paradigms dominate the literature. In each, the participant
+    truly did not do the thing &mdash; the question is whether they will sign a statement saying they did.
+  </p>
+  <div class="card-grid">
+    <div class="p-card" style="border-top-color:#2563eb;">
+      <h3>Alt-Key</h3>
+      <div class="p-cite">Kassin &amp; Kiechel (1996)</div>
+      <p>Participants type in a speeded computer task and are warned not to touch a forbidden key.
+      The computer crashes by design, and the participant is accused of pressing it &mdash; in many
+      versions, a confederate claims to have seen it happen. Signing an admission typically costs
+      nothing beyond agreeing.</p>
+      <div class="p-chips"><span class="chip" id="chip-altkey"></span><span class="chip solid" style="background:#2563eb;" id="chipv-altkey"></span></div>
+    </div>
+    <div class="p-card" style="border-top-color:#d97706;">
+      <h3>Cheating</h3>
+      <div class="p-cite">Russano et al. (2005)</div>
+      <p>Participants solve problems alongside a partner (secretly a confederate) and are later accused
+      of sharing answers on a problem they were told to solve alone. The act feels more like real
+      wrongdoing and ground truth is verifiable &mdash; but there is still no arrest, charge, or court.</p>
+      <div class="p-chips"><span class="chip" id="chip-cheating"></span><span class="chip solid" style="background:#d97706;" id="chipv-cheating"></span></div>
+    </div>
+    <div class="p-card" style="border-top-color:#7c3aed;">
+      <h3>Fake video</h3>
+      <div class="p-cite">Nash &amp; Wade (2009)</div>
+      <p>Participants play a computerized gambling task and are then shown doctored video
+      &ldquo;evidence&rdquo; of themselves taking money on a losing round. Every condition in this
+      paradigm confronts the participant with fabricated evidence.</p>
+      <div class="p-chips"><span class="chip" id="chip-fakevideo"></span><span class="chip solid" style="background:#7c3aed;" id="chipv-fakevideo"></span></div>
+    </div>
+    <div class="p-card" style="border-top-color:#0d9488;">
+      <h3>Theft accusation</h3>
+      <div class="p-cite">e.g., McMillen (2018); Paton et al. (2018)</div>
+      <p>Participants are accused of taking money or an item &mdash; a missing $20 bill, for example
+      &mdash; during the session. The allegation is closer to a real one, but it still unfolds inside
+      a university lab with no real consequences attached.</p>
+      <div class="p-chips"><span class="chip" id="chip-theft"></span><span class="chip solid" style="background:#0d9488;" id="chipv-theft"></span></div>
+    </div>
+  </div>
+  <div class="caveat">
+    <strong>Common to every paradigm:</strong> participants are typically students, not suspects. The
+    accusation is trivial. There is no Miranda warning, no lawyer, no charge, and no jail. Keep that in
+    mind as the rates below get large.
+  </div>
+</section>
+
+<!-- STEP 2: The rates -->
+<section class="section" id="rates">
+  <span class="section-kicker">Step 2 &middot; The rates</span>
+  <h2 class="section-title">The headline number &mdash; and its enormous spread</h2>
+  <p class="section-lede">
+    Pooling all 99 conditions, the meta-analytic false confession rate is <strong>41%</strong>. But the
+    more revealing number is the spread. A new experiment drawn from this literature could credibly
+    produce a rate anywhere from <strong>3% to 93%</strong> &mdash; near zero to near universal &mdash;
+    depending on task details.
+  </p>
+  <div class="tile-row">
+    <div class="tile accent"><div class="tile-value">41%</div><div class="tile-label">Pooled rate, Bayesian model (90% CrI 34&ndash;48%)</div></div>
+    <div class="tile accent"><div class="tile-value">39%</div><div class="tile-label">Pooled rate, frequentist model (95% CI 29&ndash;50%)</div></div>
+    <div class="tile warn"><div class="tile-value">3&ndash;93%</div><div class="tile-label">95% prediction interval for a new condition</div></div>
+    <div class="tile warn"><div class="tile-value">93%</div><div class="tile-label">I&sup2; &mdash; share of variation beyond sampling error</div></div>
+  </div>
+  <div id="chart-strip" class="chart-wrap" aria-label="Strip plot of all 99 condition level false confession rates by paradigm"></div>
+  <p class="chart-note">Each dot is one experimental condition (dot size = number of participants; hover for details).
+  The horizontal line marks the pooled 41% estimate; the shaded band is the 95% prediction interval.</p>
+  <p class="body-text">
+    If these tasks measured a stable psychological construct, different implementations should produce
+    reasonably consistent results. Instead, rates scatter across nearly the entire 0&ndash;100% range.
+    That pattern looks less like a stable trait being measured and more like an outcome that is
+    <strong>highly sensitive to how the task is built</strong>.
+  </p>
+</section>
+
+<!-- STEP 3: The baseline -->
+<section class="section" id="baseline">
+  <span class="section-kicker">Step 3 &middot; The baseline</span>
+  <h2 class="section-title">37% confess before interrogation even starts</h2>
+  <p class="section-lede">
+    In 30 control conditions, the experimenter simply stated the accusation &mdash; no false evidence,
+    no minimization, no pressure tactics of any kind. <strong>37% of innocent participants signed
+    anyway.</strong> The most coercive tactic in the literature, the false evidence ploy, averages 62%
+    &mdash; which means the no-tactic baseline already accounts for 60% of it.
+  </p>
+  <div id="chart-ladder" class="chart-wrap" aria-label="Bar chart of mean false confession rate by interrogation method, ordered by theoretical coerciveness"></div>
+  <p class="chart-note">Unweighted mean false confession rate by interrogation method, ordered from least to most
+  coercive (computed directly from the 99 conditions; k = number of conditions). Dashed line: control baseline.</p>
+  <div class="tile-row">
+    <div class="tile bad"><div class="tile-value">37%</div><div class="tile-label">Confess with no tactic at all (direct accusation only)</div></div>
+    <div class="tile bad"><div class="tile-value">60%</div><div class="tile-label">Share of the false evidence rate already present at baseline</div></div>
+    <div class="tile bad"><div class="tile-value">&lt;1%</div><div class="tile-label">Variation across conditions explained by tactic coerciveness (R&sup2; &lt; 0.1%)</div></div>
+  </div>
+  <p class="body-text">
+    Tactics do matter at the margin &mdash; rates rise about 0.23 logit units per step up the
+    coerciveness scale (Spearman &rho; = .33). But in a formal dose-response model, coerciveness
+    explains <strong>less than 1% of the variation</strong> across conditions. Most of the measured
+    behavior is already there when an authority figure merely states an accusation in a low-stakes
+    setting. That is the signature of <strong>compliance</strong>, not of interrogation-induced
+    false confession.
+  </p>
+</section>
+
+<!-- STEP 4: What drives variation -->
+<section class="section" id="variation">
+  <span class="section-kicker">Step 4 &middot; What actually moves the numbers</span>
+  <h2 class="section-title">Small details move the needle more than tactics do</h2>
+  <p class="section-lede">
+    If tactics explain almost none of the variation, what does? Task structure and context. Explore the
+    three views below: the same &ldquo;false confession rate&rdquo; swings dramatically with the paradigm
+    used, minor procedural details like <em>which key</em> the participant is accused of pressing, and
+    the country where the study was run.
+  </p>
+  <div class="tab-row" role="tablist">
+    <button class="tab-btn active" data-tab="panel-cells" role="tab" aria-selected="true">By paradigm &amp; tactic</button>
+    <button class="tab-btn" data-tab="panel-variants" role="tab" aria-selected="false">By Alt-Key variant</button>
+    <button class="tab-btn" data-tab="panel-country" role="tab" aria-selected="false">By country</button>
+  </div>
+  <div id="panel-cells" class="tab-panel active" role="tabpanel">
+    <div id="chart-cells" class="chart-wrap" aria-label="Posterior false confession probability for each paradigm and method combination"></div>
+    <p class="chart-note">Model-based (posterior) estimates with 90% credible intervals, for observed
+    paradigm&ndash;method combinations. Open circles (&dagger;) are cells with a single condition &mdash;
+    interpret those with caution. Note the false evidence ploy and mixed accusatorial tactics tie
+    at &asymp;69% in the Alt-Key paradigm.</p>
+  </div>
+  <div id="panel-variants" class="tab-panel" role="tabpanel">
+    <div id="chart-variants" class="chart-wrap" aria-label="Posterior false confession probability by Alt-Key task variant"></div>
+    <p class="chart-note">Posterior estimates with 90% credible intervals across Alt-Key task variants.
+    Change nothing but the forbidden key &mdash; accuse participants of pressing Shift instead of Esc
+    &mdash; and the rate roughly triples (23% &rarr; 60%). A construct this sensitive to trivial
+    procedural details is not behaving like a stable measure of interrogation vulnerability.</p>
+  </div>
+  <div id="panel-country" class="tab-panel" role="tabpanel">
+    <div id="chart-country" class="chart-wrap" aria-label="Posterior false confession probability by country"></div>
+    <p class="chart-note">Posterior estimates with 90% credible intervals, holding paradigm (Alt-Key),
+    variant (classic), and method (control) constant. Same task, same absence of tactics: 45% in the
+    United States, 6% in Japan. Non-U.S. estimates rest on fewer studies and are less precise.</p>
+  </div>
+</section>
+
+<!-- STEP 5: The test -->
+<section class="section" id="accounts">
+  <span class="section-kicker">Step 5 &middot; The test</span>
+  <h2 class="section-title">Two ways to read this literature</h2>
+  <p class="section-lede">
+    The validity question can be framed as a contest between two interpretations, each making
+    observable predictions. The <strong>interrogation mechanism account</strong> says lab paradigms tap the
+    processes that produce real false confessions. The <strong>compliance account</strong> says they mostly
+    measure willingness to go along with an authority figure&rsquo;s accusation when nothing is at stake.
+  </p>
+  <div class="table-scroll">
+  <table class="scorecard">
+    <thead>
+      <tr>
+        <th style="min-width:180px;">Observable prediction</th>
+        <th>Interrogation mechanism account</th>
+        <th>Compliance account</th>
+        <th style="min-width:200px;">What the data show</th>
+        <th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Confessions when <em>no tactic</em> is applied</td>
+        <td>Rare</td>
+        <td>Common</td>
+        <td class="data-cell">37% <span class="data-sub">across 30 control conditions</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Mechanism</span><br><span class="verdict-yes">&#10003; Compliance</span></td>
+      </tr>
+      <tr>
+        <td>Consistency across implementations</td>
+        <td>Reasonably stable</td>
+        <td>Swings with task details</td>
+        <td class="data-cell">3&ndash;93% <span class="data-sub">prediction interval; rate triples across key variants</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Mechanism</span><br><span class="verdict-yes">&#10003; Compliance</span></td>
+      </tr>
+      <tr>
+        <td>What moves the rate</td>
+        <td>Coercive tactics</td>
+        <td>Procedural &amp; contextual details</td>
+        <td class="data-cell">Tactics: &lt;1% of variation <span class="data-sub">paradigm, variant &amp; country do far more work</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Mechanism</span><br><span class="verdict-yes">&#10003; Compliance</span></td>
+      </tr>
+      <tr>
+        <td>Magnitudes commensurable with the real world</td>
+        <td>At least roughly</td>
+        <td>Far above any defensible rate</td>
+        <td class="data-cell">See the calibration test below <span class="data-sub">compatibility requires true rates near 41%</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Mechanism</span><br><span class="verdict-yes">&#10003; Compliance</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="body-text">
+    These accounts are not mutually exclusive &mdash; laboratory tasks may capture mechanisms genuinely
+    relevant to interrogation while still being poorly calibrated to the real-world phenomenon. The
+    question is which account better describes the <em>absolute rates and patterns of variation</em>
+    the literature actually produces.
+  </p>
+</section>
+
+<!-- STEP 6: Calibration -->
+<section class="section" id="calibration">
+  <span class="section-kicker">Step 6 &middot; The calibration test</span>
+  <h2 class="section-title">Could these rates come from the real world?</h2>
+  <p class="section-lede">
+    Here is the paper&rsquo;s central exercise. Suppose the true real-world false confession rate were
+    some value &mdash; say 10%. If we then ran this exact literature (99 conditions, the same sample
+    sizes) on that world, how often would it produce the observed pooled mean of 41%? Drag the slider.
+  </p>
+  <div class="control-panel">
+    <label class="control-label" for="calib-slider">
+      <span>Suppose the real-world false confession rate were&hellip;</span>
+      <span class="control-value" id="calib-value">10%</span>
+    </label>
+    <input type="range" id="calib-slider" min="1" max="45" step="1" value="10"
+      aria-label="Hypothetical real-world false confession rate, percent">
+    <div class="control-hint">Self-report surveys of interrogated suspects suggest 4&ndash;12% &mdash; and the paper treats
+    even those as upper bounds. Values near 41% are shown only to reveal where compatibility finally begins.</div>
+  </div>
+  <div class="readout-row">
+    <div class="readout hero">
+      <div class="readout-value" id="calib-prob">&asymp; 0</div>
+      <div class="readout-label" id="calib-prob-label">chance this literature reproduces its observed 41% mean</div>
+    </div>
+    <div class="readout">
+      <div class="readout-value">&asymp; 41%</div>
+      <div class="readout-label">true rate needed for a 50/50 chance of reproducing the observed mean</div>
+    </div>
+    <div class="readout">
+      <div class="readout-value">4&ndash;12%</div>
+      <div class="readout-label">the field&rsquo;s own survey-based estimates &mdash; best read as upper bounds</div>
+    </div>
+  </div>
+  <div id="chart-calib" class="chart-wrap" aria-label="Probability of reproducing the observed laboratory mean as a function of the hypothesized true false confession rate"></div>
+  <p class="chart-note">Probability that a synthetic literature (99 conditions, the actual sample sizes, binomial
+  sampling) yields a mean at or above the observed 0.41, by hypothesized true rate &mdash; the normal
+  approximation to the paper&rsquo;s 10,000-draw simulation. Amber band: plausible real-world range (5&ndash;15%).</p>
+  <p class="body-text">
+    At true rates of 5%, 10%, or 15%, the probability is <strong>essentially zero</strong> &mdash; not small,
+    zero to hundreds of decimal places. The most forgiving version of this test (allowing the corpus&rsquo;s own
+    heterogeneity into the hypothetical real world) lowers the edge of compatibility from about 40% to about
+    32% overall, and to 23% for control conditions &mdash; still double the field&rsquo;s upper-bound survey
+    estimates. <strong>The laboratory numbers are only compatible with a world in which false confession is
+    routine.</strong> No one believes that world is ours.
+  </p>
+</section>
+
+<!-- STEP 7: The reductio -->
+<section class="section" id="reductio">
+  <span class="section-kicker">Step 7 &middot; The reality check</span>
+  <h2 class="section-title">If lab rates were real-world rates</h2>
+  <p class="section-lede">
+    Another way to see the calibration gap: take the laboratory rate literally and see what it implies.
+    The FBI reports roughly 7.5 million arrests per year in the United States. Choose what share you
+    think involves custodial interrogation of an <em>innocent</em> person.
+  </p>
+  <div class="control-panel">
+    <label class="control-label" for="red-slider">
+      <span>Share of arrests involving interrogation of an innocent person</span>
+      <span class="control-value" id="red-value">10%</span>
+    </label>
+    <input type="range" id="red-slider" min="5" max="20" step="1" value="10"
+      aria-label="Assumed share of arrests involving custodial interrogation of an innocent person, percent">
+    <div class="control-hint">10% = 750,000 innocent-suspect interrogations per year, a deliberately conservative benchmark used in the paper.</div>
+  </div>
+  <div class="readout-row">
+    <div class="readout hero">
+      <div class="readout-value" id="red-implied">307,000</div>
+      <div class="readout-label">false confessions <em>per year</em> implied by the 41% laboratory rate</div>
+    </div>
+    <div class="readout">
+      <div class="readout-value">&asymp; 375</div>
+      <div class="readout-label">false confession exonerations documented by the National Registry of Exonerations &mdash; in its entire history</div>
+    </div>
+    <div class="readout">
+      <div class="readout-value" id="red-ratio">818&times;</div>
+      <div class="readout-label">implied annual count vs. all documented cases ever</div>
+    </div>
+  </div>
+  <div id="chart-reductio" class="chart-wrap" aria-label="Bar comparison of implied annual false confessions versus all documented false confession exonerations"></div>
+  <p class="body-text">
+    To be clear about the logic: <strong>this is a reductio, not an accusation.</strong> We do not claim
+    researchers believe the field produces hundreds of thousands of false confessions a year. The point is
+    the converse &mdash; because that implication is absurd, a laboratory rate that produces it cannot be
+    measuring the same thing as real-world false confession. Even the <em>control</em> conditions alone
+    (37%, no tactics) imply roughly 278,000 per year.
+  </p>
+</section>
+
+<!-- STEP 8: The power trap -->
+<section class="section" id="power">
+  <span class="section-kicker">Step 8 &middot; Why the paradigms are built this way</span>
+  <h2 class="section-title">High baselines are a feature &mdash; and the problem</h2>
+  <p class="section-lede">
+    Why would paradigms evolve toward tasks where a third of innocent people comply immediately? Statistical
+    power. Detecting tactic effects at realistic base rates requires enormous samples; at laboratory base
+    rates, small samples suffice.
+  </p>
+  <div id="chart-power" class="chart-wrap" aria-label="Participants needed per condition for adequate statistical power at realistic versus laboratory base rates"></div>
+  <p class="chart-note">Participants needed <em>per condition</em> for 80% power (two-sided &alpha; = .05) to
+  detect the labeled increase, versus the average condition actually run in this literature (n = 37).</p>
+  <p class="body-text">
+    A four-arm study at realistic base rates would need nearly <strong>5,900 participants</strong>; the
+    average condition in this corpus enrolled <strong>37</strong>. A paradigm that produces a 30&ndash;40%
+    baseline makes tactic comparisons feasible at ordinary lab sizes &mdash; that is precisely why these
+    tasks are useful experimental tools. But the same feature is the validity problem: <strong>a behavior
+    common enough to appear in over a third of innocent control participants is unlikely to be the same
+    quantity as the rare, high-cost event of false confession in a criminal case.</strong>
+  </p>
+</section>
+
+<!-- STEP 9: Takeaways -->
+<section class="section" id="practice">
+  <span class="section-kicker">Step 9 &middot; Takeaways</span>
+  <h2 class="section-title">What this means in practice</h2>
+  <div class="practice-grid">
+    <div class="practice-card">
+      <h3>For courts &amp; attorneys</h3>
+      <p>Laboratory rates, odds ratios, and effect sizes from this literature are not field-calibrated
+      risk estimates. When lab numbers are offered to characterize real-world interrogation risk,
+      <em>Daubert</em>/<em>Frye</em> &ldquo;fit&rdquo; questions apply: the behavior measured (low-stakes
+      compliance with an accusation) is not the phenomenon at issue (custodial false confession).</p>
+    </div>
+    <div class="practice-card">
+      <h3>For police &amp; trainers</h3>
+      <p>The experiments do show that false evidence ploys and minimization elicit more admissions than a
+      bare accusation &mdash; in the lab. Treat that as evidence about compliance pressure worth taking
+      seriously in training and policy. Do not treat 41%, 69%, or &ldquo;13&times; the odds&rdquo; as the
+      real-world risk attached to any tactic.</p>
+    </div>
+    <div class="practice-card">
+      <h3>For researchers &amp; reviewers</h3>
+      <p>Report absolute baselines alongside contrasts, and flag calibration limits when citing pooled
+      rates. A 3&ndash;93% prediction interval means &ldquo;the&rdquo; laboratory false confession rate
+      does not exist; a 37% no-tactic baseline means the outcome needs a construct label chosen with care.</p>
+    </div>
+  </div>
+  <div class="offer-panel">
+    <h3>What the literature does offer</h3>
+    <p>None of this means laboratory research on false confessions lacks value. The paradigms isolate real
+    psychological mechanisms &mdash; minimization cues, false evidence, authority signals &mdash; and can
+    rank tactics by how much compliance they elicit under controlled conditions. Read as <em>model
+    systems</em> for theory-building, they are informative. What they cannot responsibly supply is the
+    number: the prevalence, magnitude, or field risk of interrogation-induced false confession.</p>
+  </div>
+</section>
+
+<!-- Robustness -->
+<details class="robust" id="robustness">
+  <summary>We tried to break the result &mdash; it held</summary>
+  <div class="robust-body">
+    <ul>
+      <li><strong>Publication bias?</strong> Adjusting for small-study effects <em>raises</em> the estimate rather
+      than lowering it (PET 64%, PEESE 49%; Egger z = &minus;4.61). Selective reporting does not explain the elevated rates.</li>
+      <li><strong>One influential study?</strong> Dropping each of the 41 studies in turn moves the pooled rate
+      only between 37.2% and 41.3% &mdash; no single paper drives the result.</li>
+      <li><strong>Threshold choice?</strong> Five alternative calibration thresholds (posterior mean, median,
+      25th/75th percentiles, frequentist estimate) all yield the same verdict: essentially zero probability at
+      real-world rates &le; 15%.</li>
+      <li><strong>Heterogeneity?</strong> Injecting the corpus&rsquo;s own between-condition heterogeneity
+      (&tau; &asymp; 1.5) into the hypothetical real world lowers the compatibility edge from &asymp;40% to
+      &asymp;32% (23% for controls) &mdash; still far above any defensible real-world rate.</li>
+      <li><strong>Generous baselines?</strong> Even granting a 15% real-world rate &mdash; above the field&rsquo;s
+      own upper bounds &mdash; the lab-vs-world gap remains OR = 3.9, d = 0.75.</li>
+    </ul>
+  </div>
+</details>
+
+</main>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-inner">
+    <div class="footer-cite">
+      Interactive analysis by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina, and
+      Ian T. Adams, Ph.D., University of South Carolina &nbsp;|&nbsp; Based on Mourtgos &amp; Adams,
+      &ldquo;What Do Laboratory False Confession Paradigms Measure? A Calibration Meta-Analysis,&rdquo;
+      <em>Journal of Quantitative Criminology</em> (in press).<!-- TODO: link DOI when assigned -->
+    </div>
+    <div>
+      Methods: multilevel Bayesian binomial model (conditions nested within papers; brms/CmdStan) and
+      multilevel random effects meta-analysis (metafor). Model-based estimates shown with 90% credible
+      intervals; descriptive statistics computed directly from the condition-level dataset embedded in this
+      page. Data &amp; code: <a href="https://github.com/smourtgos/false-confession-meta-analysis" target="_blank" rel="noopener">github.com/smourtgos/false-confession-meta-analysis</a>.
+      Figures are intended for educational and exploratory use.
+    </div>
+  </div>
+</div>
+<script>
+const CONDITIONS = [{"s":"Beidas2003_a","y":2003,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":45,"x":15,"f":0.333},{"s":"Blair_a","y":2007,"c":"USA","p":"AltKey","v":"sequence_variant","m":"MIX","n":98,"x":26,"f":0.265},{"s":"Blair_b","y":2007,"c":"USA","p":"AltKey","v":"sequence_variant","m":"MIX","n":98,"x":28,"f":0.286},{"s":"Cole2013_a","y":2013,"c":"USA","p":"TheftAccusation","v":"","m":"FEP","n":26,"x":0,"f":0.0},{"s":"Cole2013_b","y":2013,"c":"USA","p":"TheftAccusation","v":"","m":"CTRL","n":29,"x":0,"f":0.0},{"s":"Eastwood_a","y":2022,"c":"Canada","p":"Cheating","v":"","m":"MIX","n":20,"x":9,"f":0.45},{"s":"Eastwood_b","y":2022,"c":"Canada","p":"Cheating","v":"","m":"INFO","n":20,"x":0,"f":0.0},{"s":"Evans2025_a","y":2025,"c":"USA","p":"Cheating","v":"","m":"MAX","n":65,"x":3,"f":0.046},{"s":"Forrest_a","y":2002,"c":"USA","p":"AltKey","v":"classic","m":"MIX","n":56,"x":34,"f":0.607},{"s":"Forrest_2006","y":2006,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":98,"x":80,"f":0.816},{"s":"Frenda2016_a","y":2016,"c":"USA","p":"AltKey","v":"esc_key_variant","m":"CTRL","n":44,"x":8,"f":0.182},{"s":"Frenda2016_b","y":2016,"c":"USA","p":"AltKey","v":"esc_key_variant","m":"CTRL","n":44,"x":22,"f":0.5},{"s":"Gallimore2025_a","y":2024,"c":"USA","p":"AltKey","v":"classic","m":"MIN","n":33,"x":16,"f":0.485},{"s":"Guyll_2013","y":2013,"c":"USA","p":"Cheating","v":"","m":"MIX","n":74,"x":32,"f":0.432},{"s":"Guyll_a","y":2019,"c":"USA","p":"Cheating","v":"","m":"MIN","n":74,"x":41,"f":0.554},{"s":"Guyll_b","y":2019,"c":"USA","p":"Cheating","v":"","m":"MAX","n":74,"x":30,"f":0.405},{"s":"Hachey2024_a","y":2024,"c":"Canada","p":"Cheating","v":"","m":"MIX","n":44,"x":6,"f":0.136},{"s":"Hachey2024_b","y":2024,"c":"Canada","p":"Cheating","v":"","m":"MAX","n":44,"x":0,"f":0.0},{"s":"HaneyCaron2023_a","y":2023,"c":"USA","p":"Cheating","v":"","m":"MIX","n":67,"x":12,"f":0.179},{"s":"Hickcox_2009","y":2009,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":56,"x":42,"f":0.75},{"s":"Hill_a","y":2008,"c":"UK","p":"Cheating","v":"","m":"CTRL","n":14,"x":0,"f":0.0},{"s":"Hill_b","y":2008,"c":"UK","p":"Cheating","v":"","m":"MIX","n":13,"x":0,"f":0.0},{"s":"Horgan_a","y":2012,"c":"USA","p":"Cheating","v":"","m":"MIX","n":33,"x":14,"f":0.424},{"s":"Horgan_b","y":2012,"c":"USA","p":"Cheating","v":"","m":"MIX","n":33,"x":7,"f":0.212},{"s":"Horselenberg_2003","y":2003,"c":"Netherlands","p":"AltKey","v":"shift_key_variant","m":"FEP","n":34,"x":27,"f":0.794},{"s":"Horselenberg_1a","y":2006,"c":"Netherlands","p":"AltKey","v":"windows_key_variant","m":"FEP","n":30,"x":23,"f":0.767},{"s":"Horselenberg_1b","y":2006,"c":"Netherlands","p":"AltKey","v":"f12_key_variant","m":"FEP","n":26,"x":15,"f":0.577},{"s":"Horselenberg_2","y":2006,"c":"Netherlands","p":"AltKey","v":"windows_key_variant","m":"FEP","n":9,"x":1,"f":0.111},{"s":"Horselenberg_3","y":2006,"c":"Netherlands","p":"Cheating","v":"","m":"FEP","n":12,"x":1,"f":0.083},{"s":"Kassin_a","y":1996,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":17,"x":17,"f":1.0},{"s":"Kassin_b","y":1996,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":18,"x":16,"f":0.889},{"s":"Kassin_c","y":1996,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":17,"x":11,"f":0.647},{"s":"Kassin_d","y":1996,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":23,"x":8,"f":0.348},{"s":"Klaver_a","y":2008,"c":"Canada","p":"AltKey","v":"classic","m":"MIN","n":71,"x":50,"f":0.704},{"s":"Klaver_b","y":2008,"c":"Canada","p":"AltKey","v":"classic","m":"MAX","n":62,"x":29,"f":0.468},{"s":"Klaver_c","y":2008,"c":"Canada","p":"AltKey","v":"esc_key_variant","m":"MIN","n":31,"x":7,"f":0.226},{"s":"Klaver_d","y":2008,"c":"Canada","p":"AltKey","v":"esc_key_variant","m":"MAX","n":40,"x":2,"f":0.05},{"s":"Mackinnon2016_a","y":2016,"c":"USA","p":"Cheating","v":"","m":"CTRL","n":20,"x":17,"f":0.85},{"s":"Mackinnon2016_b","y":2016,"c":"USA","p":"Cheating","v":"","m":"FEP","n":20,"x":19,"f":0.95},{"s":"Mackinnon2016_c","y":2016,"c":"USA","p":"Cheating","v":"","m":"FEP","n":20,"x":14,"f":0.7},{"s":"Mackinnon2016_d","y":2016,"c":"USA","p":"Cheating","v":"","m":"FEP","n":20,"x":18,"f":0.9},{"s":"McMillen2018_a","y":2018,"c":"USA","p":"FakeVideo","v":"","m":"MIX","n":15,"x":14,"f":0.933},{"s":"McMillen2018_b","y":2018,"c":"USA","p":"TheftAccusation","v":"","m":"MIX","n":15,"x":12,"f":0.8},{"s":"McMillen2018_c","y":2018,"c":"USA","p":"TheftAccusation","v":"","m":"MIX","n":9,"x":8,"f":0.889},{"s":"McMillen2018_d","y":2018,"c":"USA","p":"TheftAccusation","v":"","m":"MIX","n":7,"x":7,"f":1.0},{"s":"McMillen2018_e","y":2018,"c":"USA","p":"TheftAccusation","v":"","m":"MIX","n":13,"x":13,"f":1.0},{"s":"Narchet2011_a","y":2011,"c":"USA","p":"Cheating","v":"","m":"MIX","n":35,"x":7,"f":0.2},{"s":"Narchet2011_b","y":2011,"c":"USA","p":"Cheating","v":"","m":"MIX","n":35,"x":9,"f":0.257},{"s":"Narchet2011_c","y":2011,"c":"USA","p":"Cheating","v":"","m":"MIX","n":36,"x":17,"f":0.472},{"s":"Nash_a","y":2009,"c":"UK","p":"FakeVideo","v":"","m":"MIX","n":15,"x":15,"f":1.0},{"s":"Nash_b","y":2009,"c":"UK","p":"FakeVideo","v":"","m":"MIX","n":15,"x":15,"f":1.0},{"s":"Nash_c","y":2009,"c":"UK","p":"FakeVideo","v":"","m":"MIX","n":15,"x":14,"f":0.933},{"s":"Nash_d","y":2009,"c":"UK","p":"FakeVideo","v":"","m":"MIX","n":15,"x":14,"f":0.933},{"s":"Newring","y":2008,"c":"USA","p":"AltKey","v":"classic","m":"MIX","n":26,"x":12,"f":0.462},{"s":"Noc_a","y":2023,"c":"France","p":"AltKey","v":"classic","m":"INFO","n":42,"x":1,"f":0.024},{"s":"Noc_b","y":2023,"c":"France","p":"AltKey","v":"classic","m":"INFO","n":43,"x":0,"f":0.0},{"s":"Noc_c","y":2023,"c":"France","p":"AltKey","v":"classic","m":"MIX","n":40,"x":21,"f":0.525},{"s":"NormileScherr_a","y":2018,"c":"USA","p":"Cheating","v":"","m":"MIN","n":40,"x":21,"f":0.525},{"s":"NormileScherr_b","y":2018,"c":"USA","p":"Cheating","v":"","m":"FEP","n":36,"x":10,"f":0.278},{"s":"Otal2019_a","y":2019,"c":"USA","p":"Cheating","v":"","m":"MAX","n":45,"x":15,"f":0.333},{"s":"Otal2019_b","y":2019,"c":"USA","p":"Cheating","v":"","m":"CTRL","n":42,"x":20,"f":0.476},{"s":"Paton_a","y":2018,"c":"UK","p":"TheftAccusation","v":"","m":"MIN","n":30,"x":10,"f":0.333},{"s":"Paton_b","y":2018,"c":"UK","p":"TheftAccusation","v":"","m":"CTRL","n":30,"x":14,"f":0.467},{"s":"Paton_c","y":2018,"c":"UK","p":"TheftAccusation","v":"","m":"CTRL","n":30,"x":9,"f":0.3},{"s":"Paton_d","y":2018,"c":"UK","p":"TheftAccusation","v":"","m":"CTRL","n":30,"x":4,"f":0.133},{"s":"Perillo_a","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":14,"x":11,"f":0.786},{"s":"Perillo_b","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":15,"x":13,"f":0.867},{"s":"Perillo_c","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":13,"x":10,"f":0.769},{"s":"Perillo_d","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":15,"x":4,"f":0.267},{"s":"Perillo_e","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":14,"x":5,"f":0.357},{"s":"Perillo_f","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":19,"x":14,"f":0.737},{"s":"Perillo_g","y":2011,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":19,"x":9,"f":0.474},{"s":"Perillo_h","y":2011,"c":"USA","p":"Cheating","v":"","m":"CTRL","n":14,"x":0,"f":0.0},{"s":"Perillo_i","y":2011,"c":"USA","p":"Cheating","v":"","m":"FEP","n":16,"x":8,"f":0.5},{"s":"Redlich_a","y":2003,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":48,"x":33,"f":0.688},{"s":"Redlich_b","y":2003,"c":"USA","p":"AltKey","v":"classic","m":"FEP","n":48,"x":34,"f":0.708},{"s":"Rigoni_a","y":2007,"c":"USA","p":"Cheating","v":"","m":"MIX","n":30,"x":12,"f":0.4},{"s":"Rigoni_b","y":2007,"c":"USA","p":"Cheating","v":"","m":"CTRL","n":30,"x":5,"f":0.167},{"s":"Rigoni_c","y":2007,"c":"USA","p":"Cheating","v":"","m":"INFO","n":30,"x":5,"f":0.167},{"s":"Russano_a","y":2005,"c":"USA","p":"Cheating","v":"","m":"CTRL","n":37,"x":2,"f":0.054},{"s":"Russano_b","y":2005,"c":"USA","p":"Cheating","v":"","m":"MAX","n":37,"x":5,"f":0.135},{"s":"Russano_c","y":2005,"c":"USA","p":"Cheating","v":"","m":"MIN","n":37,"x":7,"f":0.189},{"s":"Russano_d","y":2005,"c":"USA","p":"Cheating","v":"","m":"MIX","n":37,"x":16,"f":0.432},{"s":"SBC2010_1pa","y":2010,"c":"USA","p":"AltKey","v":"tab_key_variant","m":"MIX","n":23,"x":6,"f":0.261},{"s":"SBC2010_1pb","y":2010,"c":"USA","p":"AltKey","v":"tab_key_variant","m":"MIX","n":25,"x":13,"f":0.52},{"s":"SBC2010_1pc","y":2010,"c":"USA","p":"AltKey","v":"tab_key_variant","m":"MIX","n":26,"x":17,"f":0.654},{"s":"SBC2010_1pd","y":2010,"c":"USA","p":"AltKey","v":"tab_key_variant","m":"MIX","n":26,"x":16,"f":0.615},{"s":"Schneider2020_1a","y":2021,"c":"Netherlands","p":"AltKey","v":"shift_key_variant","m":"CTRL","n":146,"x":100,"f":0.685},{"s":"Schrantz2014_1a","y":2014,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":42,"x":25,"f":0.595},{"s":"Schrantz2023_a","y":2023,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":60,"x":46,"f":0.767},{"s":"Schrantz2023_b","y":2023,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":60,"x":32,"f":0.533},{"s":"Schrantz2023_c","y":2023,"c":"USA","p":"AltKey","v":"classic","m":"CTRL","n":60,"x":36,"f":0.6},{"s":"Villalba_2014","y":2014,"c":"USA","p":"Cheating","v":"","m":"MAX","n":86,"x":17,"f":0.198},{"s":"Wachi_a","y":2018,"c":"Japan","p":"Cheating","v":"","m":"CTRL","n":40,"x":0,"f":0.0},{"s":"Wachi_b","y":2018,"c":"Japan","p":"Cheating","v":"","m":"CTRL","n":40,"x":0,"f":0.0},{"s":"Wachi_c","y":2018,"c":"Japan","p":"Cheating","v":"","m":"CTRL","n":40,"x":0,"f":0.0},{"s":"WilfordWells_a","y":2018,"c":"USA","p":"Cheating","v":"","m":"CTRL","n":38,"x":9,"f":0.237},{"s":"WilfordWells_b","y":2018,"c":"USA","p":"Cheating","v":"","m":"FEP","n":42,"x":17,"f":0.405},{"s":"Zapata2018_a","y":2018,"c":"USA","p":"TheftAccusation","v":"","m":"MAX","n":124,"x":0,"f":0.0}];
+/* ============================================================
+   Model-based results (hard-coded constants).
+   Source: Replication Package v2 verified run (run_log_v2.txt),
+   identical to the in-press manuscript. Descriptive statistics
+   are NOT hard-coded — they are computed from CONDITIONS below.
+   ============================================================ */
+const RESULTS = {
+  pooledBayes: 0.4092,          // posterior median
+  pooledFreq: 0.389,            // REML multilevel
+  predInterval: [3, 93],        // 95% prediction interval, %
+  i2: 93,
+  // Paradigm x method posterior medians with 90% CrI (%), k = observed conditions
+  cells: {
+    AltKey: [
+      { m: 'MIX',  med: 69.4, lo: 54.2, hi: 81.9, k: 9  },
+      { m: 'FEP',  med: 69.3, lo: 53.3, hi: 82.0, k: 11 },
+      { m: 'MIN',  med: 57.1, lo: 37.3, hi: 74.5, k: 3  },
+      { m: 'CTRL', med: 40.7, lo: 27.7, hi: 54.4, k: 16 },
+      { m: 'MAX',  med: 30.4, lo: 15.7, hi: 49.4, k: 2  },
+      { m: 'INFO', med: 14.6, lo: 4.8,  hi: 35.3, k: 2  }
+    ],
+    Cheating: [
+      { m: 'MIX',  med: 34.8, lo: 21.3, hi: 50.8, k: 12 },
+      { m: 'FEP',  med: 34.6, lo: 19.2, hi: 53.1, k: 7  },
+      { m: 'MIN',  med: 23.3, lo: 11.3, hi: 41.0, k: 3  },
+      { m: 'CTRL', med: 13.1, lo: 6.9,  hi: 22.8, k: 10 },
+      { m: 'MAX',  med: 8.6,  lo: 3.9,  hi: 17.5, k: 6  },
+      { m: 'INFO', med: 3.5,  lo: 1.0,  hi: 10.9, k: 2  }
+    ],
+    FakeVideo: [
+      { m: 'MIX',  med: 83.8, lo: 48.1, hi: 96.6, k: 5  }
+    ],
+    TheftAccusation: [
+      { m: 'MIX',  med: 41.8, lo: 18.1, hi: 70.4, k: 4  },
+      { m: 'FEP',  med: 41.7, lo: 17.2, hi: 70.4, k: 1  },
+      { m: 'MIN',  med: 29.1, lo: 10.1, hi: 59.3, k: 1  },
+      { m: 'CTRL', med: 17.0, lo: 5.8,  hi: 39.4, k: 4  },
+      { m: 'MAX',  med: 11.4, lo: 3.4,  hi: 31.5, k: 1  }
+    ]
+  },
+  // Alt-Key variant posterior medians with 90% CrI (%)
+  variants: [
+    { v: 'shift_key_variant',   label: 'Shift key',        med: 60.4, lo: 34.2, hi: 80.2 },
+    { v: 'classic',             label: 'Classic (Alt key)', med: 47.9, lo: 40.4, hi: 56.0 },
+    { v: 'tab_key_variant',     label: 'Tab key',          med: 43.7, lo: 25.3, hi: 63.0 },
+    { v: 'f12_key_variant',     label: 'F12 key',          med: 40.2, lo: 16.1, hi: 67.6 },
+    { v: 'windows_key_variant', label: 'Windows key',      med: 35.0, lo: 13.8, hi: 62.0 },
+    { v: 'sequence_variant',    label: 'Key sequence',     med: 28.0, lo: 12.9, hi: 49.6 },
+    { v: 'esc_key_variant',     label: 'Esc key',          med: 23.3, lo: 13.2, hi: 37.4 }
+  ],
+  // Country posteriors at Alt-Key / classic / control reference (%, 90% CrI)
+  countries: [
+    { c: 'USA',         label: 'United States',  med: 45.3, lo: 29.9, hi: 60.7 },
+    { c: 'Netherlands', label: 'Netherlands',    med: 38.4, lo: 13.9, hi: 70.5 },
+    { c: 'UK',          label: 'United Kingdom', med: 35.6, lo: 10.4, hi: 72.0 },
+    { c: 'Canada',      label: 'Canada',         med: 24.7, lo: 9.6,  hi: 49.8 },
+    { c: 'France',      label: 'France',         med: 17.1, lo: 3.0,  hi: 57.7 },
+    { c: 'Japan',       label: 'Japan',          med: 6.1,  lo: 0.7,  hi: 35.3 }
+  ],
+  // Power: participants per condition, 80% power, two-sided alpha .05
+  power: [
+    { label: '5% → 7.5%  (realistic base rate)', n: 1471, lab: false },
+    { label: '10% → 15%  (realistic base rate)', n: 686,  lab: false },
+    { label: '5% → 10%  (realistic base rate)',  n: 435,  lab: false },
+    { label: '40% → 60%  (laboratory base rate)', n: 97,   lab: true  }
+  ],
+  arrestsUS: 7.5e6,   // FBI (2024)
+  nreCases: 375       // documented false confession exonerations, cumulative
+};
+
+const PARADIGMS = ['AltKey', 'Cheating', 'FakeVideo', 'TheftAccusation'];
+const P_LABEL = { AltKey: 'Alt-Key', Cheating: 'Cheating', FakeVideo: 'Fake video', TheftAccusation: 'Theft accusation' };
+const P_COLOR = { AltKey: '#2563eb', Cheating: '#d97706', FakeVideo: '#7c3aed', TheftAccusation: '#0d9488' };
+const METHODS = ['CTRL', 'INFO', 'MIN', 'MAX', 'MIX', 'FEP'];
+const M_LABEL = {
+  CTRL: 'No tactic (direct accusation)',
+  INFO: 'Information gathering',
+  MIN:  'Minimization',
+  MAX:  'Maximization',
+  MIX:  'Mixed accusatorial',
+  FEP:  'False evidence ploy'
+};
+const M_SHORT = { CTRL: 'No tactic', INFO: 'Info-gathering', MIN: 'Minimization', MAX: 'Maximization', MIX: 'Mixed accusatorial', FEP: 'False evidence' };
+
+(function () {
+'use strict';
+
+/* ---------- shared helpers ---------- */
+const FONT = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const CONFIG = { displayModeBar: false, responsive: false };
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Explicit width management: Plotly's own responsive handling is unreliable
+   when the container is narrow at load or resizes without a window event,
+   so every chart is rendered at the measured container width and re-rendered
+   on resize. chart-strip is always visible, so it is the canonical measure. */
+function chartW() {
+  const el = document.getElementById('chart-strip');
+  const w = el ? el.clientWidth : 0;
+  return (w && w > 40) ? w : 660;
+}
+function isNarrow() { return chartW() < 560; }
+
+function baseLayout(overrides) {
+  const base = {
+    font: { family: FONT, size: 12.5, color: '#475569' },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { l: 60, r: 30, t: 20, b: 55 },
+    hoverlabel: { bgcolor: '#0f172a', bordercolor: '#0f172a', font: { family: FONT, size: 12.5, color: '#ffffff' } },
+    dragmode: false
+  };
+  return Object.assign(base, overrides);
+}
+function axis(overrides) {
+  return Object.assign({
+    gridcolor: '#e2e8f0', gridwidth: 1, zeroline: false, fixedrange: true,
+    linecolor: '#e2e8f0', tickfont: { size: 12, color: '#64748b' }
+  }, overrides);
+}
+function fmt(n) { return n.toLocaleString('en-US'); }
+function prettyLabel(s) {
+  return s.replace(/([A-Za-z&]) (?=\d)/, '$1').replace(/([A-Za-z&])(\d{4})/, '$1 $2').replace(/_/g, ' · ');
+}
+const $ = id => document.getElementById(id);
+
+/* ---------- descriptive stats computed from the embedded data ---------- */
+const byParadigm = {};
+PARADIGMS.forEach(p => { byParadigm[p] = CONDITIONS.filter(r => r.p === p); });
+const byMethod = {};
+METHODS.forEach(m => { byMethod[m] = CONDITIONS.filter(r => r.m === m); });
+const mean = a => a.reduce((s, x) => s + x, 0) / a.length;
+const methodMeans = METHODS.map(m => ({ m, k: byMethod[m].length, mean: mean(byMethod[m].map(r => r.f)) * 100 }));
+const ctrlMean = methodMeans[0].mean;
+const fepMean = methodMeans[5].mean;
+
+/* paradigm chips in Step 1 */
+PARADIGMS.forEach(p => {
+  const rows = byParadigm[p];
+  const key = { AltKey: 'altkey', Cheating: 'cheating', FakeVideo: 'fakevideo', TheftAccusation: 'theft' }[p];
+  const kEl = $('chip-' + key), vEl = $('chipv-' + key);
+  if (kEl) kEl.textContent = rows.length + ' conditions';
+  if (vEl) vEl.textContent = 'avg observed rate ' + Math.round(mean(rows.map(r => r.f)) * 100) + '%';
+});
+
+/* ---------- count-up stat band ---------- */
+function animateCount(el) {
+  const target = parseFloat(el.getAttribute('data-count'));
+  const comma = el.getAttribute('data-comma');
+  const suffix = el.getAttribute('data-suffix') || '';
+  if (reduceMotion) { el.textContent = (comma ? fmt(target) : target) + suffix; return; }
+  const t0 = performance.now(), dur = 900;
+  function tick(t) {
+    const u = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - u, 3);
+    const val = Math.round(target * eased);
+    el.textContent = (comma ? fmt(val) : val) + suffix;
+    if (u < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const counted = new WeakSet();
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !counted.has(e.target)) { counted.add(e.target); animateCount(e.target); }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.stat-value[data-count]').forEach(el => io.observe(el));
+
+/* ---------- Step 2: strip plot of all 99 conditions ---------- */
+function renderStrip() {
+  const narrow = isNarrow();
+  const traces = PARADIGMS.map((p, gi) => {
+    const rows = byParadigm[p];
+    return {
+      type: 'scatter', mode: 'markers', name: P_LABEL[p] + ' (' + rows.length + ')',
+      x: rows.map((r, i) => gi + ((i * 0.6180339887) % 1 - 0.5) * 0.58),
+      y: rows.map(r => r.f * 100),
+      marker: {
+        color: P_COLOR[p], opacity: 0.85,
+        size: rows.map(r => Math.max(narrow ? 5 : 7, Math.min(narrow ? 15 : 24, Math.sqrt(r.n) * (narrow ? 1.15 : 1.7)))),
+        line: { color: '#ffffff', width: narrow ? 1 : 1.5 }
+      },
+      customdata: rows.map(r => [prettyLabel(r.s), M_SHORT[r.m], r.n, r.c]),
+      hovertemplate: '<b>%{customdata[0]}</b><br>%{customdata[1]} · %{customdata[3]} · n = %{customdata[2]}<br>False confession rate: %{y:.0f}%<extra></extra>'
+    };
+  });
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 420 : 480,
+    margin: { l: narrow ? 42 : 60, r: narrow ? 8 : 30, t: 34, b: 45 },
+    showlegend: !narrow,
+    legend: { orientation: 'h', y: 1.09, x: 0, font: { size: 12 } },
+    xaxis: axis({ tickvals: [0, 1, 2, 3], ticktext: PARADIGMS.map(p => narrow ? (P_LABEL[p].replace(' accusation', '') + '<br>k=' + byParadigm[p].length) : P_LABEL[p]), showgrid: false, range: [-0.55, 3.55], tickfont: { size: narrow ? 10.5 : 12, color: '#64748b' } }),
+    yaxis: axis({ title: { text: 'False confession rate (%)', font: { size: 12.5 } }, range: [-4, 104], tickvals: [0, 25, 50, 75, 100] }),
+    shapes: [
+      { type: 'rect', xref: 'paper', x0: 0, x1: 1, y0: RESULTS.predInterval[0], y1: RESULTS.predInterval[1],
+        fillcolor: 'rgba(148,163,184,0.10)', line: { width: 0 }, layer: 'below' },
+      { type: 'line', xref: 'paper', x0: 0, x1: 1, y0: RESULTS.pooledBayes * 100, y1: RESULTS.pooledBayes * 100,
+        line: { color: '#0f172a', width: 2 } }
+    ],
+    annotations: narrow ? [
+      { xref: 'paper', x: 1, y: RESULTS.pooledBayes * 100, xanchor: 'right', yanchor: 'bottom',
+        text: '<b>Pooled: 41%</b>', showarrow: false, font: { size: 11, color: '#0f172a' }, bgcolor: 'rgba(255,255,255,0.75)' }
+    ] : [
+      { xref: 'paper', x: 1, y: RESULTS.pooledBayes * 100, xanchor: 'right', yanchor: 'bottom',
+        text: '<b>Pooled: 41%</b>', showarrow: false, font: { size: 12, color: '#0f172a' }, bgcolor: 'rgba(255,255,255,0.75)' },
+      { xref: 'paper', x: 0.005, y: RESULTS.predInterval[1], xanchor: 'left', yanchor: 'top',
+        text: '95% prediction interval: 3–93%', showarrow: false, font: { size: 11.5, color: '#64748b' } }
+    ]
+  });
+  Plotly.newPlot('chart-strip', traces, layout, CONFIG);
+}
+
+/* ---------- Step 3: method ladder ---------- */
+function renderLadder() {
+  const narrow = isNarrow();
+  const ramp = ['#bfdbfe', '#93c5fd', '#60a5fa', '#3b82f6', '#2563eb', '#1e40af'];
+  const M_TINY = { CTRL: 'None', INFO: 'Info', MIN: 'Min', MAX: 'Max', MIX: 'Mixed', FEP: 'False<br>evid.' };
+  const trace = {
+    type: 'bar',
+    x: methodMeans.map((_, i) => i),
+    y: methodMeans.map(d => d.mean),
+    marker: { color: ramp },
+    width: 0.62,
+    text: methodMeans.map(d => d.mean.toFixed(0) + '%'),
+    textposition: 'outside', cliponaxis: false,
+    textfont: { size: narrow ? 11 : 13, color: '#0f172a', family: FONT },
+    customdata: methodMeans.map(d => [M_LABEL[d.m], d.k]),
+    hovertemplate: '<b>%{customdata[0]}</b><br>Mean rate: %{y:.1f}%<br>k = %{customdata[1]} conditions<extra></extra>'
+  };
+  const annotations = [
+    { x: 3, y: ctrlMean, xanchor: 'center', yanchor: 'top', yshift: -4,
+      text: narrow ? ('Baseline ' + ctrlMean.toFixed(0) + '%') : ('Control baseline: ' + ctrlMean.toFixed(0) + '% — no tactics at all'),
+      showarrow: false, font: { size: narrow ? 10 : 11.5, color: '#ef4444' } }
+  ];
+  if (!narrow) {
+    annotations.push({ x: 5, y: fepMean - 7, ax: -92, ay: -22, xanchor: 'right',
+      text: 'Baseline alone = ' + Math.round(ctrlMean / fepMean * 100) + '% of this',
+      arrowcolor: '#94a3b8', arrowwidth: 1.2, font: { size: 11.5, color: '#475569' } });
+  }
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 330 : 380,
+    margin: { l: narrow ? 42 : 60, r: narrow ? 8 : 30, t: 30, b: narrow ? 56 : 70 },
+    showlegend: false,
+    xaxis: axis({
+      tickvals: methodMeans.map((_, i) => i),
+      ticktext: methodMeans.map(d => narrow ? (M_TINY[d.m] + '<br>' + d.k) : (M_SHORT[d.m] + '<br>(k = ' + d.k + ')')),
+      showgrid: false, tickfont: { size: narrow ? 10 : 11.5, color: '#64748b' }
+    }),
+    yaxis: axis({ title: narrow ? undefined : { text: 'Mean false confession rate (%)', font: { size: 12.5 } }, range: [0, 78] }),
+    shapes: [
+      { type: 'line', xref: 'paper', x0: 0, x1: 1, y0: ctrlMean, y1: ctrlMean,
+        line: { color: '#ef4444', width: 1.5, dash: 'dot' } }
+    ],
+    annotations: annotations
+  });
+  Plotly.newPlot('chart-ladder', [trace], layout, CONFIG);
+}
+
+/* ---------- Step 4: dot-interval charts ---------- */
+function dotIntervalLayout(height, extra) {
+  const narrow = isNarrow();
+  return baseLayout(Object.assign({
+    width: chartW(),
+    height: height,
+    margin: { l: 10, r: narrow ? 8 : 30, t: 30, b: 50 },
+    xaxis: axis({ title: { text: narrow ? 'Posterior probability (%)' : 'Posterior false confession probability (%)', font: { size: narrow ? 11.5 : 12.5 } }, range: [0, 100] }),
+    yaxis: axis({ showgrid: false, automargin: true, autorange: 'reversed', ticksuffix: ' ', tickfont: { size: narrow ? 10.5 : 12, color: '#64748b' } }),
+    showlegend: false
+  }, extra || {}));
+}
+function renderCells() {
+  const narrow = isNarrow();
+  const P_TINY = { AltKey: 'Alt-Key', Cheating: 'Cheating', FakeVideo: 'Fake video', TheftAccusation: 'Theft' };
+  const M_TINY = { CTRL: 'No tactic', INFO: 'Info', MIN: 'Min.', MAX: 'Max.', MIX: 'Mixed', FEP: 'False ev.' };
+  const labels = [], traces = [];
+  PARADIGMS.forEach(p => {
+    const cells = RESULTS.cells[p];
+    const ys = cells.map(c => (narrow ? (P_TINY[p] + ' · ' + M_TINY[c.m]) : (P_LABEL[p] + ' — ' + M_SHORT[c.m])) + (c.k === 1 ? ' †' : ''));
+    labels.push.apply(labels, ys);
+    traces.push({
+      type: 'scatter', mode: 'markers', name: P_LABEL[p],
+      x: cells.map(c => c.med), y: ys,
+      error_x: {
+        type: 'data', symmetric: false,
+        array: cells.map(c => c.hi - c.med),
+        arrayminus: cells.map(c => c.med - c.lo),
+        color: P_COLOR[p], thickness: 1.6, width: 0
+      },
+      marker: {
+        color: P_COLOR[p], size: narrow ? 8 : 10,
+        symbol: cells.map(c => c.k === 1 ? 'circle-open' : 'circle'),
+        line: { color: P_COLOR[p], width: 1.5 }
+      },
+      customdata: cells.map(c => [M_LABEL[c.m], c.lo, c.hi, c.k]),
+      hovertemplate: '<b>' + P_LABEL[p] + ' · %{customdata[0]}</b><br>%{x:.0f}% (90% CrI %{customdata[1]:.0f}–%{customdata[2]:.0f}%)<br>k = %{customdata[3]} condition(s)<extra></extra>'
+    });
+  });
+  const layout = dotIntervalLayout(narrow ? 560 : 640, {
+    showlegend: !narrow,
+    legend: { orientation: 'h', y: 1.08, x: 0, font: { size: 12 } },
+    yaxis: axis({ showgrid: false, automargin: true, autorange: 'reversed', categoryorder: 'array', categoryarray: labels, tickfont: { size: narrow ? 10.5 : 12, color: '#64748b' } })
+  });
+  Plotly.newPlot('chart-cells', traces, layout, CONFIG);
+}
+function renderVariants() {
+  const kByVariant = {};
+  byParadigm.AltKey.forEach(r => { kByVariant[r.v] = (kByVariant[r.v] || 0) + 1; });
+  const v = RESULTS.variants;
+  const trace = {
+    type: 'scatter', mode: 'markers',
+    x: v.map(d => d.med), y: v.map(d => d.label),
+    error_x: { type: 'data', symmetric: false, array: v.map(d => d.hi - d.med), arrayminus: v.map(d => d.med - d.lo), color: '#2563eb', thickness: 1.6, width: 0 },
+    marker: { color: '#2563eb', size: isNarrow() ? 8 : 10, line: { color: '#ffffff', width: 1.5 } },
+    customdata: v.map(d => [d.lo, d.hi, kByVariant[d.v] || 0]),
+    hovertemplate: '<b>%{y}</b><br>%{x:.0f}% (90% CrI %{customdata[0]:.0f}–%{customdata[1]:.0f}%)<br>k = %{customdata[2]} condition(s)<extra></extra>'
+  };
+  Plotly.newPlot('chart-variants', [trace], dotIntervalLayout(isNarrow() ? 340 : 380, { margin: { l: 10, r: isNarrow() ? 8 : 30, t: 20, b: 50 } }), CONFIG);
+}
+function renderCountry() {
+  const narrow = isNarrow();
+  const kByCountry = {};
+  CONDITIONS.forEach(r => { kByCountry[r.c] = (kByCountry[r.c] || 0) + 1; });
+  const cs = RESULTS.countries;
+  const trace = {
+    type: 'scatter', mode: 'markers',
+    x: cs.map(d => d.med), y: cs.map(d => (narrow ? d.c : d.label) + '  (k = ' + (kByCountry[d.c] || 0) + ')'),
+    error_x: { type: 'data', symmetric: false, array: cs.map(d => d.hi - d.med), arrayminus: cs.map(d => d.med - d.lo), color: '#2563eb', thickness: 1.6, width: 0 },
+    marker: { color: '#2563eb', size: narrow ? 8 : 10, line: { color: '#ffffff', width: 1.5 } },
+    customdata: cs.map(d => [d.lo, d.hi]),
+    hovertemplate: '<b>%{y}</b><br>%{x:.0f}% (90% CrI %{customdata[0]:.0f}–%{customdata[1]:.0f}%)<extra></extra>'
+  };
+  Plotly.newPlot('chart-country', [trace], dotIntervalLayout(narrow ? 300 : 340, { margin: { l: 10, r: narrow ? 8 : 30, t: 20, b: 50 } }), CONFIG);
+}
+
+/* ---------- tabs (deferred first render) ---------- */
+const tabRenders = { 'panel-cells': renderCells, 'panel-variants': renderVariants, 'panel-country': renderCountry };
+const tabRendered = {};
+function activateTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const on = b.getAttribute('data-tab') === id;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === id));
+  // always render fresh: cheap, and guarantees correct width even if the
+  // viewport changed while the panel was hidden
+  tabRendered[id] = true;
+  tabRenders[id]();
+}
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => activateTab(b.getAttribute('data-tab'))));
+
+/* ---------- Step 6: calibration ---------- */
+/* Normal approximation to the paper's simulation: the mean of 99 binomial
+   proportions with the actual per-condition sample sizes. */
+const sumInvN = CONDITIONS.reduce((s, r) => s + 1 / r.n, 0);
+const K = CONDITIONS.length;
+const THR = RESULTS.pooledBayes; // 0.409 calibration target
+function sdMean(p) { return Math.sqrt(p * (1 - p) * sumInvN) / K; }
+function zFor(p) { return (THR - p) / sdMean(p); }
+function erf(x) {
+  const s = x < 0 ? -1 : 1; x = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * x);
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return s * y;
+}
+function probReach(p) { const z = zFor(p); return 0.5 * (1 - erf(z / Math.SQRT2)); }
+function log10Tail(z) { return -(0.4342944819 * (z * z / 2 + Math.log(z * Math.sqrt(2 * Math.PI)))); }
+
+function calibReadout(pct) {
+  const p = pct / 100, z = zFor(p), q = probReach(p);
+  if (z > 6) {
+    const e = Math.max(9, Math.round(-log10Tail(z)));
+    return { main: '≈ 0', sub: 'chance this literature reproduces its observed 41% mean — less than 1 in 10<sup>' + fmt(e) + '</sup>' };
+  }
+  if (z > 3) {
+    return { main: '< 0.1%', sub: 'chance of reproducing the observed 41% mean — about 1 in ' + fmt(Math.round(1 / q)) };
+  }
+  const pctVal = q * 100;
+  const shown = pctVal >= 10 ? pctVal.toFixed(0) : pctVal >= 1 ? pctVal.toFixed(1) : pctVal.toFixed(2);
+  return { main: shown + '%', sub: 'chance this literature reproduces its observed 41% mean' };
+}
+
+const calibX = [], calibY = [];
+for (let x = 1; x <= 45; x += 0.25) { calibX.push(x); calibY.push(probReach(x / 100) * 100); }
+
+function renderCalib(pct) {
+  const narrow = isNarrow();
+  const q = probReach(pct / 100) * 100;
+  const traces = [
+    { type: 'scatter', mode: 'lines', x: calibX, y: calibY,
+      line: { color: '#2563eb', width: 2.5 }, hovertemplate: 'True rate %{x:.1f}% → %{y:.1f}% chance<extra></extra>' },
+    { type: 'scatter', mode: 'markers', x: [pct], y: [q],
+      marker: { color: '#ef4444', size: 12, line: { color: '#ffffff', width: 2 } },
+      hovertemplate: 'Your setting: %{x}%<extra></extra>' }
+  ];
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 330 : 380,
+    margin: { l: narrow ? 42 : 65, r: narrow ? 8 : 30, t: 26, b: 55 },
+    showlegend: false,
+    xaxis: axis({ title: { text: narrow ? 'Hypothesized true rate (%)' : 'Hypothesized true real-world false confession rate (%)', font: { size: narrow ? 11.5 : 12.5 } }, range: [0, 46] }),
+    yaxis: axis({ title: narrow ? undefined : { text: 'Chance of reproducing the observed mean (%)', font: { size: 12.5 } }, range: [-3, 103] }),
+    shapes: [
+      { type: 'rect', x0: 5, x1: 15, yref: 'paper', y0: 0, y1: 1,
+        fillcolor: 'rgba(245,158,11,0.12)', line: { width: 0 }, layer: 'below' }
+    ],
+    annotations: [
+      { x: 10, yref: 'paper', y: 0.98, text: 'plausible real-world range<br>(upper bounds)', showarrow: false,
+        font: { size: narrow ? 9.5 : 11, color: '#92400e' } },
+      { x: 41, y: 50, ax: narrow ? -38 : -55, ay: 0, text: 'compatibility begins<br>only near 41%', arrowcolor: '#94a3b8',
+        arrowwidth: 1.2, font: { size: narrow ? 9.5 : 11, color: '#475569' } }
+    ]
+  });
+  Plotly.react('chart-calib', traces, layout, CONFIG);
+}
+
+const calibSlider = $('calib-slider');
+function updateCalib() {
+  const pct = parseInt(calibSlider.value, 10);
+  $('calib-value').textContent = pct + '%';
+  const r = calibReadout(pct);
+  $('calib-prob').innerHTML = r.main;
+  $('calib-prob-label').innerHTML = r.sub;
+  renderCalib(pct);
+}
+calibSlider.addEventListener('input', updateCalib);
+
+/* ---------- Step 7: reductio ---------- */
+const redSlider = $('red-slider');
+function renderReductio(pct) {
+  const interrogations = RESULTS.arrestsUS * pct / 100;
+  const implied = interrogations * RESULTS.pooledBayes;
+  const impliedRounded = Math.round(implied / 1000) * 1000;
+  const ratio = Math.round(implied / RESULTS.nreCases);
+  $('red-value').textContent = pct + '%';
+  $('red-implied').textContent = fmt(impliedRounded);
+  $('red-ratio').textContent = fmt(ratio) + '×';
+  const narrow = isNarrow();
+  const traces = [{
+    type: 'bar', orientation: 'h',
+    y: narrow
+      ? ['Implied by lab rate<br><span style="font-size:0.8em;color:#94a3b8">per year</span>',
+         'Documented ever<br><span style="font-size:0.8em;color:#94a3b8">(NRE)</span>']
+      : ['Implied by the 41% lab rate<br><span style="font-size:0.8em;color:#94a3b8">per year</span>',
+         'Documented false confession exonerations<br><span style="font-size:0.8em;color:#94a3b8">entire history (NRE)</span>'],
+    x: [implied, RESULTS.nreCases],
+    marker: { color: ['#2563eb', '#0f172a'] },
+    width: 0.55,
+    text: [fmt(impliedRounded), fmt(RESULTS.nreCases)],
+    textposition: 'outside', cliponaxis: false,
+    textfont: { size: narrow ? 11 : 13, color: '#0f172a', family: FONT },
+    hovertemplate: '%{x:,.0f}<extra></extra>'
+  }];
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 200 : 230,
+    margin: { l: 10, r: narrow ? 56 : 80, t: 12, b: 40 },
+    showlegend: false,
+    xaxis: axis({ title: { text: 'False confessions (count)', font: { size: narrow ? 11.5 : 12.5 } }, range: [0, Math.max(implied * 1.18, 100)], tickfont: { size: narrow ? 10 : 12, color: '#64748b' } }),
+    yaxis: axis({ showgrid: false, automargin: true, autorange: 'reversed', tickfont: { size: narrow ? 10.5 : 12, color: '#64748b' } })
+  });
+  Plotly.react('chart-reductio', traces, layout, CONFIG);
+}
+redSlider.addEventListener('input', () => renderReductio(parseInt(redSlider.value, 10)));
+
+/* ---------- Step 8: power ---------- */
+function renderPower() {
+  const narrow = isNarrow();
+  const rows = RESULTS.power;
+  const traces = [{
+    type: 'bar', orientation: 'h',
+    y: rows.map(r => narrow ? r.label.replace('  (realistic base rate)', '<br><span style="font-size:0.85em;color:#94a3b8">realistic</span>').replace('  (laboratory base rate)', '<br><span style="font-size:0.85em;color:#94a3b8">laboratory</span>') : r.label),
+    x: rows.map(r => r.n),
+    marker: { color: rows.map(r => r.lab ? '#f59e0b' : '#64748b') },
+    width: 0.6,
+    text: rows.map(r => fmt(r.n)),
+    textposition: 'outside', cliponaxis: false,
+    textfont: { size: narrow ? 11 : 13, color: '#0f172a', family: FONT },
+    hovertemplate: '<b>%{y}</b><br>%{x:,} participants per condition<extra></extra>'
+  }];
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 270 : 300,
+    margin: { l: 10, r: narrow ? 48 : 60, t: 26, b: 55 },
+    showlegend: false,
+    xaxis: axis({ title: { text: narrow ? 'Participants needed per condition' : 'Participants needed per condition (80% power)', font: { size: narrow ? 11.5 : 12.5 } }, range: [0, 1650], tickfont: { size: narrow ? 10 : 12, color: '#64748b' } }),
+    yaxis: axis({ showgrid: false, automargin: true, autorange: 'reversed', tickfont: { size: narrow ? 10 : 12, color: '#64748b' } }),
+    shapes: [
+      { type: 'line', x0: 37.2, x1: 37.2, yref: 'paper', y0: 0, y1: 1,
+        line: { color: '#ef4444', width: 1.5, dash: 'dot' } }
+    ],
+    annotations: [
+      { x: 37.2, yref: 'paper', y: 1.06, text: narrow ? 'average actually run: n = 37' : 'average condition actually run: n = 37', showarrow: false,
+        xanchor: 'left', font: { size: narrow ? 10.5 : 11.5, color: '#ef4444' } }
+    ]
+  });
+  Plotly.newPlot('chart-power', traces, layout, CONFIG);
+}
+
+/* ---------- initial render ---------- */
+renderStrip();
+renderLadder();
+renderCells(); tabRendered['panel-cells'] = true;
+updateCalib();
+renderReductio(10);
+renderPower();
+
+/* ---------- resize: re-render at the new measured width ---------- */
+let resizeTimer, lastW = chartW();
+function rerenderAll() {
+  const w = chartW();
+  if (Math.abs(w - lastW) < 2) return;
+  lastW = w;
+  renderStrip();
+  renderLadder();
+  renderCalib(parseInt(calibSlider.value, 10));
+  renderReductio(parseInt(redSlider.value, 10));
+  renderPower();
+  // re-render only the visible tab chart; stale hidden ones re-render on activation
+  const active = document.querySelector('.tab-panel.active');
+  Object.keys(tabRenders).forEach(id => {
+    if (active && active.id === id) tabRenders[id]();
+    else tabRendered[id] = false;
+  });
+}
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(rerenderAll, 220);
+});
+window.addEventListener('orientationchange', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(rerenderAll, 350);
+});
+
+})();
+</script>
+</body>
+</html>

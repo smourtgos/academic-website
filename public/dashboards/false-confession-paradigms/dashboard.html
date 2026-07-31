@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What Do Laboratory False Confession Paradigms Measure?</title>
 <meta property="og:title" content="What Do Laboratory False Confession Paradigms Measure?" />
-<meta name="description" content="Interactive walkthrough of a calibration meta-analysis of 41 laboratory false confession studies: 41% of innocent participants confess, 37% with no interrogation at all. What do those numbers actually measure?" />
+<meta name="description" content="Interactive walkthrough of a calibration meta-analysis of 41 laboratory false confession studies: 41% of innocent participants confess, 37% in control conditions. What do those numbers actually measure?" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -493,7 +493,7 @@ details.robust[open] summary::after { content: "\2212"; }
     <h1>What Do Laboratory False Confession Paradigms Measure?</h1>
     <p class="subtitle">
       Across 41 studies and 3,682 participants, 41% of innocent people &ldquo;confessed&rdquo; to something
-      they did not do &mdash; including 37% who were never interrogated at all. This page walks through
+      they did not do &mdash; including 37% who were in the control condition. This page walks through
       what those numbers do, and do not, tell us about real interrogation rooms.
     </p>
     <p class="byline">
@@ -762,7 +762,7 @@ details.robust[open] summary::after { content: "\2212"; }
     heterogeneity into the hypothetical real world) lowers the edge of compatibility from about 40% to about
     32% overall, and to 23% for control conditions &mdash; still double the field&rsquo;s upper-bound survey
     estimates. <strong>The laboratory numbers are only compatible with a world in which false confession is
-    routine.</strong> No one believes that world is ours.
+    routine.</strong>
   </p>
 </section>
 
@@ -802,15 +802,55 @@ details.robust[open] summary::after { content: "\2212"; }
   <p class="body-text">
     To be clear about the logic: <strong>this is a reductio, not an accusation.</strong> We do not claim
     researchers believe the field produces hundreds of thousands of false confessions a year. The point is
-    the converse &mdash; because that implication is absurd, a laboratory rate that produces it cannot be
+    the converse &mdash; because that implication is not reasonable, a laboratory rate that produces it cannot be
     measuring the same thing as real-world false confession. Even the <em>control</em> conditions alone
     (37%, no tactics) imply roughly 278,000 per year.
   </p>
 </section>
 
-<!-- STEP 8: The power trap -->
+<!-- STEP 8: The size of the gap -->
+<section class="section" id="effects">
+  <span class="section-kicker">Step 8 &middot; The size of the gap</span>
+  <h2 class="section-title">Even generous assumptions leave an enormous gap</h2>
+  <p class="section-lede">
+    Effect sizes are the standard language for how big a difference is. Express the gap between the
+    pooled laboratory rate (41%) and conservative real-world rates (5&ndash;15%) in those terms, and it
+    dwarfs the conventional benchmarks for a &ldquo;large&rdquo; effect &mdash; at every baseline.
+  </p>
+  <div id="chart-effects" class="chart-wrap" aria-label="Odds ratio of the laboratory rate versus assumed real-world rates, compared with the large-effect threshold"></div>
+  <p class="chart-note">Odds ratio comparing the pooled laboratory rate (41%) with each assumed real-world rate.
+  Dashed line: the conventional &ldquo;large effect&rdquo; benchmark (OR = 2). Hover a bar for the other metrics.</p>
+  <div class="table-scroll">
+  <table class="scorecard">
+    <thead>
+      <tr>
+        <th>Assumed real-world rate</th><th>Risk ratio</th><th>Odds ratio</th>
+        <th>Cohen&rsquo;s <em>h</em></th><th>Cohen&rsquo;s <em>d</em></th><th>Correlation <em>r</em></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>5%</td><td class="data-cell">8.18</td><td class="data-cell">13.1</td><td class="data-cell">0.94</td><td class="data-cell">1.42</td><td class="data-cell">.58</td></tr>
+      <tr><td>10%</td><td class="data-cell">4.09</td><td class="data-cell">6.23</td><td class="data-cell">0.75</td><td class="data-cell">1.01</td><td class="data-cell">.45</td></tr>
+      <tr><td>15%</td><td class="data-cell">2.73</td><td class="data-cell">3.92</td><td class="data-cell">0.59</td><td class="data-cell">0.75</td><td class="data-cell">.35</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="chart-note">Large-effect benchmarks: RR = 1.5, OR = 2.0, <em>h</em> = 0.5, <em>d</em> = 0.8, <em>r</em> = .30.
+  Every value exceeds its benchmark except Cohen&rsquo;s <em>d</em> at the 15% baseline (0.75, just below the 0.8 cutoff).</p>
+  <p class="body-text">
+    At a 5% baseline, the gap corresponds to an odds ratio of 13.1 and a Cohen&rsquo;s <em>d</em> of 1.42.
+    Even granting 15% &mdash; above the field&rsquo;s own upper-bound survey estimates &mdash; nearly every
+    metric still clears its large-effect threshold, and the one exception (<em>d</em> = 0.75) misses by a
+    hair. Gaps of this size are rare for complex social behavior: associations this strong usually involve
+    direct mechanistic relationships, and behavioral effects routinely shrink once confounding and
+    measurement error are addressed. <strong>These numbers are best read as the size of the calibration gap
+    itself &mdash; not as the size of any real-world interrogation effect.</strong>
+  </p>
+</section>
+
+<!-- STEP 9: The power trap -->
 <section class="section" id="power">
-  <span class="section-kicker">Step 8 &middot; Why the paradigms are built this way</span>
+  <span class="section-kicker">Step 9 &middot; Why the paradigms are built this way</span>
   <h2 class="section-title">High baselines are a feature &mdash; and the problem</h2>
   <p class="section-lede">
     Why would paradigms evolve toward tasks where a third of innocent people comply immediately? Statistical
@@ -830,9 +870,9 @@ details.robust[open] summary::after { content: "\2212"; }
   </p>
 </section>
 
-<!-- STEP 9: Takeaways -->
+<!-- STEP 10: Takeaways -->
 <section class="section" id="practice">
-  <span class="section-kicker">Step 9 &middot; Takeaways</span>
+  <span class="section-kicker">Step 10 &middot; Takeaways</span>
   <h2 class="section-title">What this means in practice</h2>
   <div class="practice-grid">
     <div class="practice-card">
@@ -845,8 +885,8 @@ details.robust[open] summary::after { content: "\2212"; }
     <div class="practice-card">
       <h3>For police &amp; trainers</h3>
       <p>The experiments do show that false evidence ploys and minimization elicit more admissions than a
-      bare accusation &mdash; in the lab. Treat that as evidence about compliance pressure worth taking
-      seriously in training and policy. Do not treat 41%, 69%, or &ldquo;13&times; the odds&rdquo; as the
+      bare accusation &mdash; in the lab. Treat that as evidence about compliance pressure worth considering
+      in context. Do not treat 41%, 69%, or &ldquo;13&times; the odds&rdquo; as the
       real-world risk attached to any tactic.</p>
     </div>
     <div class="practice-card">
@@ -881,8 +921,6 @@ details.robust[open] summary::after { content: "\2212"; }
       <li><strong>Heterogeneity?</strong> Injecting the corpus&rsquo;s own between-condition heterogeneity
       (&tau; &asymp; 1.5) into the hypothetical real world lowers the compatibility edge from &asymp;40% to
       &asymp;32% (23% for controls) &mdash; still far above any defensible real-world rate.</li>
-      <li><strong>Generous baselines?</strong> Even granting a 15% real-world rate &mdash; above the field&rsquo;s
-      own upper bounds &mdash; the lab-vs-world gap remains OR = 3.9, d = 0.75.</li>
     </ul>
   </div>
 </details>
@@ -976,7 +1014,13 @@ const RESULTS = {
     { label: '40% → 60%  (laboratory base rate)', n: 97,   lab: true  }
   ],
   arrestsUS: 7.5e6,   // FBI (2024)
-  nreCases: 375       // documented false confession exonerations, cumulative
+  nreCases: 375,      // documented false confession exonerations, cumulative
+  // Effect sizes: lab rate (.41) vs assumed real-world baselines (Table 2)
+  effectSizes: [
+    { p0: '5%',  rr: 8.18, or: 13.1,  h: 0.94, d: 1.42, r: 0.58 },
+    { p0: '10%', rr: 4.09, or: 6.23,  h: 0.75, d: 1.01, r: 0.45 },
+    { p0: '15%', rr: 2.73, or: 3.92,  h: 0.59, d: 0.75, r: 0.35 }
+  ]
 };
 
 const PARADIGMS = ['AltKey', 'Cheating', 'FakeVideo', 'TheftAccusation'];
@@ -1377,7 +1421,44 @@ function renderReductio(pct) {
 }
 redSlider.addEventListener('input', () => renderReductio(parseInt(redSlider.value, 10)));
 
-/* ---------- Step 8: power ---------- */
+/* ---------- Step 8: effect sizes ---------- */
+function renderEffects() {
+  const narrow = isNarrow();
+  const es = RESULTS.effectSizes;
+  const trace = {
+    type: 'bar',
+    x: es.map(e => e.p0),
+    y: es.map(e => e.or),
+    marker: { color: '#2563eb' },
+    width: 0.55,
+    text: es.map(e => e.or.toFixed(1)),
+    textposition: 'outside', cliponaxis: false,
+    textfont: { size: narrow ? 11 : 13, color: '#0f172a', family: FONT },
+    customdata: es.map(e => [e.rr, e.h, e.d, e.r]),
+    hovertemplate: '<b>vs %{x} real-world baseline</b><br>Odds ratio %{y:.2f} · Risk ratio %{customdata[0]:.2f}<br>h %{customdata[1]:.2f} · d %{customdata[2]:.2f} · r %{customdata[3]:.2f}<extra></extra>'
+  };
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 300 : 340,
+    margin: { l: narrow ? 42 : 60, r: narrow ? 8 : 30, t: 30, b: 55 },
+    showlegend: false,
+    xaxis: axis({ type: 'category', title: { text: 'Assumed real-world false confession rate', font: { size: narrow ? 11.5 : 12.5 } }, showgrid: false, tickfont: { size: narrow ? 10.5 : 12, color: '#64748b' } }),
+    yaxis: axis({ title: narrow ? undefined : { text: 'Odds ratio: lab rate (41%) vs baseline', font: { size: 12.5 } }, range: [0, 15] }),
+    shapes: [
+      { type: 'line', xref: 'paper', x0: 0, x1: 1, y0: 2, y1: 2,
+        line: { color: '#64748b', width: 1.5, dash: 'dot' } }
+    ],
+    annotations: [
+      { xref: 'paper', x: 0.99, y: 2, xanchor: 'right', yanchor: 'bottom',
+        text: narrow ? "'large effect' (OR = 2)" : "conventional 'large effect' benchmark (OR = 2)",
+        showarrow: false, font: { size: narrow ? 10 : 11.5, color: '#475569' },
+        bgcolor: 'rgba(255,255,255,0.85)' }
+    ]
+  });
+  Plotly.newPlot('chart-effects', [trace], layout, CONFIG);
+}
+
+/* ---------- Step 9: power ---------- */
 function renderPower() {
   const narrow = isNarrow();
   const rows = RESULTS.power;
@@ -1417,6 +1498,7 @@ renderLadder();
 renderCells(); tabRendered['panel-cells'] = true;
 updateCalib();
 renderReductio(10);
+renderEffects();
 renderPower();
 
 /* ---------- resize: re-render at the new measured width ---------- */
@@ -1429,6 +1511,7 @@ function rerenderAll() {
   renderLadder();
   renderCalib(parseInt(calibSlider.value, 10));
   renderReductio(parseInt(redSlider.value, 10));
+  renderEffects();
   renderPower();
   // re-render only the visible tab chart; stale hidden ones re-render on activation
   const active = document.querySelector('.tab-panel.active');

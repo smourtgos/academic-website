@@ -1,7 +1,7 @@
 ---
 title: "Do Deceptive Interrogation Bans Affect Juvenile Case Resolution? Nine-State Results, Forthcoming in Crime & Delinquency"
 date: 2026-08-22
-summary: "Nine states banned deceptive interrogation tactics for juveniles between 2022 and 2024. Critics predicted fewer cases would be solved. Across 510,582 juvenile-involved incidents in NIBRS (2021-2024), arrest clearances did not decline after adoption --- estimates are null to modestly positive across every method --- and the one measure that fell, prosecution declinations, fell for adults in the same states too."
+summary: "Nine states banned deceptive interrogation tactics for juveniles between 2022 and 2024, raising concerns among some that the tradeoff would be fewer cases solved. Across 510,582 juvenile-involved incidents in NIBRS (2021-2024), arrest clearances did not decline after adoption --- estimates are null to modestly positive across every method --- and prosecution declinations, the one measure that fell, fell for adults in the same states too."
 tags: ["juvenile justice", "interrogation", "deception bans", "NIBRS", "Bayesian DiD", "synthetic control"]
 featured: true
 ---
@@ -19,10 +19,11 @@ nine states restricted the practice for minors between 2021 and 2024: Illinois a
 2022), Utah (May 2022), Delaware (October 2022), Indiana (July 2023), Colorado (August 2023),
 Connecticut (October 2023), and Nevada and California (July 2024).
 
-The laws had prominent critics, who predicted a concrete public-safety cost: fewer confessions, fewer
-cases solved, more prosecutions refused. Our study, "Do Deceptive Interrogation Bans Affect Case
-Resolution? Evidence from Juvenile Justice Reforms" (Mourtgos & Adams, forthcoming in *Crime &
-Delinquency*), tests that prediction.
+Restrictions on interrogation can be understood not only as safeguards against unreliable admissions
+but also as potential constraints on police fact-development, raising the hypothesis of a public-safety
+tradeoff: fewer confessions, fewer cases solved, more prosecutions refused. Our study, "Do Deceptive
+Interrogation Bans Affect Case Resolution? Evidence from Juvenile Justice Reforms" (Mourtgos & Adams,
+forthcoming in *Crime & Delinquency*), tests whether that hypothesized cost appears in the data.
 
 ## What we did
 
@@ -38,7 +39,7 @@ window robustness checks.
 
 ## What we found
 
-**The predicted cost does not appear within the study period.**
+**We find no aggregate decline in case resolution within the study period.**
 
 - **Arrest clearances did not decline.** The primary estimate is **+2.25 percentage points** (95% CrI
   +0.99 to +3.60), with a posterior probability of any decline of 0.5%. Every one of twelve estimation
@@ -47,20 +48,27 @@ window robustness checks.
   randomization inference, because nine treated clusters are too few for reliable clustered standard
   errors --- the pooled effect is not statistically significant (p = .47): the honest headline is "no
   decline," not "bans raised clearances." We report the positive drift as descriptive, not causal.
-- **The strictest laws show no penalty.** A dose-response model over a statute-strength composite finds
-  the strongest laws (Oregon, Connecticut) associated with the *largest positive* annual drift in
-  arrest clearances (+2.28 pp/yr, CrI +1.00 to +3.51) --- the opposite of the critics' corollary.
+- **The strictest laws show no larger declines.** A dose-response model over a statute-strength
+  composite finds the strongest laws (Oregon, Connecticut) associated with the *largest positive* annual
+  change in arrest clearances (+2.28 pp/yr, CrI +1.00 to +3.51) --- the opposite of the hypothesized
+  gradient, though the strength cells are thin (one or two states per level).
 - **Prosecution declinations fell, but not just for juveniles.** Declinations drifted down in ban
-  states (-0.26 pp, P(increase) = .13) --- the opposite of the predicted surge. Adult cases in the same
-  states show a comparable decline, and the juvenile-minus-adult triple-difference is null (-0.27 pp,
-  CrI -1.11 to +0.49), so the pattern is not attributable to the juvenile bans.
-- **Confession-heavy crimes show no collapse.** Murder and sex-crime clearances --- where
-  interrogation evidence matters most --- show no change in either direction.
+  states (-0.26 pp, P(increase) = .13) --- the opposite of the hypothesized increase. Adult cases in the
+  same states show a comparable decline, and the juvenile-minus-adult triple-difference is null
+  (-0.27 pp, CrI -1.11 to +0.49), so the pattern is not attributable to the juvenile bans.
+- **Offense-specific results are mixed but broadly consistent with the aggregate pattern.** Property
+  offenses show positive, relatively precise estimates. Sex crimes show the most credible evidence of a
+  possible reduction (P(decline) = .89; -0.63 pp, with an interval including zero), and the murder
+  estimate is negative but highly imprecise --- patterns consistent with the possibility that cases
+  depending more heavily on statement evidence respond differently, though not confidently
+  distinguishable from sampling noise.
 
-Honest limits: Nevada and California contribute only about six post-ban months; pre-trend tests reject
+Caveats: Nevada and California contribute only about six post-ban months; pre-trend tests reject
 equal slopes for both outcomes (for arrest clearance the divergence biases *against* the positive
-finding; for prosecution declined it warrants genuine caution); and we observe case outcomes, not
-interrogation practice, so mechanisms remain unmeasured.
+finding; for prosecution declined it warrants genuine caution); we observe case outcomes, not
+interrogation practice, so mechanisms remain unmeasured; the analysis is aggregate, so individual cases
+may still have been affected even where no aggregate change is detectable; and the statutes studied
+cover juveniles only --- results could differ for adult interrogation restrictions.
 
 ## Explore the results
 

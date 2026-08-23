@@ -463,13 +463,12 @@ details.robust[open] summary::after { content: "\2212"; }
     <span class="category-badge">Policy Evaluation</span>
     <h1>Did Banning Deceptive Interrogation Tactics Affect Juvenile Case Outcomes?</h1>
     <p class="subtitle">
-      Between 2022 and 2024, nine states banned police from using deception &mdash; fake evidence, false
-      promises of leniency &mdash; when interrogating juveniles, and critics warned the price would be
-      fewer cases solved. Across 510,582 serious juvenile-involved incidents in national police data
-      (2021&ndash;2024), that cost does not appear: arrest clearances did not decline after adoption, with
-      estimates running null to modestly positive across every method we tried. The one measure that did
-      fall &mdash; prosecutors declining to pursue cases &mdash; fell for adult suspects in the same states
-      too, so it is not a juvenile-ban effect.
+      Between 2022 and 2024, nine states banned police from using deception when interrogating juveniles,
+      raising concerns among some that the tradeoff would be fewer cases solved. Across 510,582 serious
+      juvenile-involved incidents in NIBRS (2021&ndash;2024), arrest clearances did not decline after
+      adoption, and estimates are null to modestly positive across every method. Prosecution-declined
+      clearances fell in adopting states, but the same decline appears for adult suspects, and
+      triple-difference analyses indicate the pattern is not juvenile-specific.
     </p>
     <p class="byline">
       Scott M. Mourtgos &amp; Ian T. Adams &middot; <em>Crime &amp; Delinquency</em> (forthcoming)
@@ -494,19 +493,21 @@ details.robust[open] summary::after { content: "\2212"; }
 <!-- STEP 1: The policy -->
 <section class="section" id="policy">
   <span class="section-kicker">Step 1 &middot; The policy</span>
-  <h2 class="section-title">What nine states banned &mdash; and the fear it raised</h2>
+  <h2 class="section-title">What nine states banned &mdash; and the question it raised</h2>
   <p class="section-lede">
     American police may legally lie to adult suspects during interrogation: claim to hold fingerprints that
-    do not exist, or hint that confessing brings leniency. Because juveniles are far more likely than adults
-    to falsely confess under such pressure, nine states passed laws between 2021 and 2024 restricting
-    deceptive interrogation of minors &mdash; typically by making statements obtained through deception
-    inadmissible in court.
+    do not exist, or hint that confessing brings leniency. Because juveniles are widely considered more
+    susceptible than adults to suggestive questioning and false confession, nine states passed laws between
+    2021 and 2024 restricting deceptive interrogation of minors &mdash; typically by making statements
+    obtained through deception inadmissible in court.
   </p>
   <p class="body-text">
-    The laws had prominent critics. Law-enforcement organizations and some legal scholars predicted a
-    concrete public-safety cost: <strong>take away deception, and fewer cases will be solved</strong> &mdash;
-    fewer confessions, fewer arrests standing up, more cases that prosecutors refuse to pursue. That
-    prediction is testable. This page walks through the test.
+    These statutes sit between two research traditions. One treats deception as a contributor to unreliable
+    admissions, with juveniles of special concern. The other treats restrictions on interrogation as
+    potential constraints on police fact-development &mdash; suggesting a possible tradeoff:
+    <strong>fewer confessions, fewer cases solved, more cases that prosecutors decline</strong>. A competing
+    possibility is substitution: agencies adapt to legal constraints, and investigators shift toward other
+    lawful techniques. Which pattern the data show is an empirical question. This page walks through it.
   </p>
   <div class="caveat">
     <strong>How to read this page:</strong> it is a descriptive companion to a peer-reviewed study, scoped
@@ -565,34 +566,35 @@ details.robust[open] summary::after { content: "\2212"; }
 <!-- STEP 4: The yardsticks -->
 <section class="section" id="outcomes">
   <span class="section-kicker">Step 4 &middot; The yardsticks</span>
-  <h2 class="section-title">Two ways a juvenile case gets resolved &mdash; and two predicted harms</h2>
+  <h2 class="section-title">Two ways a juvenile case gets resolved &mdash; and two hypothesized changes</h2>
   <p class="section-lede">
-    NIBRS records how each incident is cleared. We track the two outcomes the critics&rsquo; prediction
-    speaks to directly.
+    NIBRS records how each incident is cleared. We track the two outcomes the hypothesized tradeoff speaks
+    to directly.
   </p>
   <div class="card-grid">
     <div class="p-card" style="border-top-color:#2563eb;">
       <h3>Arrest clearance</h3>
-      <div class="p-cite">Predicted to FALL after a ban</div>
+      <div class="p-cite">The concern: could fall after a ban</div>
       <p>The case is closed because someone was arrested, charged, and turned over for prosecution &mdash;
       the everyday sense of a case being &ldquo;solved.&rdquo; Across the full panel, roughly 41% of these
       juvenile-involved incidents end in an arrest clearance.</p>
-      <div class="p-chips"><span class="chip">&asymp; 41% of incidents</span><span class="chip solid" style="background:#2563eb;">critics predicted: decline</span></div>
+      <div class="p-chips"><span class="chip">&asymp; 41% of incidents</span><span class="chip solid" style="background:#2563eb;">concern: decline</span></div>
     </div>
     <div class="p-card" style="border-top-color:#d97706;">
       <h3>Prosecution-declined exceptional clearance</h3>
-      <div class="p-cite">Predicted to RISE after a ban</div>
+      <div class="p-cite">The concern: could rise after a ban</div>
       <p>Police identified the offender and presented the case, but the prosecutor declined to pursue it
-      &mdash; the incident is closed &ldquo;exceptionally.&rdquo; If bans gutted the evidence in juvenile
-      cases, these refusals should become more common. They are rare to begin with: about 3.3% of
+      &mdash; the incident is closed &ldquo;exceptionally.&rdquo; If bans weakened the evidence in juvenile
+      cases, these refusals could become more common. They are rare to begin with: about 3.3% of
       incidents.</p>
-      <div class="p-chips"><span class="chip">&asymp; 3.3% of incidents</span><span class="chip solid" style="background:#d97706;">critics predicted: increase</span></div>
+      <div class="p-chips"><span class="chip">&asymp; 3.3% of incidents</span><span class="chip solid" style="background:#d97706;">concern: increase</span></div>
     </div>
   </div>
   <p class="body-text">
-    Throughout this page, probabilities are reported in the <strong>direction of the predicted cost</strong>:
-    for arrest clearance, the posterior probability of a <em>decline</em>; for prosecution-declined, the
-    probability of an <em>increase</em>. Small values mean the data point away from the predicted harm.
+    Throughout this page, probabilities are reported in the <strong>direction of the hypothesized
+    cost</strong>: for arrest clearance, the posterior probability of a <em>decline</em>; for
+    prosecution-declined, the probability of an <em>increase</em>. Small values mean the data point away
+    from the hypothesized tradeoff.
   </p>
 </section>
 
@@ -622,24 +624,23 @@ details.robust[open] summary::after { content: "\2212"; }
   </div>
   <div id="chart-headline" class="chart-wrap" aria-label="Dot and interval chart of the two primary estimates against a zero line"></div>
   <p class="chart-note">Dots are posterior mean effects in percentage points; bars are 95% credible
-  intervals. The dashed line at zero is &ldquo;no change.&rdquo; The critics&rsquo; prediction lives below
-  zero for arrest clearance and above zero for prosecution declined &mdash; neither side materializes.</p>
+  intervals. The dashed line at zero is &ldquo;no change.&rdquo; A tradeoff would appear below zero for
+  arrest clearance and above zero for prosecution declined.</p>
   <p class="body-text">
-    On the outcome critics cared most about, the posterior odds are roughly <strong>200-to-1 against any
-    decline</strong> in arrest clearances within the study period &mdash; the point estimate actually runs
-    modestly positive. We treat that positive sign as descriptive, not causal: concurrent reforms, agency
-    adaptation, or compositional shifts could produce it. What the data speak to directly is the predicted
-    cost, and <strong>the predicted cost is absent</strong>.
+    The posterior probability of any decline in arrest clearances within the study period is 0.5%. We
+    treat the positive point estimate as descriptive, not causal: concurrent reforms, agency adaptation,
+    or compositional shifts could produce it. <strong>On the available evidence, and over the study period
+    examined, adoption is not associated with an aggregate decline in arrest clearances.</strong>
   </p>
 </section>
 
 <!-- STEP 6: The test -->
 <section class="section" id="test">
   <span class="section-kicker">Step 6 &middot; The test</span>
-  <h2 class="section-title">The critics&rsquo; prediction vs. what the data show</h2>
+  <h2 class="section-title">The hypothesized tradeoff vs. what the data show</h2>
   <p class="section-lede">
-    The harm prediction implies several observable patterns. Each row is one of them, next to what the
-    data actually show for 2021&ndash;2024.
+    If restricting deception reduced case resolution, several patterns should be observable. Each row is
+    one of them, next to what the data actually show for 2021&ndash;2024.
   </p>
   <div class="table-scroll">
   <table class="scorecard">
@@ -653,12 +654,12 @@ details.robust[open] summary::after { content: "\2212"; }
     <tbody>
       <tr>
         <td>Arrest clearances should <em>fall</em> in ban states</td>
-        <td class="data-cell">+2.25 pp [+0.99, +3.60] <span class="data-sub">P(decline) = .005 &mdash; wrong direction for the prediction</span></td>
+        <td class="data-cell">+2.25 pp [+0.99, +3.60] <span class="data-sub">P(decline) = .005; the point estimate runs modestly positive</span></td>
         <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
       </tr>
       <tr>
         <td>The <em>strictest</em> laws should hurt the most</td>
-        <td class="data-cell">Strongest statutes (OR, CT) show the largest positive drift: +2.28 pp/yr [+1.00, +3.51] <span class="data-sub">the dose gradient runs opposite to the prediction (Step 9)</span></td>
+        <td class="data-cell">Strongest statutes (OR, CT) show the largest positive annual change: +2.28 pp/yr [+1.00, +3.51] <span class="data-sub">the gradient runs opposite to the hypothesized direction, though strength cells are thin (Step 9)</span></td>
         <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
       </tr>
       <tr>
@@ -680,10 +681,10 @@ details.robust[open] summary::after { content: "\2212"; }
   </table>
   </div>
   <p class="body-text">
-    To be precise about scope: this scorecard tests the prediction <strong>within the first one to three
+    To be precise about scope: this scorecard tests the hypothesis <strong>within the first one to three
     years of each ban, in states that report to NIBRS</strong>. It does not rule out longer-run effects,
-    and it does not establish that bans <em>improve</em> clearances &mdash; only that the predicted
-    deterioration is absent everywhere we can look.
+    and it does not establish that bans <em>improve</em> clearances &mdash; only that the hypothesized
+    deterioration is not observed in any of these tests.
   </p>
 </section>
 
@@ -694,8 +695,8 @@ details.robust[open] summary::after { content: "\2212"; }
   <p class="section-lede">
     Any single model can mislead, so the paper re-asks the question with different estimators, samples,
     and windows: frequentist two-way fixed effects, randomization tests, synthetic controls, restricted
-    samples, an extended 2016&ndash;2024 panel, and placebo contrasts. If the headline were a fluke of one
-    specification, these would disagree. They do not.
+    samples, an extended 2016&ndash;2024 panel, and placebo contrasts. If the aggregate result were an
+    artifact of one specification, the alternatives would disagree.
   </p>
   <div class="tab-row" role="tablist">
     <button class="tab-btn active" data-outcome="arrest" role="tab" aria-selected="true">Arrest clearance</button>
@@ -712,7 +713,7 @@ details.robust[open] summary::after { content: "\2212"; }
   <p class="body-text">
     The methods disagree about magnitude &mdash; from +1.05 to +3.53 percentage points for arrest
     clearance &mdash; and about statistical significance. They do not disagree about direction:
-    <strong>no method, sample, or window produces evidence of the predicted decline.</strong>
+    <strong>no method, sample, or window produces evidence of the hypothesized decline.</strong>
   </p>
 </section>
 
@@ -735,31 +736,34 @@ details.robust[open] summary::after { content: "\2212"; }
     Every point estimate is positive &mdash; and at two-decimal rounding, four of nine states have
     P(decline) &le; .05. The honest summary is not &ldquo;bans raised clearances in nine states&rdquo;;
     single-state intervals are wide, and only Indiana&rsquo;s (+3.71, CrI +0.61 to +5.86) excludes zero.
-    The honest summary is that <strong>in no state does the ban look like it cost arrest clearances</strong>
-    &mdash; nine chances for the predicted harm to appear, zero appearances.
+    The consistent finding is that <strong>no state shows evidence of a post-adoption decline in arrest
+    clearances</strong>.
   </p>
 </section>
 
 <!-- STEP 9: Statute strength -->
 <section class="section" id="dose">
   <span class="section-kicker">Step 9 &middot; Statute strength</span>
-  <h2 class="section-title">Stronger bans, if anything, look better</h2>
+  <h2 class="section-title">Stronger statutes do not show larger declines</h2>
   <p class="section-lede">
-    The harm prediction has a corollary: the strictest laws should hurt the most. Using the Step 3
-    composite, the model estimates how each outcome drifts per year after adoption at each observed
-    strength level &mdash; from Nevada&rsquo;s 2 to Oregon and Connecticut&rsquo;s 8.
+    If statutory restrictiveness reduced case resolution, more restrictive statutes should show more
+    negative post-adoption trajectories. Using the Step 3 composite, the model estimates how each outcome
+    changes per year after adoption at each observed strength level &mdash; from Nevada&rsquo;s 2 to
+    Oregon and Connecticut&rsquo;s 8.
   </p>
   <div id="chart-dose" class="chart-wrap" aria-label="Dot and interval chart of estimated annual post-ban change by statute strength for both outcomes"></div>
   <p class="chart-note">Estimated post-adoption trend (percentage points per year) at each observed
   composite score, with 95% credible intervals; blue = arrest clearance, amber = prosecution declined.
   Hover for the states at each level and the cost-direction probability.</p>
   <p class="body-text">
-    For arrest clearance the gradient runs <em>against</em> the prediction: the strongest statutes show
-    the largest positive annual drift (+2.28 pp/yr, CrI +1.00 to +3.51), the weakest a flat-to-negative
-    one. For prosecution declined, every level below the strongest shows declinations <em>falling</em>;
-    at the strongest (OR/CT) the estimate is +0.14 pp/yr with an interval straddling zero &mdash; a
-    non-trivial but not credible signal in the cost direction. <strong>Nowhere does stringency purchase
-    the predicted harm.</strong> As throughout, these are dose-response associations, not mechanisms.
+    For arrest clearance, the estimated annual change becomes more positive as restrictiveness increases
+    &mdash; the opposite of the hypothesized gradient &mdash; with the strongest statutes (OR, CT) at
+    +2.28 pp/yr (CrI +1.00 to +3.51). The pattern is monotonic, but the strength cells are thin (one
+    state at scores 2 and 3; two at scores 4 and 8), so the gradient reflects differences among a small
+    number of states as much as a general relationship with statutory strength. For prosecution declined,
+    estimated annual changes are negative below the strongest level; at OR/CT the estimate is +0.14 pp/yr
+    with an interval straddling zero. <strong>No gradient consistent with the claim that restrictiveness
+    reduces case resolution appears.</strong> As throughout, these are associations, not mechanisms.
   </p>
 </section>
 
@@ -780,8 +784,8 @@ details.robust[open] summary::after { content: "\2212"; }
   <p class="body-text">
     Juvenile declinations fell (&minus;1.03 pp), but so did adult declinations in the same states
     (&minus;0.51 pp, credibly negative) &mdash; and the juvenile-minus-adult difference (&minus;0.27 pp,
-    CrI &minus;1.11 to +0.49) is null. The decline looks like <strong>something happening to those
-    states&rsquo; case processing generally, not something the juvenile bans did</strong>. The same
+    CrI &minus;1.11 to +0.49) is null. The decline is <strong>consistent with broader changes in those
+    states&rsquo; case processing rather than a juvenile-specific policy effect</strong>. The same
     placebo sharpens the arrest result in the other direction: adult arrest clearances did not rise
     (&minus;0.74 pp, interval spanning zero), so the juvenile-specific arrest difference is +2.10 pp
     (CrI +0.54 to +3.68). One footnote: Connecticut is omitted from state-level declination summaries
@@ -806,27 +810,40 @@ details.robust[open] summary::after { content: "\2212"; }
   <p class="chart-note">Same convention, by offense type (n = incidents). &dagger; The prosecution-declined
   model for murder is not estimable &mdash; too few declined murder cases to identify the parameter.</p>
   <p class="body-text">
-    The positive arrest drift is largest for the youngest juveniles (&le;13: +3.23 pp) and null for
-    16&ndash;17-year-olds; both Black (+1.99) and non-Black (+1.11) youth show credibly positive
-    estimates. By offense, property crimes (burglary, motor vehicle theft) drive the pattern, while
-    <strong>murder and sex crimes &mdash; the cases where interrogation and confession evidence matter
-    most &mdash; show no change in either direction</strong> (murder &minus;1.41 pp, CrI &minus;8.35 to
-    +5.71; sex crimes &minus;0.63, CrI &minus;1.61 to +0.39). Even in confession-heavy cases, the
-    predicted collapse does not appear. These splits are descriptive; we do not claim a mechanism for
-    any of them.
+    By age and race, the positive arrest-clearance drift is largest for the youngest juveniles (&le;13:
+    +3.23 pp) and absent for 16&ndash;17-year-olds; both Black (+1.99) and non-Black (+1.11) youth show
+    credibly positive estimates. By offense, results are mixed but broadly consistent with the aggregate
+    pattern: property offenses &mdash; burglary, motor vehicle theft &mdash; show positive and relatively
+    precise estimates, while several violent and more complex offenses have point estimates near zero or
+    negative with wide intervals spanning both directions. <strong>The offense with the most credible
+    evidence of a possible reduction is sex crimes</strong> (P(decline) = .89), though the estimate is
+    modest (&minus;0.63 pp) and its interval includes zero (&minus;1.61 to +0.39). The most negative
+    point estimate is murder, but it is highly imprecise (&minus;1.41 pp, CrI &minus;8.35 to +5.71).
+    These patterns are consistent with the possibility that clearance outcomes in serious, complex cases
+    &mdash; those that may depend more heavily on statement evidence &mdash; respond differently to
+    interrogation constraints; the data do not allow that possibility to be distinguished confidently
+    from noise. These splits are descriptive; we claim no mechanism for any of them.
   </p>
 </section>
 
 <!-- STEP 12: The honest limits -->
 <section class="section" id="limits">
-  <span class="section-kicker">Step 12 &middot; The honest limits</span>
-  <h2 class="section-title">What this page does not claim</h2>
+  <span class="section-kicker">Step 12 &middot; Caveats</span>
+  <h2 class="section-title">Caveats</h2>
   <p class="section-lede">
-    A fair reading of the critics deserves a fair statement of what these data cannot settle.
+    A fair reading of these results requires being clear about what they can and cannot settle.
   </p>
   <div class="offer-panel">
-    <h3>What these results do not rule out</h3>
+    <h3>What to keep in mind</h3>
     <ul>
+      <li><strong>Aggregate, not individual cases.</strong> The analysis is of aggregate clearance rates.
+      It should not be read to imply that no individual case was affected &mdash; it remains possible that
+      some cases that would otherwise have been cleared were not, even if such effects are not detectable
+      at the aggregate level.</li>
+      <li><strong>Juveniles only.</strong> These statutes govern the interrogation of juveniles, and every
+      estimate here is for juvenile-involved incidents. The results say nothing about what restricting
+      deception in adult interrogations would do &mdash; adult outcomes appear on this page only as a
+      placebo comparison, and results could differ for adults.</li>
       <li><strong>Long-run effects.</strong> Nevada and California contribute only ~6 post-ban months; the
       longest-treated states contribute three years. Costs that emerge later would not be visible here.</li>
       <li><strong>Pre-existing trend differences.</strong> Formal tests reject equal pre-ban slopes (arrest
@@ -837,7 +854,9 @@ details.robust[open] summary::after { content: "\2212"; }
       caution.</li>
       <li><strong>Mechanisms.</strong> We measure case outcomes, not interrogation practice. Whether
       investigators changed tactics, recorded more, or obtained fewer confessions is not observed &mdash;
-      and the positive arrest estimates are associations, not demonstrated effects of the bans.</li>
+      and the positive arrest estimates are associations, not demonstrated effects of the bans. NIBRS also
+      does not flag which incidents involved interrogation at all, so the denominator includes many cases
+      where the restricted tactic could not have mattered, diluting any true effect toward zero.</li>
       <li><strong>Justice quality.</strong> A cleared case is not necessarily a justly cleared case;
       administrative clearance rates cannot speak to wrongful convictions averted or caused.</li>
       <li><strong>Coverage.</strong> NIBRS reporting grew over the window; results describe reporting
@@ -853,23 +872,24 @@ details.robust[open] summary::after { content: "\2212"; }
   <div class="practice-grid">
     <div class="practice-card">
       <h3>For legislators &amp; advocates</h3>
-      <p>The concrete cost predicted by opponents &mdash; fewer juvenile cases solved &mdash; has not
-      materialized in the first one to three years of any adopting state, including the states with the
-      strictest statutes. Debates over these bans can proceed on juvenile-protection grounds without
-      assuming a demonstrated clearance penalty.</p>
+      <p>Over the first one to three years of adoption, the data show no aggregate decline in juvenile
+      case resolution in any adopting state, including those with the strictest statutes. On current
+      evidence, a clearance penalty should not be assumed in debates over these laws &mdash; though
+      longer-run effects remain an open question.</p>
     </div>
     <div class="practice-card">
       <h3>For police executives</h3>
-      <p>Agencies in ban states did not stop solving juvenile cases; arrest clearances held or drifted
-      up, including for the youngest suspects. The drop in prosecutor declinations is a statewide
-      case-processing pattern, not a ban effect &mdash; nothing here suggests investigative collapse
-      requiring workarounds.</p>
+      <p>Aggregate arrest clearances in adopting states held or drifted upward after adoption, including
+      for the youngest suspects, and the decline in prosecutorial declinations appears for adult cases
+      too. One plausible reading is substitution &mdash; investigators adapting toward other lawful
+      techniques rather than absorbing the constraint as lost capacity.</p>
     </div>
     <div class="practice-card">
       <h3>For researchers</h3>
-      <p>The null-on-harm is robust; the positive drift is unexplained. Mechanism data &mdash; recording
-      rates, confession rates, interrogation practice &mdash; are the next step, along with longer
-      post-periods for the 2024 adopters and court data separating dismissal from declination.</p>
+      <p>The absence of an aggregate decline is consistent across methods; the modest positive drift is
+      unexplained. Mechanism data &mdash; recording rates, confession rates, interrogation practice
+      &mdash; are the next step, along with longer post-periods for the 2024 adopters and court data
+      separating dismissal from declination.</p>
     </div>
   </div>
 </section>

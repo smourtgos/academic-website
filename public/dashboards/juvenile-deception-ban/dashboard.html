@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Did Banning Deceptive Interrogation Tactics Affect Juvenile Case Outcomes?</title>
 <meta property="og:title" content="Did Banning Deceptive Interrogation Tactics Affect Juvenile Case Outcomes?" />
-<meta name="description" content="Interactive dashboard presenting difference-in-differences analysis of state-level bans on deceptive interrogation tactics for juveniles using NIBRS 2021-2024 data." />
+<meta name="description" content="Nine states banned deceptive interrogation of juveniles. Across 510,582 juvenile-involved incidents (NIBRS 2021-2024), arrest clearances did not decline after adoption - estimates are null to modestly positive across every method." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -32,9 +32,13 @@
   --red: #ef4444;
   --red-light: #fca5a5;
   --green: #22c55e;
+  --green-light: #dcfce7;
+  --green-dark: #166534;
   --amber: #f59e0b;
   --amber-light: #fef3c7;
   --amber-dark: #92400e;
+  --violet: #7c3aed;
+  --teal: #0d9488;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -46,6 +50,7 @@ body {
   color: var(--navy);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* Navbar */
@@ -83,13 +88,10 @@ body {
 /* Header */
 .header {
   background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
-  padding: 2.5rem 2rem 2rem;
+  padding: 2.75rem 2rem 2.25rem;
   color: var(--white);
 }
-.header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+.header-inner { max-width: 1200px; margin: 0 auto; }
 .category-badge {
   display: inline-block;
   background: var(--blue);
@@ -107,445 +109,340 @@ body {
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 0.75rem;
-  max-width: 800px;
+  max-width: 850px;
 }
 .header .subtitle {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: var(--gray-300);
   font-weight: 400;
-  max-width: 700px;
+  max-width: 780px;
+  margin-bottom: 0.9rem;
 }
-
-/* Preliminary banner */
-.prelim-banner {
-  background: linear-gradient(90deg, #dc2626, #b91c1c);
-  color: var(--white);
-  text-align: center;
-  padding: 0.75rem 1rem;
+.header .byline {
   font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  color: var(--gray-400);
 }
-.prelim-banner span {
-  display: inline-block;
-  margin-right: 0.5rem;
-  font-size: 1rem;
-}
+.header .byline a { color: var(--blue-light); text-decoration: none; }
+.header .byline a:hover { text-decoration: underline; }
 
-/* Tab navigation */
-.tab-nav {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-  position: sticky;
-  top: 56px;
-  z-index: 999;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+/* Stat band */
+.stat-band {
+  background: var(--navy-dark);
+  border-top: 1px solid rgba(148,163,184,0.15);
+  padding: 1.1rem 2rem;
 }
-.tab-nav::-webkit-scrollbar { height: 0; }
-.tab-nav-inner {
+.stat-band-inner {
   max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  padding: 0 1rem;
-  gap: 0;
-}
-.tab-btn {
-  background: none;
-  border: none;
-  padding: 1rem 1.25rem;
-  font-family: var(--font);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--gray-500);
-  cursor: pointer;
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-.tab-btn:hover {
-  color: var(--navy);
-  background: var(--gray-50);
-}
-.tab-btn.active {
-  color: var(--blue);
-  border-bottom-color: var(--blue);
-  font-weight: 600;
-}
-
-/* Main content */
-.main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
-}
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* KPI cards */
-.kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
-  margin-bottom: 2rem;
 }
-.kpi-card {
-  background: var(--navy);
-  color: var(--white);
-  padding: 1.5rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-.kpi-card .kpi-value {
-  font-size: 2rem;
+.stat-band .stat { text-align: center; }
+.stat-band .stat-value {
+  font-size: clamp(1.3rem, 2.4vw, 1.85rem);
   font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 0.25rem;
-}
-.kpi-card .kpi-label {
-  font-size: 0.8rem;
-  color: var(--gray-300);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Dark explanatory boxes */
-.explain-box {
-  background: var(--navy);
-  color: var(--gray-200);
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  font-size: 0.92rem;
-  line-height: 1.7;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-.explain-box p { margin-bottom: 0.75rem; }
-.explain-box p:last-child { margin-bottom: 0; }
-.explain-box strong { color: var(--white); font-weight: 600; }
-
-/* Warning box */
-.warning-box {
-  background: var(--amber-light);
-  border-left: 4px solid var(--amber);
-  color: var(--amber-dark);
-  padding: 1rem 1.5rem;
-  border-radius: 0 8px 8px 0;
-  margin: 1.5rem 0;
-  font-size: 0.88rem;
-  line-height: 1.6;
-}
-
-/* Section headings */
-.section-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--navy);
-  margin: 2rem 0 1rem;
-}
-.section-subtitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--navy-light);
-  margin: 1.5rem 0 0.75rem;
-}
-
-/* Chart containers */
-.chart-container {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  border: 1px solid var(--gray-200);
-}
-.chart-container .chart-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--navy);
-  margin-bottom: 0.5rem;
-}
-.chart-container .chart-subtitle {
-  font-size: 0.82rem;
-  color: var(--gray-500);
-  margin-bottom: 1rem;
-}
-
-/* Tables */
-.styled-table-wrapper {
-  overflow-x: auto;
-  margin-bottom: 2rem;
-  border-radius: 12px;
-  border: 1px solid var(--gray-200);
-  background: var(--white);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.styled-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-}
-.styled-table thead {
-  background: var(--navy);
   color: var(--white);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
 }
-.styled-table thead th {
-  padding: 0.85rem 1rem;
-  text-align: left;
+.stat-band .stat-label {
+  font-size: 0.72rem;
   font-weight: 600;
-  font-size: 0.8rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
+  color: var(--gray-400);
+  margin-top: 0.15rem;
 }
-.styled-table tbody tr {
-  border-bottom: 1px solid var(--gray-100);
-  transition: background 0.15s;
-}
-.styled-table tbody tr:hover { background: var(--gray-50); }
-.styled-table tbody td {
-  padding: 0.75rem 1rem;
-  white-space: nowrap;
-}
-.styled-table .positive { color: #16a34a; font-weight: 600; }
-.styled-table .negative { color: #dc2626; font-weight: 600; }
-.styled-table .neutral { color: var(--gray-500); font-weight: 500; }
-.styled-table .sig { font-weight: 700; }
 
-.table-footnote {
+/* Main + sections */
+.main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem 3rem; }
+.section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  padding: 2rem;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+}
+.section-kicker {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-dark);
+  background: #eff6ff;
+  border-radius: 4px;
+  padding: 0.25rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--navy-dark);
+  margin-bottom: 0.6rem;
+}
+.section-lede {
+  color: var(--gray-600);
+  font-size: 0.97rem;
+  max-width: 820px;
+  margin-bottom: 1.4rem;
+}
+.section p.body-text {
+  color: var(--gray-600);
+  font-size: 0.93rem;
+  max-width: 860px;
+  margin: 1rem 0 0;
+}
+.section p.body-text strong { color: var(--navy-dark); }
+
+/* Callout tiles */
+.tile-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem;
+  margin: 1.25rem 0;
+}
+.tile {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+.tile .tile-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.tile .tile-label {
   font-size: 0.78rem;
   color: var(--gray-500);
-  padding: 0.75rem 1rem;
-  background: var(--gray-50);
-  border-top: 1px solid var(--gray-100);
-  line-height: 1.5;
-}
-
-/* Key takeaway box */
-.takeaway-box {
-  background: var(--navy);
-  color: var(--gray-200);
-  padding: 1.25rem 1.5rem;
-  border-radius: 12px;
-  margin: 1.5rem 0;
-  border-left: 4px solid var(--blue);
-  font-size: 0.92rem;
-  line-height: 1.7;
-}
-.takeaway-box strong { color: var(--white); }
-
-/* Robustness result inline */
-.ri-result {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--gray-100);
-}
-.ri-result:last-child { border-bottom: none; }
-.ri-label {
-  font-size: 0.88rem;
   font-weight: 500;
-  color: var(--navy);
-  min-width: 180px;
+  margin-top: 0.1rem;
 }
-.ri-value {
-  font-size: 0.92rem;
+.tile.accent { border-left: 4px solid var(--blue); }
+.tile.warn { border-left: 4px solid var(--amber); }
+.tile.bad  { border-left: 4px solid var(--red); }
+
+/* Outcome cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+.p-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.1rem 1.15rem;
+  background: var(--white);
+  border-top: 4px solid var(--gray-300);
+}
+.p-card h3 {
+  font-size: 1rem;
   font-weight: 700;
+  color: var(--navy-dark);
+  margin-bottom: 0.2rem;
+}
+.p-card .p-cite { font-size: 0.75rem; color: var(--gray-400); margin-bottom: 0.5rem; }
+.p-card p { font-size: 0.86rem; color: var(--gray-600); }
+.p-card .p-chips { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--gray-100);
   color: var(--gray-600);
 }
+.chip.solid { color: var(--white); }
 
-/* Verification check/x */
-.check { color: #16a34a; font-weight: 700; }
-.cross { color: #dc2626; font-weight: 700; }
+/* Caveat strip */
+.caveat {
+  margin-top: 1.25rem;
+  background: var(--amber-light);
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.88rem;
+  color: var(--amber-dark);
+}
+.caveat strong { font-weight: 700; }
 
-/* KPI result cards for sex crimes */
-.result-cards {
+/* Charts */
+.chart-wrap { width: 100%; min-height: 240px; overflow: hidden; }
+.chart-note {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-top: 0.5rem;
+  max-width: 860px;
+}
+
+/* Tabs */
+.tab-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+.tab-btn {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab-btn:hover { background: var(--gray-200); }
+.tab-btn.active { background: var(--navy-dark); color: var(--white); border-color: var(--navy-dark); }
+
+/* Scorecard + tables */
+.scorecard { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.scorecard th, .scorecard td {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+  vertical-align: top;
+}
+.scorecard thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  border-bottom: 2px solid var(--gray-300);
+}
+.scorecard td.verdict { white-space: nowrap; font-weight: 700; }
+.verdict-yes { color: var(--green-dark); }
+.verdict-no { color: var(--red); }
+.scorecard .data-cell { color: var(--navy-dark); font-weight: 600; }
+.scorecard .data-sub { display: block; font-weight: 400; color: var(--gray-500); font-size: 0.8rem; }
+.scorecard td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.table-scroll { overflow-x: auto; }
+
+/* Readouts */
+.readout-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem;
+  margin: 1.1rem 0;
+}
+.readout {
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+}
+.readout .readout-value {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  color: var(--navy-dark);
+}
+.readout .readout-label { font-size: 0.8rem; color: var(--gray-500); margin-top: 0.2rem; }
+.readout.hero { background: var(--navy-dark); border-color: var(--navy-dark); }
+.readout.hero .readout-value { color: var(--white); }
+.readout.hero .readout-label { color: var(--gray-400); }
+
+/* Practice cards */
+.practice-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
 }
-.result-card {
-  background: var(--navy);
-  color: var(--white);
-  padding: 1.75rem;
+.practice-card {
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--blue);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+  background: var(--gray-50);
+}
+.practice-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.45rem; }
+.practice-card p { font-size: 0.86rem; color: var(--gray-600); }
+.offer-panel {
+  margin-top: 1.1rem;
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--green);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+  background: #f0fdf4;
+}
+.offer-panel h3 { font-size: 0.95rem; font-weight: 700; color: var(--green-dark); margin-bottom: 0.45rem; }
+.offer-panel p { font-size: 0.86rem; color: var(--gray-700); }
+.offer-panel ul { margin: 0.4rem 0 0 1.1rem; }
+.offer-panel li { font-size: 0.86rem; color: var(--gray-700); padding: 0.2rem 0; }
+
+/* Robustness details */
+details.robust {
+  border: 1px solid var(--gray-200);
   border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-.result-card .rc-outcome {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--gray-400);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.result-card .rc-value {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 0.15rem;
-}
-.result-card .rc-pval {
-  font-size: 0.8rem;
-  color: var(--gray-400);
-  margin-bottom: 0.5rem;
-}
-.result-card .rc-tag {
-  display: inline-block;
-  padding: 0.2rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: rgba(100,116,139,0.3);
-  color: var(--gray-300);
-}
-
-/* Outcome toggle */
-.outcome-toggle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-.outcome-toggle-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--gray-500);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  align-self: center;
-  margin-right: 0.25rem;
-}
-.outcome-btn {
-  padding: 0.45rem 1rem;
-  border: 1px solid var(--gray-300);
   background: var(--white);
-  border-radius: 6px;
-  font-family: var(--font);
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--navy);
+  padding: 0;
+  margin-bottom: 1.75rem;
+  overflow: hidden;
+}
+details.robust summary {
   cursor: pointer;
-  transition: all 0.2s;
-}
-.outcome-btn:hover { border-color: var(--blue); color: var(--blue); }
-.outcome-btn.active {
-  background: var(--blue);
-  color: var(--white);
-  border-color: var(--blue);
-}
-
-/* State selector for time series */
-.state-selector {
+  padding: 1.1rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy-dark);
+  background: var(--gray-50);
+  list-style: none;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  gap: 0.6rem;
 }
-.state-btn {
-  padding: 0.45rem 1rem;
-  border: 1px solid var(--gray-300);
-  background: var(--white);
-  border-radius: 6px;
-  font-family: var(--font);
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--navy);
-  cursor: pointer;
-  transition: all 0.2s;
+details.robust summary::-webkit-details-marker { display: none; }
+details.robust summary::after {
+  content: "+";
+  margin-left: auto;
+  font-size: 1.2rem;
+  color: var(--gray-400);
+  font-weight: 400;
 }
-.state-btn:hover { border-color: var(--blue); color: var(--blue); }
-.state-btn.active {
-  background: var(--blue);
-  color: var(--white);
-  border-color: var(--blue);
+details.robust[open] summary::after { content: "\2212"; }
+.robust-body { padding: 1rem 1.5rem 1.3rem; }
+.robust-body ul { list-style: none; }
+.robust-body li {
+  font-size: 0.88rem;
+  color: var(--gray-600);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gray-100);
 }
+.robust-body li:last-child { border-bottom: none; }
+.robust-body li strong { color: var(--navy-dark); }
 
 /* Footer */
 .footer {
-  background: var(--navy-dark);
-  color: var(--gray-400);
-  text-align: center;
-  padding: 2rem;
-  font-size: 0.82rem;
+  border-top: 1px solid var(--gray-200);
+  background: var(--white);
+  padding: 1.6rem 2rem 2rem;
+  font-size: 0.83rem;
+  color: var(--gray-500);
 }
-.footer a { color: var(--blue-light); text-decoration: none; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer a { color: var(--blue-dark); text-decoration: none; overflow-wrap: anywhere; }
 .footer a:hover { text-decoration: underline; }
+.footer .footer-cite { margin-bottom: 0.5rem; }
+.footer, .robust-body { overflow-wrap: break-word; }
 
-/* Responsive — Tablets */
-@media (max-width: 768px) {
-  .navbar { padding: 0 1rem; }
-  .navbar-back { font-size: 0.75rem; }
-  .header { padding: 1.5rem 1rem 1.25rem; }
-  .header h1 { font-size: 1.3rem; }
-  .main { padding: 1.25rem 0.75rem 3rem; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .tab-btn { padding: 0.75rem 0.85rem; font-size: 0.78rem; }
-  .explain-box { padding: 1.25rem; font-size: 0.85rem; }
-  .styled-table { font-size: 0.8rem; }
-  .styled-table thead th, .styled-table tbody td { padding: 0.6rem 0.65rem; white-space: normal; }
-  .result-cards { grid-template-columns: 1fr; }
-  .chart-container { padding: 1rem; }
-
-  /* Outcome toggle — wrap to grid */
-  .outcome-toggle { gap: 0.4rem; }
-  .outcome-btn { padding: 0.5rem 0.75rem; font-size: 0.78rem; min-height: 44px; }
-  .outcome-toggle-label { width: 100%; margin-bottom: 0.15rem; }
-
-  /* State selector — smaller buttons */
-  .state-selector { gap: 0.35rem; }
-  .state-btn { padding: 0.4rem 0.7rem; font-size: 0.78rem; min-height: 44px; }
-
-  /* RI results stack */
-  .ri-result { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
-  .ri-label { min-width: auto; }
+@media (max-width: 720px) {
+  .stat-band-inner { grid-template-columns: repeat(2, 1fr); row-gap: 0.9rem; }
+  .stat-band-inner .stat:last-child { grid-column: span 2; }
+  .section { padding: 1.35rem 1.1rem; }
+  .navbar { padding: 0 1.1rem; }
+  .header { padding: 2rem 1.1rem 1.75rem; }
+  .stat-band { padding: 1rem 1.1rem; }
+  .footer { padding: 1.4rem 1.1rem 1.75rem; }
+  .main { padding: 1.75rem 0.85rem 2.25rem; }
 }
-
-/* Responsive — Phones */
-@media (max-width: 480px) {
-  .navbar { height: 48px; }
-  .navbar-brand { font-size: 0.82rem; }
-  .navbar-brand svg { width: 15px; height: 15px; }
-  .navbar-back { display: none; }
-  .prelim-banner { font-size: 0.75rem; padding: 0.6rem 0.75rem; }
-  .header { padding: 1.25rem 0.75rem 1rem; }
-  .header h1 { font-size: 1.15rem; }
-  .header .subtitle { font-size: 0.82rem; }
-  .category-badge { font-size: 0.6rem; padding: 0.25rem 0.6rem; }
-  .tab-nav { top: 48px; }
-  .tab-btn { padding: 0.6rem 0.65rem; font-size: 0.72rem; }
-  .main { padding: 1rem 0.5rem 2rem; }
-  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-  .kpi-card { padding: 0.85rem; border-radius: 8px; }
-  .kpi-card .kpi-value { font-size: 1.5rem; }
-  .kpi-card .kpi-label { font-size: 0.7rem; }
-  .explain-box { padding: 1rem; font-size: 0.82rem; border-radius: 8px; }
-  .chart-container { padding: 0.75rem; border-radius: 8px; }
-  .chart-container .chart-title { font-size: 0.88rem; }
-  .chart-container .chart-subtitle { font-size: 0.75rem; }
-  .section-title { font-size: 1.1rem; }
-  .section-subtitle { font-size: 0.88rem; }
-  .styled-table { font-size: 0.72rem; }
-  .styled-table thead th { font-size: 0.68rem; padding: 0.5rem; }
-  .styled-table tbody td { padding: 0.5rem; white-space: normal; }
-  .table-footnote { font-size: 0.7rem; padding: 0.6rem 0.75rem; }
-  .result-card { padding: 1.25rem; border-radius: 8px; }
-  .result-card .rc-value { font-size: 1.8rem; }
-  .takeaway-box { padding: 1rem; font-size: 0.85rem; border-radius: 8px; }
-  .warning-box { font-size: 0.82rem; padding: 0.85rem 1rem; }
-  .footer { padding: 1.5rem 1rem; font-size: 0.75rem; }
-
-  /* Outcome toggle — full width buttons */
-  .outcome-toggle { gap: 0.35rem; }
-  .outcome-btn { flex: 1 1 auto; text-align: center; padding: 0.5rem 0.5rem; font-size: 0.72rem; min-height: 44px; }
-
-  /* State selector — compact grid */
-  .state-selector { gap: 0.3rem; }
-  .state-btn { flex: 1 1 calc(25% - 0.3rem); text-align: center; padding: 0.45rem 0.3rem; font-size: 0.72rem; min-height: 44px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 </style>
 </head>
@@ -553,1200 +450,1015 @@ body {
 
 <!-- Navbar -->
 <nav class="navbar">
-  <a class="navbar-brand" href="#">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-    Juvenile Interrogation Policy Dashboard
+  <a href="/" class="navbar-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Scott M. Mourtgos, Ph.D.
   </a>
-  <a class="navbar-back" href="https://smourtgos.netlify.app">&larr; Back to Main Site</a>
+  <a href="/dashboards" class="navbar-back">&larr; Back to Dashboards</a>
 </nav>
 
-<!-- Preliminary Results Banner -->
-<div class="prelim-banner">
-  <span>&#9888;</span> PRELIMINARY RESULTS &mdash; These results are preliminary and should not be cited or distributed.
-</div>
-
 <!-- Header -->
-<div class="header">
+<header class="header">
   <div class="header-inner">
-    <div class="category-badge">Policy Evaluation</div>
+    <span class="category-badge">Policy Evaluation</span>
     <h1>Did Banning Deceptive Interrogation Tactics Affect Juvenile Case Outcomes?</h1>
-    <p class="subtitle">Difference-in-differences analysis using NIBRS data from 41 states, 2021&ndash;2024</p>
+    <p class="subtitle">
+      Between 2022 and 2024, nine states banned police from using deception &mdash; fake evidence, false
+      promises of leniency &mdash; when interrogating juveniles, and critics warned the price would be
+      fewer cases solved. Across 510,582 serious juvenile-involved incidents in national police data
+      (2021&ndash;2024), that cost does not appear: arrest clearances did not decline after adoption, with
+      estimates running null to modestly positive across every method we tried. The one measure that did
+      fall &mdash; prosecutors declining to pursue cases &mdash; fell for adult suspects in the same states
+      too, so it is not a juvenile-ban effect.
+    </p>
+    <p class="byline">
+      Scott M. Mourtgos &amp; Ian T. Adams &middot; <em>Crime &amp; Delinquency</em> (forthcoming)
+      &middot; Interactive companion to the peer-reviewed article
+    </p>
+  </div>
+</header>
+
+<!-- Stat band -->
+<div class="stat-band" aria-label="Key study statistics">
+  <div class="stat-band-inner">
+    <div class="stat"><div class="stat-value" data-count="9">0</div><div class="stat-label">Treated states</div></div>
+    <div class="stat"><div class="stat-value" data-count="42">0</div><div class="stat-label">Control states (incl. DC)</div></div>
+    <div class="stat"><div class="stat-value" data-count="510582" data-comma="1">0</div><div class="stat-label">Juvenile-involved incidents</div></div>
+    <div class="stat"><div class="stat-value">+2.25 pp</div><div class="stat-label">Arrest-clearance change after adoption</div></div>
+    <div class="stat"><div class="stat-value">0.5%</div><div class="stat-label">Posterior probability arrests declined</div></div>
   </div>
 </div>
 
-<!-- Tab Navigation -->
-<div class="tab-nav">
-  <div class="tab-nav-inner">
-    <button class="tab-btn active" data-tab="overview">Overview</button>
-    <button class="tab-btn" data-tab="state-results">State Results</button>
-    <button class="tab-btn" data-tab="time-effects">Effects Over Time</button>
-    <button class="tab-btn" data-tab="sex-crimes">Sex Crimes</button>
-    <button class="tab-btn" data-tab="verification">How I Verified</button>
-    <button class="tab-btn" data-tab="about">About &amp; Methodology</button>
+<main class="main">
+
+<!-- STEP 1: The policy -->
+<section class="section" id="policy">
+  <span class="section-kicker">Step 1 &middot; The policy</span>
+  <h2 class="section-title">What nine states banned &mdash; and the fear it raised</h2>
+  <p class="section-lede">
+    American police may legally lie to adult suspects during interrogation: claim to hold fingerprints that
+    do not exist, or hint that confessing brings leniency. Because juveniles are far more likely than adults
+    to falsely confess under such pressure, nine states passed laws between 2021 and 2024 restricting
+    deceptive interrogation of minors &mdash; typically by making statements obtained through deception
+    inadmissible in court.
+  </p>
+  <p class="body-text">
+    The laws had prominent critics. Law-enforcement organizations and some legal scholars predicted a
+    concrete public-safety cost: <strong>take away deception, and fewer cases will be solved</strong> &mdash;
+    fewer confessions, fewer arrests standing up, more cases that prosecutors refuse to pursue. That
+    prediction is testable. This page walks through the test.
+  </p>
+  <div class="caveat">
+    <strong>How to read this page:</strong> it is a descriptive companion to a peer-reviewed study, scoped
+    to what administrative data can show for 2021&ndash;2024. &ldquo;No decline&rdquo; is the claim being
+    tested; where estimates come out <em>positive</em>, we report them as associations, not causal benefits
+    &mdash; no mechanism linking deception bans to <em>more</em> cleared cases is claimed. Two states
+    (Nevada and California) adopted in July 2024 and contribute only about six post-ban months.
   </div>
-</div>
+</section>
 
-<!-- Main Content -->
-<div class="main">
+<!-- STEP 2: The natural experiment -->
+<section class="section" id="experiment">
+  <span class="section-kicker">Step 2 &middot; The natural experiment</span>
+  <h2 class="section-title">Nine states adopted; 42 stayed put</h2>
+  <p class="section-lede">
+    Staggered adoption &mdash; Illinois and Oregon first (January 2022), California and Nevada last (July
+    2024) &mdash; creates a natural comparison: how did case outcomes move in ban states, relative to the
+    42 state units (including Washington, DC) that never adopted? The data are FBI NIBRS incident records:
+    510,582 serious juvenile-involved incidents reported by 11,333 law-enforcement agencies from 2021
+    through 2024.
+  </p>
+  <div id="chart-map" class="chart-wrap" aria-label="US map showing the nine treated states shaded by statute strength and control states in gray"></div>
+  <p class="chart-note">Treated states are shaded by statute strength (darker = stronger law; see Step 3).
+  Hover a state for its effective date and statute score. Gray states never adopted a ban and serve as
+  controls.</p>
+</section>
 
-<!-- ============================================================ -->
-<!-- TAB 1: OVERVIEW -->
-<!-- ============================================================ -->
-<div class="tab-panel active" id="panel-overview">
+<!-- STEP 3: The laws -->
+<section class="section" id="laws">
+  <span class="section-kicker">Step 3 &middot; The laws</span>
+  <h2 class="section-title">These nine laws are not the same law</h2>
+  <p class="section-lede">
+    The statutes differ on five dimensions: how strong the remedy is (presumptive exclusion vs. weaker),
+    how broadly &ldquo;deception&rdquo; is defined, how general the prohibition is, and whether good-faith
+    or public-safety exceptions soften it. Summing the first three and subtracting the exceptions gives a
+    composite strength score from 2 to 8. Oregon and Connecticut have the strongest laws; Nevada the
+    weakest. Step 9 uses this variation.
+  </p>
+  <div class="table-scroll">
+  <table class="scorecard" id="law-table">
+    <thead>
+      <tr>
+        <th>State</th><th>Effective</th><th>Remedy</th><th>Breadth</th><th>Scope</th>
+        <th>Good-faith exc.</th><th>Public-safety exc.</th><th>Composite</th><th>Strength</th>
+      </tr>
+    </thead>
+    <tbody><!-- filled by JS from LAWS --></tbody>
+  </table>
+  </div>
+  <p class="chart-note">Remedy, breadth, and scope are each coded 1&ndash;3 (higher = stricter/broader);
+  exceptions subtract 1 each. Composite = remedy + breadth + scope &minus; good-faith &minus; public-safety.
+  Utah and Colorado additionally require recording; Illinois and Connecticut also address deception more
+  broadly than the juvenile provisions scored here.</p>
+</section>
 
-  <!-- KPI Cards -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-value">7</div>
-      <div class="kpi-label">Treated States</div>
+<!-- STEP 4: The yardsticks -->
+<section class="section" id="outcomes">
+  <span class="section-kicker">Step 4 &middot; The yardsticks</span>
+  <h2 class="section-title">Two ways a juvenile case gets resolved &mdash; and two predicted harms</h2>
+  <p class="section-lede">
+    NIBRS records how each incident is cleared. We track the two outcomes the critics&rsquo; prediction
+    speaks to directly.
+  </p>
+  <div class="card-grid">
+    <div class="p-card" style="border-top-color:#2563eb;">
+      <h3>Arrest clearance</h3>
+      <div class="p-cite">Predicted to FALL after a ban</div>
+      <p>The case is closed because someone was arrested, charged, and turned over for prosecution &mdash;
+      the everyday sense of a case being &ldquo;solved.&rdquo; Across the full panel, roughly 41% of these
+      juvenile-involved incidents end in an arrest clearance.</p>
+      <div class="p-chips"><span class="chip">&asymp; 41% of incidents</span><span class="chip solid" style="background:#2563eb;">critics predicted: decline</span></div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-value">34</div>
-      <div class="kpi-label">Control States</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">2021&ndash;2024</div>
-      <div class="kpi-label">NIBRS Data</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">~510K</div>
-      <div class="kpi-label">Juvenile Incidents</div>
-    </div>
-  </div>
-
-  <!-- Explanatory box -->
-  <div class="explain-box">
-    <p>Between 2022 and 2024, seven U.S. states banned the use of deceptive interrogation tactics on juveniles. This dashboard presents results from a difference-in-differences analysis examining whether these bans affected how juvenile cases are resolved &mdash; specifically, whether cases are cleared by arrest, cleared by exceptional means (e.g., prosecution declined, victim refused cooperation), or cleared at all.</p>
-    <p><strong>The key finding:</strong> when all seven states are analyzed together, there is no statistically significant effect on any clearance outcome. However, there is substantial variation across individual states.</p>
-  </div>
-
-  <!-- Outcome toggle for Overview -->
-  <div class="outcome-toggle" id="overview-outcome-toggle">
-    <span class="outcome-toggle-label">Outcome:</span>
-    <button class="outcome-btn active" data-outcome="clear_rate">Any Clearance</button>
-    <button class="outcome-btn" data-outcome="arrest_rate">Arrest Clearance</button>
-    <button class="outcome-btn" data-outcome="exc_rate">Exceptional Clearance</button>
-  </div>
-
-  <!-- Choropleth map -->
-  <div class="chart-container">
-    <div class="chart-title" id="map-title">State Effects on Any Clearance Rate</div>
-    <div class="chart-subtitle">Estimated change in percentage points after ban enactment. Gray states are controls.</div>
-    <div id="map-overview" style="width:100%;"></div>
-  </div>
-
-  <!-- State law details table -->
-  <h3 class="section-title">State Law Details</h3>
-  <div class="styled-table-wrapper">
-    <table class="styled-table" id="state-law-table">
-      <thead>
-        <tr>
-          <th>State</th>
-          <th>Effective Date</th>
-          <th>Law Strength</th>
-          <th id="state-law-effect-header">Effect on Any Clearance (pp)</th>
-        </tr>
-      </thead>
-      <tbody id="state-law-tbody">
-      </tbody>
-    </table>
-    <div class="table-footnote">*** p &lt; 0.01; ** p &lt; 0.05; * p &lt; 0.10. &#9888; Nevada has only ~6 months of post-treatment data; results should be interpreted with extreme caution.</div>
-  </div>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- TAB 2: STATE RESULTS -->
-<!-- ============================================================ -->
-<div class="tab-panel" id="panel-state-results">
-
-  <div class="explain-box">
-    <p><strong>How to read this section:</strong> Each number represents the estimated change in clearance rate (in percentage points) after a state enacted its ban, compared to what would have been expected without the ban. A positive number means more cases were cleared; a negative number means fewer. Statistical significance (marked with asterisks) indicates the result is unlikely due to chance alone.</p>
-  </div>
-
-  <!-- Heatmap -->
-  <div class="chart-container">
-    <div class="chart-title">State-by-Outcome Heatmap</div>
-    <div class="chart-subtitle">Average treatment effect on the treated (ATT) in percentage points, with significance markers.</div>
-    <div id="heatmap-state" style="width:100%;"></div>
-  </div>
-
-  <!-- Outcome toggle for bar chart -->
-  <div class="outcome-toggle" id="bar-outcome-toggle">
-    <span class="outcome-toggle-label">Outcome:</span>
-    <button class="outcome-btn active" data-outcome="arrest_rate">Arrest Clearance</button>
-    <button class="outcome-btn" data-outcome="exc_rate">Exceptional Clearance</button>
-    <button class="outcome-btn" data-outcome="clear_rate">Any Clearance</button>
-  </div>
-
-  <!-- Bar chart -->
-  <div class="chart-container">
-    <div class="chart-title" id="bar-title">Arrest Clearance Effects by State</div>
-    <div class="chart-subtitle" id="bar-subtitle">Estimated change in arrest clearance rate (pp) with 95% confidence intervals.</div>
-    <div id="bar-arrest" style="width:100%;"></div>
-  </div>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- TAB 3: EFFECTS OVER TIME -->
-<!-- ============================================================ -->
-<div class="tab-panel" id="panel-time-effects">
-
-  <div class="explain-box">
-    <p><strong>How to read these plots:</strong> Each chart tracks the estimated effect of a ban over time for a single state. The solid line shows the estimated change in clearance rate (in percentage points) at each time point after the ban took effect. The shaded band represents the 95% confidence interval &mdash; the range where the true effect likely falls. When the band includes zero (the dashed horizontal line), the effect is not statistically distinguishable from no change.</p>
-  </div>
-
-  <!-- Outcome toggle for time series -->
-  <div class="outcome-toggle" id="time-outcome-toggle">
-    <span class="outcome-toggle-label">Outcome:</span>
-    <button class="outcome-btn active" data-outcome="arrest_rate">Arrest Clearance</button>
-    <button class="outcome-btn" data-outcome="exc_rate">Exceptional Clearance</button>
-    <button class="outcome-btn" data-outcome="clear_rate">Any Clearance</button>
-  </div>
-
-  <!-- State selector buttons -->
-  <div class="state-selector" id="time-state-selector">
-    <button class="state-btn active" data-state="IL">Illinois</button>
-    <button class="state-btn" data-state="OR">Oregon</button>
-    <button class="state-btn" data-state="UT">Utah</button>
-    <button class="state-btn" data-state="DE">Delaware</button>
-    <button class="state-btn" data-state="IN">Indiana</button>
-    <button class="state-btn" data-state="CO">Colorado</button>
-    <button class="state-btn" data-state="NV">Nevada</button>
-  </div>
-
-  <div class="chart-container">
-    <div id="time-chart" style="width:100%;"></div>
-  </div>
-
-  <div class="warning-box" id="nv-warning" style="display:none;">
-    &#9888; <strong>Nevada</strong> enacted its ban in July 2024 and has only ~6 months of post-treatment data. The initial positive effect reverses sharply by month 4. These results should be interpreted with extreme caution.
-  </div>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- TAB 4: SEX CRIMES -->
-<!-- ============================================================ -->
-<div class="tab-panel" id="panel-sex-crimes">
-
-  <div class="explain-box">
-    <p><strong>Why sex crimes matter:</strong> Confessions play an outsized role in sex crime investigations, particularly those involving juveniles. Because deceptive interrogation tactics are often used to elicit confessions, these bans might be expected to have an especially visible impact on sex crime clearance rates. The results tell a different story.</p>
-  </div>
-
-  <h3 class="section-title">Pooled Results (All 7 States)</h3>
-  <div class="result-cards">
-    <div class="result-card">
-      <div class="rc-outcome">Arrest Clearance</div>
-      <div class="rc-value">+0.02 <span style="font-size:0.9rem;">pp</span></div>
-      <div class="rc-pval">p = 0.979</div>
-      <div class="rc-tag">No effect</div>
-    </div>
-    <div class="result-card">
-      <div class="rc-outcome">Exceptional Clearance</div>
-      <div class="rc-value">-0.56 <span style="font-size:0.9rem;">pp</span></div>
-      <div class="rc-pval">p = 0.511</div>
-      <div class="rc-tag">No effect</div>
-    </div>
-    <div class="result-card">
-      <div class="rc-outcome">Any Clearance</div>
-      <div class="rc-value">-0.53 <span style="font-size:0.9rem;">pp</span></div>
-      <div class="rc-pval">p = 0.693</div>
-      <div class="rc-tag">No effect</div>
+    <div class="p-card" style="border-top-color:#d97706;">
+      <h3>Prosecution-declined exceptional clearance</h3>
+      <div class="p-cite">Predicted to RISE after a ban</div>
+      <p>Police identified the offender and presented the case, but the prosecutor declined to pursue it
+      &mdash; the incident is closed &ldquo;exceptionally.&rdquo; If bans gutted the evidence in juvenile
+      cases, these refusals should become more common. They are rare to begin with: about 3.3% of
+      incidents.</p>
+      <div class="p-chips"><span class="chip">&asymp; 3.3% of incidents</span><span class="chip solid" style="background:#d97706;">critics predicted: increase</span></div>
     </div>
   </div>
+  <p class="body-text">
+    Throughout this page, probabilities are reported in the <strong>direction of the predicted cost</strong>:
+    for arrest clearance, the posterior probability of a <em>decline</em>; for prosecution-declined, the
+    probability of an <em>increase</em>. Small values mean the data point away from the predicted harm.
+  </p>
+</section>
 
-  <div class="takeaway-box">
-    <strong>Key takeaway:</strong> Across all seven treated states, the bans show no measurable impact on juvenile sex crime clearance rates. This null finding is consistent across all three primary outcomes.
-  </div>
-
-  <h3 class="section-title">State-Level Sex Crime Results</h3>
-  <div class="styled-table-wrapper">
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>State</th>
-          <th>Arrest (pp)</th>
-          <th>p-value</th>
-          <th>Exc. Clearance (pp)</th>
-          <th>p-value</th>
-          <th>Any Clearance (pp)</th>
-          <th>p-value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Illinois</td>
-          <td class="positive sig">+1.94</td>
-          <td>&lt;0.001</td>
-          <td class="neutral">+0.42</td>
-          <td>0.490</td>
-          <td class="positive sig">+2.36</td>
-          <td>&lt;0.001</td>
-        </tr>
-        <tr>
-          <td>Oregon</td>
-          <td class="negative sig">-2.68</td>
-          <td>&lt;0.001</td>
-          <td class="positive sig">+2.65</td>
-          <td>&lt;0.001</td>
-          <td class="neutral">-0.03</td>
-          <td>0.970</td>
-        </tr>
-        <tr>
-          <td>Utah</td>
-          <td class="neutral">+0.93</td>
-          <td>0.064</td>
-          <td class="neutral">+0.43</td>
-          <td>0.326</td>
-          <td class="neutral">+1.36</td>
-          <td>0.054</td>
-        </tr>
-        <tr>
-          <td>Delaware</td>
-          <td class="positive sig">+2.66</td>
-          <td>&lt;0.001</td>
-          <td class="negative sig">-4.75</td>
-          <td>&lt;0.001</td>
-          <td class="negative sig">-2.09</td>
-          <td>0.004</td>
-        </tr>
-        <tr>
-          <td>Nevada</td>
-          <td class="positive">+1.14</td>
-          <td>0.022</td>
-          <td class="positive sig">+1.11</td>
-          <td>&lt;0.001</td>
-          <td class="positive sig">+2.25</td>
-          <td>&lt;0.001</td>
-        </tr>
-        <tr>
-          <td>Indiana</td>
-          <td class="positive sig">+1.30</td>
-          <td>&lt;0.001</td>
-          <td class="negative">-1.15</td>
-          <td>0.036</td>
-          <td class="neutral">+0.15</td>
-          <td>0.824</td>
-        </tr>
-        <tr>
-          <td>Colorado</td>
-          <td class="negative sig">-2.14</td>
-          <td>&lt;0.001</td>
-          <td class="negative sig">-2.21</td>
-          <td>&lt;0.001</td>
-          <td class="negative sig">-4.35</td>
-          <td>&lt;0.001</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="takeaway-box">
-    <strong>Note:</strong> Oregon's sex crime results notably reverse direction from its overall results: arrest clearance decreases by 2.68 pp for sex crimes (compared to a 2.80 pp increase overall), suggesting the ban may have affected sex crime investigations differently than other case types.
-  </div>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- TAB 5: HOW WE VERIFIED -->
-<!-- ============================================================ -->
-<div class="tab-panel" id="panel-verification">
-
-  <div class="explain-box">
-    <p>Any good study needs to check its own work. Below are three methods I used to test whether the findings are robust.</p>
-  </div>
-
-  <!-- Randomization Inference -->
-  <h3 class="section-title">Randomization Inference</h3>
-  <div class="chart-container">
-    <p style="font-size:0.92rem;color:var(--gray-600);margin-bottom:1rem;line-height:1.7;">If these bans had no real effect, how unusual would the results be? To answer this, I randomly reshuffled treatment assignments 500 times and re-estimated the effect each time. This creates a distribution of &ldquo;fake&rdquo; effects that would arise by chance alone.</p>
-    <p style="font-size:0.92rem;font-weight:600;color:var(--navy);margin-bottom:1.25rem;">Result: The pooled estimates are well within the range of random noise.</p>
-    <div style="padding:0 0.5rem;">
-      <div class="ri-result">
-        <span class="ri-label">Arrest clearance</span>
-        <span class="ri-value">empirical p = 0.558</span>
-      </div>
-      <div class="ri-result">
-        <span class="ri-label">Exceptional clearance</span>
-        <span class="ri-value">empirical p = 0.294</span>
-      </div>
-      <div class="ri-result">
-        <span class="ri-label">Any clearance</span>
-        <span class="ri-value">empirical p = 0.926</span>
-      </div>
+<!-- STEP 5: The headline -->
+<section class="section" id="headline">
+  <span class="section-kicker">Step 5 &middot; The headline</span>
+  <h2 class="section-title">Arrest clearances did not fall</h2>
+  <p class="section-lede">
+    The primary model is a hierarchical Bayesian difference-in-differences fit on the agency-month panel
+    (11,333 agencies, roughly 153,000 agency-months), which lets the treatment effect vary by state and
+    agency and weights by caseload. It compares ban states, after adoption, to what the never-treated
+    states say we should have expected.
+  </p>
+  <div class="readout-row">
+    <div class="readout hero">
+      <div class="readout-value">+2.25 pp</div>
+      <div class="readout-label">arrest clearance after adoption vs. the no-ban expectation (95% CrI +0.99 to +3.60)</div>
     </div>
-    <p style="font-size:0.88rem;color:var(--gray-500);margin-top:1.25rem;line-height:1.6;"><strong style="color:var(--navy);">In plain English:</strong> If you shuffled which states got bans, you would get results as large as these more than half the time. This confirms there is no robust pooled effect.</p>
-  </div>
-
-  <!-- Bayesian Analysis -->
-  <h3 class="section-title">Bayesian Analysis</h3>
-  <div class="chart-container">
-    <p style="font-size:0.92rem;color:var(--gray-600);margin-bottom:1.25rem;line-height:1.7;">A complementary statistical approach that asks: given the data, what is the probability the ban had a positive vs. negative effect?</p>
-    <div class="styled-table-wrapper" style="margin-bottom:1rem;">
-      <table class="styled-table">
-        <thead>
-          <tr>
-            <th>Outcome</th>
-            <th>Estimate (logit)</th>
-            <th>95% Credible Interval</th>
-            <th>Excludes Zero?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Arrest clearance</td>
-            <td>0.121</td>
-            <td>[0.026, 0.224]</td>
-            <td><span class="check">&#10003; Yes</span></td>
-          </tr>
-          <tr>
-            <td>Any clearance</td>
-            <td>0.097</td>
-            <td>[-0.015, 0.231]</td>
-            <td><span class="cross">&#10007; No</span></td>
-          </tr>
-          <tr>
-            <td>Exceptional clearance</td>
-            <td>-0.067</td>
-            <td>[-0.296, 0.149]</td>
-            <td><span class="cross">&#10007; No</span></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="readout">
+      <div class="readout-value">0.5%</div>
+      <div class="readout-label">posterior probability that arrest clearances declined at all</div>
     </div>
-    <p style="font-size:0.88rem;color:var(--gray-500);line-height:1.6;">Only arrest clearance shows a credible positive effect under the Bayesian framework. For all other outcomes, the uncertainty is too large to draw conclusions.</p>
+    <div class="readout">
+      <div class="readout-value">&minus;0.26 pp</div>
+      <div class="readout-label">prosecution-declined change (95% CrI &minus;0.76 to +0.25); P(increase) = .13</div>
+    </div>
   </div>
+  <div id="chart-headline" class="chart-wrap" aria-label="Dot and interval chart of the two primary estimates against a zero line"></div>
+  <p class="chart-note">Dots are posterior mean effects in percentage points; bars are 95% credible
+  intervals. The dashed line at zero is &ldquo;no change.&rdquo; The critics&rsquo; prediction lives below
+  zero for arrest clearance and above zero for prosecution declined &mdash; neither side materializes.</p>
+  <p class="body-text">
+    On the outcome critics cared most about, the posterior odds are roughly <strong>200-to-1 against any
+    decline</strong> in arrest clearances within the study period &mdash; the point estimate actually runs
+    modestly positive. We treat that positive sign as descriptive, not causal: concurrent reforms, agency
+    adaptation, or compositional shifts could produce it. What the data speak to directly is the predicted
+    cost, and <strong>the predicted cost is absent</strong>.
+  </p>
+</section>
 
-</div>
-
-<!-- ============================================================ -->
-<!-- TAB 6: ABOUT & METHODOLOGY -->
-<!-- ============================================================ -->
-<div class="tab-panel" id="panel-about">
-
-  <div class="explain-box">
-    <p>This dashboard presents results from a quasi-experimental analysis of state-level bans on deceptive interrogation tactics for juveniles.</p>
+<!-- STEP 6: The test -->
+<section class="section" id="test">
+  <span class="section-kicker">Step 6 &middot; The test</span>
+  <h2 class="section-title">The critics&rsquo; prediction vs. what the data show</h2>
+  <p class="section-lede">
+    The harm prediction implies several observable patterns. Each row is one of them, next to what the
+    data actually show for 2021&ndash;2024.
+  </p>
+  <div class="table-scroll">
+  <table class="scorecard">
+    <thead>
+      <tr>
+        <th style="min-width:170px;">If bans cost cases&hellip;</th>
+        <th style="min-width:210px;">What the data show</th>
+        <th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Arrest clearances should <em>fall</em> in ban states</td>
+        <td class="data-cell">+2.25 pp [+0.99, +3.60] <span class="data-sub">P(decline) = .005 &mdash; wrong direction for the prediction</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
+      </tr>
+      <tr>
+        <td>The <em>strictest</em> laws should hurt the most</td>
+        <td class="data-cell">Strongest statutes (OR, CT) show the largest positive drift: +2.28 pp/yr [+1.00, +3.51] <span class="data-sub">the dose gradient runs opposite to the prediction (Step 9)</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
+      </tr>
+      <tr>
+        <td>Each ban state should show its own decline</td>
+        <td class="data-cell">9 of 9 state-specific synthetic-control estimates are positive <span class="data-sub">+1.33 to +5.20 pp (Step 8)</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
+      </tr>
+      <tr>
+        <td>Prosecutors should <em>refuse more</em> juvenile cases</td>
+        <td class="data-cell">Declinations fell (&minus;0.26 pp), and fell for adults in the same states too <span class="data-sub">juvenile-minus-adult difference is null (Step 10)</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
+      </tr>
+      <tr>
+        <td>Any null should be the artifact of one model</td>
+        <td class="data-cell">Twelve estimation strategies, one direction <span class="data-sub">every arrest estimate is null-to-positive (Step 7)</span></td>
+        <td class="verdict"><span class="verdict-no">&#10007; Not supported</span></td>
+      </tr>
+    </tbody>
+  </table>
   </div>
+  <p class="body-text">
+    To be precise about scope: this scorecard tests the prediction <strong>within the first one to three
+    years of each ban, in states that report to NIBRS</strong>. It does not rule out longer-run effects,
+    and it does not establish that bans <em>improve</em> clearances &mdash; only that the predicted
+    deterioration is absent everywhere we can look.
+  </p>
+</section>
 
-  <div class="takeaway-box" style="margin-bottom:2rem;">
-    <p><strong>What is difference-in-differences?</strong></p>
-    <p style="margin-top:0.5rem;">This study uses a difference-in-differences (DiD) design &mdash; a statistical method that compares changes in outcomes over time between states that enacted bans (treated states) and states that did not (control states). The key idea: if treated and control states were trending similarly before the ban, any divergence afterward can be attributed to the policy change.</p>
-    <p style="margin-top:0.5rem;">The analysis uses two-way fixed effects with two-way clustering (by state and time) to account for both geographic and temporal correlation.</p>
+<!-- STEP 7: Many methods -->
+<section class="section" id="methods">
+  <span class="section-kicker">Step 7 &middot; Many methods</span>
+  <h2 class="section-title">Twelve estimates, one direction</h2>
+  <p class="section-lede">
+    Any single model can mislead, so the paper re-asks the question with different estimators, samples,
+    and windows: frequentist two-way fixed effects, randomization tests, synthetic controls, restricted
+    samples, an extended 2016&ndash;2024 panel, and placebo contrasts. If the headline were a fluke of one
+    specification, these would disagree. They do not.
+  </p>
+  <div class="tab-row" role="tablist">
+    <button class="tab-btn active" data-outcome="arrest" role="tab" aria-selected="true">Arrest clearance</button>
+    <button class="tab-btn" data-outcome="prosec" role="tab" aria-selected="false">Prosecution declined</button>
   </div>
+  <div id="chart-forest" class="chart-wrap" aria-label="Forest plot of twelve estimation strategies for the selected outcome"></div>
+  <p class="chart-note">Dots are point estimates in percentage points with 95% intervals (credible or
+  confidence, per method); rows without a dot are ranges across states or leave-one-out samples. Colors
+  group the methods. The randomization-inference p-value (.47 for arrest) is the paper&rsquo;s primary
+  frequentist significance measure, because nine treated states are too few clusters for reliable
+  clustered standard errors &mdash; by that standard the pooled arrest effect is <em>not</em>
+  statistically significant, merely directionally positive. The augmented synthetic control is reported
+  as directional only (its interval is wide and spans zero).</p>
+  <p class="body-text">
+    The methods disagree about magnitude &mdash; from +1.05 to +3.53 percentage points for arrest
+    clearance &mdash; and about statistical significance. They do not disagree about direction:
+    <strong>no method, sample, or window produces evidence of the predicted decline.</strong>
+  </p>
+</section>
 
-  <h3 class="section-title">Treatment Definitions</h3>
-  <div class="styled-table-wrapper">
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>State</th>
-          <th>Effective Date</th>
-          <th>Burden Strength</th>
-          <th>Definition Breadth</th>
-          <th>Good-Faith Exception</th>
-          <th>Public Safety Exception</th>
-          <th>Extra Mandates</th>
-          <th>Overall Strength</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Illinois</td>
-          <td>Jan 1, 2022</td>
-          <td>Moderate</td>
-          <td>Broad</td>
-          <td>No</td>
-          <td>No</td>
-          <td>No</td>
-          <td>Moderate</td>
-        </tr>
-        <tr>
-          <td>Oregon</td>
-          <td>Jan 1, 2022</td>
-          <td>Strong</td>
-          <td>Broad</td>
-          <td>No</td>
-          <td>No</td>
-          <td>No</td>
-          <td>Strong</td>
-        </tr>
-        <tr>
-          <td>Utah</td>
-          <td>May 4, 2022</td>
-          <td>Moderate</td>
-          <td>Narrow</td>
-          <td>No</td>
-          <td>No</td>
-          <td>No</td>
-          <td>Weak</td>
-        </tr>
-        <tr>
-          <td>Delaware</td>
-          <td>Oct 10, 2022</td>
-          <td>Moderate</td>
-          <td>Narrow</td>
-          <td>No</td>
-          <td>No</td>
-          <td>No</td>
-          <td>Weak-Moderate</td>
-        </tr>
-        <tr>
-          <td>Indiana</td>
-          <td>Jul 1, 2023</td>
-          <td>Moderate</td>
-          <td>Broad</td>
-          <td>Yes</td>
-          <td>No</td>
-          <td>No</td>
-          <td>Weak-Moderate</td>
-        </tr>
-        <tr>
-          <td>Colorado</td>
-          <td>Aug 7, 2023</td>
-          <td>Moderate</td>
-          <td>Very Broad</td>
-          <td>Yes</td>
-          <td>No</td>
-          <td>Yes</td>
-          <td>Moderate-Strong</td>
-        </tr>
-        <tr>
-          <td>Nevada</td>
-          <td>Jul 1, 2024</td>
-          <td>Moderate</td>
-          <td>Narrow</td>
-          <td>No</td>
-          <td>Yes</td>
-          <td>No</td>
-          <td>Weak</td>
-        </tr>
-      </tbody>
-    </table>
+<!-- STEP 8: State by state -->
+<section class="section" id="states">
+  <span class="section-kicker">Step 8 &middot; State by state</span>
+  <h2 class="section-title">All nine states point the same way</h2>
+  <p class="section-lede">
+    Pooled averages can hide a state that really was hurt. So each state gets its own Bayesian synthetic
+    control: a weighted blend of never-treated states tuned to track that state&rsquo;s pre-ban history
+    (typical tracking error 1&ndash;4 percentage points), then projected forward as the no-ban
+    counterfactual.
+  </p>
+  <div id="chart-bscm" class="chart-wrap" aria-label="Dot and interval chart of state-specific synthetic control estimates for arrest clearance in all nine states"></div>
+  <p class="chart-note">Average post-ban arrest-clearance effect per state, in percentage points, with 95%
+  credible intervals; hover for each state&rsquo;s pre/post months and P(decline). Open circles mark
+  Nevada and California, which have only ~6 post-ban months. Indiana is the only state whose interval
+  excludes zero.</p>
+  <p class="body-text">
+    Every point estimate is positive &mdash; and at two-decimal rounding, four of nine states have
+    P(decline) &le; .05. The honest summary is not &ldquo;bans raised clearances in nine states&rdquo;;
+    single-state intervals are wide, and only Indiana&rsquo;s (+3.71, CrI +0.61 to +5.86) excludes zero.
+    The honest summary is that <strong>in no state does the ban look like it cost arrest clearances</strong>
+    &mdash; nine chances for the predicted harm to appear, zero appearances.
+  </p>
+</section>
+
+<!-- STEP 9: Statute strength -->
+<section class="section" id="dose">
+  <span class="section-kicker">Step 9 &middot; Statute strength</span>
+  <h2 class="section-title">Stronger bans, if anything, look better</h2>
+  <p class="section-lede">
+    The harm prediction has a corollary: the strictest laws should hurt the most. Using the Step 3
+    composite, the model estimates how each outcome drifts per year after adoption at each observed
+    strength level &mdash; from Nevada&rsquo;s 2 to Oregon and Connecticut&rsquo;s 8.
+  </p>
+  <div id="chart-dose" class="chart-wrap" aria-label="Dot and interval chart of estimated annual post-ban change by statute strength for both outcomes"></div>
+  <p class="chart-note">Estimated post-adoption trend (percentage points per year) at each observed
+  composite score, with 95% credible intervals; blue = arrest clearance, amber = prosecution declined.
+  Hover for the states at each level and the cost-direction probability.</p>
+  <p class="body-text">
+    For arrest clearance the gradient runs <em>against</em> the prediction: the strongest statutes show
+    the largest positive annual drift (+2.28 pp/yr, CrI +1.00 to +3.51), the weakest a flat-to-negative
+    one. For prosecution declined, every level below the strongest shows declinations <em>falling</em>;
+    at the strongest (OR/CT) the estimate is +0.14 pp/yr with an interval straddling zero &mdash; a
+    non-trivial but not credible signal in the cost direction. <strong>Nowhere does stringency purchase
+    the predicted harm.</strong> As throughout, these are dose-response associations, not mechanisms.
+  </p>
+</section>
+
+<!-- STEP 10: The prosecution story -->
+<section class="section" id="prosecution">
+  <span class="section-kicker">Step 10 &middot; The prosecution story</span>
+  <h2 class="section-title">Declinations fell &mdash; but not just for juveniles</h2>
+  <p class="section-lede">
+    One outcome did move: prosecution-declined clearances drifted <em>down</em> in ban states &mdash; the
+    opposite of the predicted surge. Before crediting the bans, run the placebo: adult suspects in the
+    same states are untouched by juvenile interrogation statutes, so if the decline were the ban&rsquo;s
+    doing, it should appear only for juveniles.
+  </p>
+  <div id="chart-placebo" class="chart-wrap" aria-label="Dot and interval chart comparing juvenile, adult, and difference-in-difference-in-differences estimates for both outcomes"></div>
+  <p class="chart-note">Estimates in percentage points with 95% credible intervals. &ldquo;Juv &minus;
+  adult&rdquo; is the triple-difference: the juvenile-specific residual after subtracting whatever
+  happened to adults in the same states. Zero line = no effect.</p>
+  <p class="body-text">
+    Juvenile declinations fell (&minus;1.03 pp), but so did adult declinations in the same states
+    (&minus;0.51 pp, credibly negative) &mdash; and the juvenile-minus-adult difference (&minus;0.27 pp,
+    CrI &minus;1.11 to +0.49) is null. The decline looks like <strong>something happening to those
+    states&rsquo; case processing generally, not something the juvenile bans did</strong>. The same
+    placebo sharpens the arrest result in the other direction: adult arrest clearances did not rise
+    (&minus;0.74 pp, interval spanning zero), so the juvenile-specific arrest difference is +2.10 pp
+    (CrI +0.54 to +3.68). One footnote: Connecticut is omitted from state-level declination summaries
+    &mdash; its base rate is 0.33% and 14 of its 15 post-ban months had zero declined cases, too little
+    signal to summarize responsibly.
+  </p>
+</section>
+
+<!-- STEP 11: Who and what -->
+<section class="section" id="subgroups">
+  <span class="section-kicker">Step 11 &middot; Who and what</span>
+  <h2 class="section-title">Where the arrest estimates concentrate</h2>
+  <p class="section-lede">
+    Splitting the arrest-clearance result by offender age and race, and by offense type, shows where the
+    positive drift sits &mdash; and where there is none.
+  </p>
+  <div id="chart-demog" class="chart-wrap" aria-label="Dot and interval chart of arrest clearance effects by offender age group and race"></div>
+  <p class="chart-note">Arrest-clearance estimates in percentage points with 95% credible intervals;
+  hover for the prosecution-declined counterpart. Groups are modeled separately; intervals overlap, so
+  differences <em>between</em> groups are suggestive, not established.</p>
+  <div id="chart-crime" class="chart-wrap" style="margin-top:1.4rem;" aria-label="Dot and interval chart of arrest clearance effects by offense type"></div>
+  <p class="chart-note">Same convention, by offense type (n = incidents). &dagger; The prosecution-declined
+  model for murder is not estimable &mdash; too few declined murder cases to identify the parameter.</p>
+  <p class="body-text">
+    The positive arrest drift is largest for the youngest juveniles (&le;13: +3.23 pp) and null for
+    16&ndash;17-year-olds; both Black (+1.99) and non-Black (+1.11) youth show credibly positive
+    estimates. By offense, property crimes (burglary, motor vehicle theft) drive the pattern, while
+    <strong>murder and sex crimes &mdash; the cases where interrogation and confession evidence matter
+    most &mdash; show no change in either direction</strong> (murder &minus;1.41 pp, CrI &minus;8.35 to
+    +5.71; sex crimes &minus;0.63, CrI &minus;1.61 to +0.39). Even in confession-heavy cases, the
+    predicted collapse does not appear. These splits are descriptive; we do not claim a mechanism for
+    any of them.
+  </p>
+</section>
+
+<!-- STEP 12: The honest limits -->
+<section class="section" id="limits">
+  <span class="section-kicker">Step 12 &middot; The honest limits</span>
+  <h2 class="section-title">What this page does not claim</h2>
+  <p class="section-lede">
+    A fair reading of the critics deserves a fair statement of what these data cannot settle.
+  </p>
+  <div class="offer-panel">
+    <h3>What these results do not rule out</h3>
+    <ul>
+      <li><strong>Long-run effects.</strong> Nevada and California contribute only ~6 post-ban months; the
+      longest-treated states contribute three years. Costs that emerge later would not be visible here.</li>
+      <li><strong>Pre-existing trend differences.</strong> Formal tests reject equal pre-ban slopes (arrest
+      p = .008; prosecution declined p = .025), driven substantially by California&rsquo;s long pre-period.
+      For arrest clearance the treated states were trending <em>more negative</em> before adoption &mdash;
+      a bias running against the positive finding, which makes it conservative. For prosecution declined
+      the pre-trend runs the same direction as the post-ban decline, so that result warrants genuine
+      caution.</li>
+      <li><strong>Mechanisms.</strong> We measure case outcomes, not interrogation practice. Whether
+      investigators changed tactics, recorded more, or obtained fewer confessions is not observed &mdash;
+      and the positive arrest estimates are associations, not demonstrated effects of the bans.</li>
+      <li><strong>Justice quality.</strong> A cleared case is not necessarily a justly cleared case;
+      administrative clearance rates cannot speak to wrongful convictions averted or caused.</li>
+      <li><strong>Coverage.</strong> NIBRS reporting grew over the window; results describe reporting
+      agencies, and the consistent-reporter check (see robustness) addresses but cannot eliminate this.</li>
+    </ul>
   </div>
+</section>
 
-  <div class="chart-container" style="margin-top:2rem;">
-    <p style="font-size:0.92rem;color:var(--gray-600);margin-bottom:0.5rem;"><strong style="color:var(--navy);">Data source:</strong> FBI National Incident-Based Reporting System (NIBRS), 2021&ndash;2024.</p>
-    <p style="font-size:0.92rem;color:var(--gray-600);margin-bottom:0.5rem;"><strong style="color:var(--navy);">Author:</strong> Scott M. Mourtgos, Ph.D. &mdash; University of South Carolina</p>
-    <p style="font-size:0.92rem;margin-top:1rem;"><a href="https://smourtgos.netlify.app" style="color:var(--blue);text-decoration:none;font-weight:500;">&larr; Back to smourtgos.netlify.app</a></p>
+<!-- STEP 13: Takeaways -->
+<section class="section" id="practice">
+  <span class="section-kicker">Step 13 &middot; Takeaways</span>
+  <h2 class="section-title">What this means in practice</h2>
+  <div class="practice-grid">
+    <div class="practice-card">
+      <h3>For legislators &amp; advocates</h3>
+      <p>The concrete cost predicted by opponents &mdash; fewer juvenile cases solved &mdash; has not
+      materialized in the first one to three years of any adopting state, including the states with the
+      strictest statutes. Debates over these bans can proceed on juvenile-protection grounds without
+      assuming a demonstrated clearance penalty.</p>
+    </div>
+    <div class="practice-card">
+      <h3>For police executives</h3>
+      <p>Agencies in ban states did not stop solving juvenile cases; arrest clearances held or drifted
+      up, including for the youngest suspects. The drop in prosecutor declinations is a statewide
+      case-processing pattern, not a ban effect &mdash; nothing here suggests investigative collapse
+      requiring workarounds.</p>
+    </div>
+    <div class="practice-card">
+      <h3>For researchers</h3>
+      <p>The null-on-harm is robust; the positive drift is unexplained. Mechanism data &mdash; recording
+      rates, confession rates, interrogation practice &mdash; are the next step, along with longer
+      post-periods for the 2024 adopters and court data separating dismissal from declination.</p>
+    </div>
   </div>
+</section>
 
-</div>
+<!-- Robustness -->
+<details class="robust" id="robustness">
+  <summary>We tried to break the result &mdash; it held</summary>
+  <div class="robust-body">
+    <ul>
+      <li><strong>Shuffle the treatment.</strong> Randomization inference (reassigning the 9-state
+      treatment structure across states, 500 permutations) gives p = .47 for the pooled arrest effect and
+      p = .63 for prosecution declined &mdash; the pooled effects are not significant by the paper&rsquo;s
+      primary frequentist standard, consistent with &ldquo;no decline&rdquo; rather than &ldquo;credible
+      increase.&rdquo; A rank-based randomization test asking whether treated states <em>rank</em>
+      unusually high lands at mean-rank p = .01 for arrest (p = .83 for prosecution declined).</li>
+      <li><strong>Drop California.</strong> The largest treated state (and a short post-period) could
+      dominate. Refitting the primary model without it: arrest +2.59 pp [+0.92, +4.08] &mdash; the result
+      strengthens slightly.</li>
+      <li><strong>Drop any state.</strong> All nine leave-one-state-out TWFE estimates stay positive
+      (+0.95 to +1.54 pp); dropping California gives the largest and only conventionally significant one
+      (+1.54, p = .02).</li>
+      <li><strong>Extend the window.</strong> Refit on 2016&ndash;2024 (265,412 agency-months), letting
+      treated states carry up to eight pre-years: arrest +1.05 pp [+0.43, +1.68].</li>
+      <li><strong>Hold the sample fixed.</strong> Restricting to agencies present in every year
+      2021&ndash;2024 (guarding against NIBRS rollout churn): arrest +3.53 pp [+1.62, +5.48].</li>
+      <li><strong>Check the pre-trends.</strong> Treated and control pre-ban slopes differ (arrest
+      p = .008, prosecution declined p = .025). The arrest divergence is negative &mdash; it biases
+      <em>against</em> the positive finding. The prosecution-declined divergence runs with its post-ban
+      decline and is flagged as a genuine caution in Step 12.</li>
+      <li><strong>Ask adults.</strong> The adult-offender placebo and triple-difference (Step 10) are
+      themselves robustness checks: the arrest effect is juvenile-specific (+2.10 pp DDD); the
+      declination drop is not.</li>
+    </ul>
+  </div>
+</details>
 
-</div><!-- end .main -->
+</main>
 
 <!-- Footer -->
 <div class="footer">
-  <p>Scott M. Mourtgos, Ph.D. &mdash; University of South Carolina</p>
-  <p style="margin-top:0.4rem;"><a href="https://smourtgos.netlify.app">&larr; Back to Main Site</a></p>
+  <div class="footer-inner">
+    <div class="footer-cite">
+      Interactive analysis by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina, and
+      Ian T. Adams, Ph.D., University of South Carolina &nbsp;|&nbsp; Based on Mourtgos &amp; Adams,
+      &ldquo;Do Deceptive Interrogation Bans Affect Case Resolution? Evidence from Juvenile Justice
+      Reforms,&rdquo; <em>Crime &amp; Delinquency</em> (forthcoming).<!-- TODO: link DOI when assigned -->
+    </div>
+    <div>
+      Methods: hierarchical Bayesian binomial-logit difference-in-differences with random treatment slopes
+      (brms/CmdStan) on NIBRS agency-month panels; state-specific Bayesian synthetic controls with AR(1)
+      latent structure; randomization inference and rank-based permutation tests; adult-offender
+      triple-difference placebos. Bayesian estimates are shown with 95% credible intervals and
+      cost-direction posterior probabilities. All figures on this page are hard-coded from the verified
+      replication outputs of the accepted manuscript (clean-room replication, July 2026); the replication
+      package is available from the authors.<!-- TODO: link public replication archive when deposited -->
+      Figures are intended for educational and exploratory use.
+    </div>
+  </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- JAVASCRIPT -->
-<!-- ============================================================ -->
 <script>
-(function() {
-  'use strict';
+/* ============================================================
+   All estimates below are hard-coded constants transcribed from
+   the verified replication outputs of the accepted manuscript
+   ("Do Deceptive Interrogation Bans Affect Case Resolution?",
+   Crime & Delinquency, forthcoming; 9-state analysis).
+   Sources (project: AV Application - Juvenile False Evidence,
+   Claude Attempt 4 - CT CA Expansion/results/):
+     PRIMARY  - tables/method_summary_forest_data.csv rows 1-2
+     LAWS     - did/law_features.csv + statute effective dates (Table 1)
+     FOREST   - tables/method_summary_forest_data.csv (paper Figure 2);
+                consistent-reporter CrI uses the manuscript's
+                delta-method values [+1.62, +5.48] (the CSV variant
+                differs in the 3rd digit from a slightly different
+                base rate)
+     BSCM     - tables/bscm_v2_binomial_ar1_state_specific.csv
+                (+ MAE from tables/bscm_v2_alt_fit_metrics.csv);
+                probabilities printed at 2dp to match accepted Table 3
+     DOSE     - bayesian/legislative_predicted_effects_BYSTATE.csv,
+                logit/yr converted to pp/yr via delta method at panel
+                base rates (factors 24.234 arrest / 3.2055 prosec);
+                matches accepted Table 5
+     PLACEBO  - tables/adult_placebo_results.csv
+     DEMOG    - tables/demographic_subgroup_effects.csv (pp means/probs)
+                + accepted Table 7 (pp credible intervals)
+     CRIME    - tables/crime_specific_results.csv and
+                crime_specific_results_exc_prosec.csv (accepted Table 8);
+                murder prosecution-declined is unidentified and
+                intentionally has no prosec entry
+   Verified against the accepted R1 manuscript tables 2026-08-22.
+   ============================================================ */
+const PRIMARY = {
+  arrest: { m: 2.25, lo: 0.99, hi: 3.60, pCost: 0.005 },   // pCost = P(decline)
+  prosec: { m: -0.26, lo: -0.76, hi: 0.25, pCost: 0.13 }   // pCost = P(increase)
+};
 
-  // ---- Tab switching ----
-  var tabBtns = document.querySelectorAll('.tab-btn');
-  var panels = document.querySelectorAll('.tab-panel');
+const LAWS = [
+  { st: 'NV', name: 'Nevada',      date: 'Jul 1, 2024',  remedy: 1, breadth: 1, scope: 1, gf: 0, ps: 1, comp: 2, label: 'Weak' },
+  { st: 'UT', name: 'Utah',        date: 'May 4, 2022',  remedy: 1, breadth: 1, scope: 1, gf: 0, ps: 0, comp: 3, label: 'Weak' },
+  { st: 'IL', name: 'Illinois',    date: 'Jan 1, 2022',  remedy: 1, breadth: 2, scope: 1, gf: 0, ps: 0, comp: 4, label: 'Moderate' },
+  { st: 'DE', name: 'Delaware',    date: 'Oct 10, 2022', remedy: 2, breadth: 1, scope: 1, gf: 0, ps: 0, comp: 4, label: 'Moderate' },
+  { st: 'IN', name: 'Indiana',     date: 'Jul 1, 2023',  remedy: 3, breadth: 2, scope: 1, gf: 1, ps: 0, comp: 5, label: 'Moderate-Strong' },
+  { st: 'CO', name: 'Colorado',    date: 'Aug 7, 2023',  remedy: 1, breadth: 3, scope: 2, gf: 1, ps: 0, comp: 5, label: 'Moderate-Strong' },
+  { st: 'CA', name: 'California',  date: 'Jul 1, 2024',  remedy: 1, breadth: 3, scope: 2, gf: 0, ps: 1, comp: 5, label: 'Moderate-Strong' },
+  { st: 'OR', name: 'Oregon',      date: 'Jan 1, 2022',  remedy: 3, breadth: 2, scope: 3, gf: 0, ps: 0, comp: 8, label: 'Strong' },
+  { st: 'CT', name: 'Connecticut', date: 'Oct 1, 2023',  remedy: 3, breadth: 3, scope: 2, gf: 0, ps: 0, comp: 8, label: 'Strong' }
+];
 
-  tabBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var tabId = this.getAttribute('data-tab');
-      tabBtns.forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      panels.forEach(function(p) { p.classList.remove('active'); });
-      document.getElementById('panel-' + tabId).classList.add('active');
-      window.dispatchEvent(new Event('resize'));
-    });
+/* cat colors: Primary blue, Convergence teal, Robustness violet, Placebo amber */
+const FOREST = [
+  { label: 'Primary Bayesian DiD',   cat: 'Primary',     a: { m: 2.25, lo: 0.99, hi: 3.60 },   p: { m: -0.26, lo: -0.76, hi: 0.25 } },
+  { label: 'BSCM pooled (9 states)', cat: 'Primary',     a: { m: 2.76, lo: 1.56, hi: 3.96 },   p: { m: -0.46, lo: -0.63, hi: -0.29 } },
+  { label: 'BSCM per-state range',   cat: 'Primary',     range: true, a: { lo: 1.33, hi: 5.20 }, p: { lo: -3.51, hi: -0.07 } },
+  { label: 'TWFE',                   cat: 'Convergence', annotA: 'RI p = .47', annotP: 'RI p = .63', a: { m: 1.07, lo: -0.27, hi: 2.41 }, p: { m: -0.29, lo: -0.85, hi: 0.26 } },
+  { label: 'Rank permutation',       cat: 'Convergence', annotA: 'mean-rank p = .01', annotP: 'mean-rank p = .83', a: { m: 1.84, lo: -0.88, hi: 4.55 }, p: { m: -0.29, lo: -1.04, hi: 0.46 } },
+  { label: 'Augmented SCM (pooled)', cat: 'Convergence', a: { m: 1.79, lo: -5.08, hi: 8.66 },  p: { m: -0.36, lo: -2.57, hi: 1.86 } },
+  { label: 'Consistent reporters',   cat: 'Robustness',  a: { m: 3.53, lo: 1.62, hi: 5.48 },   p: { m: -0.45, lo: -1.34, hi: 0.29 } },
+  { label: 'Extended window 2016&#8211;24', cat: 'Robustness', a: { m: 1.05, lo: 0.43, hi: 1.68 }, p: { m: -0.18, lo: -0.45, hi: 0.07 } },
+  { label: 'Excluding California',   cat: 'Robustness',  a: { m: 2.59, lo: 0.92, hi: 4.08 },   p: { m: -0.25, lo: -0.84, hi: 0.39 } },
+  { label: 'Leave-one-out range',    cat: 'Robustness',  range: true, a: { lo: 0.95, hi: 1.54 }, p: { lo: -0.43, hi: -0.13 } },
+  { label: 'Adult-offender placebo', cat: 'Placebo',     a: { m: -0.74, lo: -1.99, hi: 0.53 }, p: { m: -0.51, lo: -0.98, hi: -0.07 } },
+  { label: 'Juvenile &#8722; adult (DDD)', cat: 'Placebo', a: { m: 2.10, lo: 0.54, hi: 3.68 }, p: { m: -0.27, lo: -1.11, hi: 0.49 } }
+];
+const CAT_COLOR = { Primary: '#2563eb', Convergence: '#0d9488', Robustness: '#7c3aed', Placebo: '#d97706' };
+
+const BSCM = [
+  { st: 'IL', name: 'Illinois',    pre: 12, post: 36, mae: 2.07, m: 3.22, lo: -2.40, hi: 7.50,  pDec: '.08', short: false },
+  { st: 'OR', name: 'Oregon',      pre: 12, post: 36, mae: 2.69, m: 4.64, lo: -1.81, hi: 10.27, pDec: '.06', short: false },
+  { st: 'UT', name: 'Utah',        pre: 16, post: 32, mae: 2.15, m: 2.70, lo: -1.11, hi: 5.85,  pDec: '.05', short: false },
+  { st: 'DE', name: 'Delaware',    pre: 21, post: 27, mae: 3.94, m: 5.20, lo: -1.42, hi: 11.43, pDec: '.05', short: false },
+  { st: 'IN', name: 'Indiana',     pre: 30, post: 18, mae: 2.12, m: 3.71, lo: 0.61,  hi: 5.86,  pDec: '.01', short: false },
+  { st: 'CO', name: 'Colorado',    pre: 31, post: 17, mae: 1.61, m: 1.33, lo: -2.53, hi: 3.96,  pDec: '.20', short: false },
+  { st: 'CT', name: 'Connecticut', pre: 33, post: 15, mae: 3.60, m: 2.62, lo: -2.24, hi: 6.55,  pDec: '.11', short: false },
+  { st: 'NV', name: 'Nevada',      pre: 42, post: 6,  mae: 2.41, m: 2.35, lo: -0.46, hi: 5.29,  pDec: '.05', short: true },
+  { st: 'CA', name: 'California',  pre: 42, post: 6,  mae: 1.17, m: 2.09, lo: -0.96, hi: 5.25,  pDec: '.08', short: true }
+];
+
+const DOSE = {
+  arrest: [
+    { comp: 2, states: 'NV',         m: -0.63, lo: -1.70, hi: 0.46, pCost: '.88' },
+    { comp: 3, states: 'UT',         m: -0.15, lo: -0.95, hi: 0.67, pCost: '.64' },
+    { comp: 4, states: 'IL, DE',     m: 0.34,  lo: -0.29, hi: 0.96, pCost: '.14' },
+    { comp: 5, states: 'IN, CO, CA', m: 0.83,  lo: 0.22,  hi: 1.42, pCost: '<.01' },
+    { comp: 8, states: 'OR, CT',     m: 2.28,  lo: 1.00,  hi: 3.51, pCost: '<.01' }
+  ],
+  prosec: [
+    { comp: 2, states: 'NV',         m: -0.82, lo: -1.26, hi: -0.38, pCost: '<.01' },
+    { comp: 3, states: 'UT',         m: -0.66, lo: -0.99, hi: -0.33, pCost: '<.01' },
+    { comp: 4, states: 'IL, DE',     m: -0.50, lo: -0.76, hi: -0.25, pCost: '<.01' },
+    { comp: 5, states: 'IN, CO, CA', m: -0.34, lo: -0.58, hi: -0.10, pCost: '<.01' },
+    { comp: 8, states: 'OR, CT',     m: 0.14,  lo: -0.40, hi: 0.67,  pCost: '.70' }
+  ]
+};
+
+const PLACEBO = [
+  { grp: 'Arrest clearance', row: 'Juvenile',        m: 1.31,  lo: 0.41,  hi: 2.29,  color: '#2563eb' },
+  { grp: 'Arrest clearance', row: 'Adult (placebo)', m: -0.74, lo: -1.99, hi: 0.53,  color: '#94a3b8' },
+  { grp: 'Arrest clearance', row: 'Juv &#8722; adult (DDD)', m: 2.10, lo: 0.54, hi: 3.68, color: '#0f172a' },
+  { grp: 'Prosecution declined', row: 'Juvenile',        m: -1.03, lo: -2.01, hi: -0.22, color: '#2563eb' },
+  { grp: 'Prosecution declined', row: 'Adult (placebo)', m: -0.51, lo: -0.98, hi: -0.07, color: '#94a3b8' },
+  { grp: 'Prosecution declined', row: 'Juv &#8722; adult (DDD)', m: -0.27, lo: -1.11, hi: 0.49, color: '#0f172a' }
+];
+
+const DEMOG = [
+  { label: 'Age 13 and under', a: { m: 3.23,  lo: 1.96,  hi: 4.49, p: '<.01' }, x: { m: -0.36, lo: -0.94, hi: 0.22,  pr: '.11' } },
+  { label: 'Age 14&#8211;15',  a: { m: 2.16,  lo: 1.13,  hi: 3.17, p: '<.01' }, x: { m: -1.39, lo: -2.04, hi: -0.78, pr: '<.01' } },
+  { label: 'Age 16&#8211;17',  a: { m: -0.09, lo: -1.04, hi: 0.88, p: '.57' },  x: { m: -0.81, lo: -1.39, hi: -0.24, pr: '<.01' } },
+  { label: 'Black offenders',  a: { m: 1.99,  lo: 0.95,  hi: 3.08, p: '<.01' }, x: { m: -0.72, lo: -1.33, hi: -0.12, pr: '.01' } },
+  { label: 'Non-Black offenders', a: { m: 1.11, lo: 0.21, hi: 1.93, p: '.01' }, x: { m: -0.88, lo: -1.35, hi: -0.40, pr: '<.01' } }
+];
+
+const CRIME = [
+  { label: 'Burglary',            n: 64968,  a: { m: 2.98,  lo: 0.61,  hi: 5.37, p: '.01' }, x: { m: -0.23, lo: -0.92, hi: 0.45,  pr: '.25' } },
+  { label: 'Kidnapping',          n: 4957,   a: { m: 2.30,  lo: -3.29, hi: 7.83, p: '.22' }, x: { m: -2.34, lo: -4.53, hi: -0.28, pr: '.01' } },
+  { label: 'Motor vehicle theft', n: 94807,  a: { m: 1.94,  lo: 0.09,  hi: 3.82, p: '.02' }, x: { m: -0.20, lo: -0.72, hi: 0.30,  pr: '.22' } },
+  { label: 'Aggravated assault',  n: 151318, a: { m: 1.32,  lo: -0.10, hi: 2.76, p: '.04' }, x: { m: 0.07,  lo: -0.43, hi: 0.56,  pr: '.61' } },
+  { label: 'Robbery',             n: 61579,  a: { m: -0.22, lo: -2.30, hi: 1.79, p: '.58' }, x: { m: -0.51, lo: -1.09, hi: 0.06,  pr: '.04' } },
+  { label: 'Sex crimes',          n: 138882, a: { m: -0.63, lo: -1.61, hi: 0.39, p: '.89' }, x: { m: -1.67, lo: -2.63, hi: -0.72, pr: '<.01' } },
+  { label: 'Negligent manslaughter', n: 4889, a: { m: -0.65, lo: -7.76, hi: 6.28, p: '.57' }, x: { m: -1.85, lo: -4.82, hi: 0.02, pr: '.03' } },
+  { label: 'Murder †',     n: 4338,   a: { m: -1.41, lo: -8.35, hi: 5.71, p: '.65' }, x: null }
+];
+
+const TREATED = LAWS.map(function (d) { return d.st; });
+const ALL_UNITS = ['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+const CONTROLS = ALL_UNITS.filter(function (s) { return TREATED.indexOf(s) === -1; });
+
+(function () {
+'use strict';
+
+/* ---------- shared helpers ---------- */
+const FONT = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const CONFIG = { displayModeBar: false, responsive: false };
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Explicit width management: Plotly's own responsive handling is unreliable
+   when the container is narrow at load or resizes without a window event,
+   so every chart is rendered at the measured container width and re-rendered
+   on resize. chart-map is always visible, so it is the canonical measure. */
+function chartW() {
+  const el = document.getElementById('chart-map');
+  const w = el ? el.clientWidth : 0;
+  return (w && w > 40) ? w : 660;
+}
+function isNarrow() { return chartW() < 560; }
+
+function baseLayout(overrides) {
+  const base = {
+    font: { family: FONT, size: 12.5, color: '#475569' },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { l: 60, r: 30, t: 20, b: 55 },
+    hoverlabel: { bgcolor: '#0f172a', bordercolor: '#0f172a', font: { family: FONT, size: 12.5, color: '#ffffff' } },
+    dragmode: false
+  };
+  return Object.assign(base, overrides);
+}
+function axis(overrides) {
+  return Object.assign({
+    gridcolor: '#e2e8f0', gridwidth: 1, zeroline: false, fixedrange: true,
+    linecolor: '#e2e8f0', tickfont: { size: 12, color: '#64748b' }
+  }, overrides);
+}
+function fmt(n) { return n.toLocaleString('en-US'); }
+function pp(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2); }
+const $ = function (id) { return document.getElementById(id); };
+
+/* zero reference line for pp charts */
+function zeroLine() {
+  return { type: 'line', x0: 0, x1: 0, yref: 'paper', y0: 0, y1: 1,
+           line: { color: '#94a3b8', width: 1.5, dash: 'dot' } };
+}
+
+/* ---------- count-up stat band ---------- */
+function animateCount(el) {
+  const target = parseFloat(el.getAttribute('data-count'));
+  const comma = el.getAttribute('data-comma');
+  const suffix = el.getAttribute('data-suffix') || '';
+  if (reduceMotion) { el.textContent = (comma ? fmt(target) : target) + suffix; return; }
+  const t0 = performance.now(), dur = 900;
+  function tick(t) {
+    const u = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - u, 3);
+    const val = Math.round(target * eased);
+    el.textContent = (comma ? fmt(val) : val) + suffix;
+    if (u < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const counted = new WeakSet();
+const io = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) {
+    if (e.isIntersecting && !counted.has(e.target)) { counted.add(e.target); animateCount(e.target); }
   });
+}, { threshold: 0.4 });
+document.querySelectorAll('.stat-value[data-count]').forEach(function (el) { io.observe(el); });
 
-  // ---- Responsive helpers ----
-  function isMobile() { return window.innerWidth <= 768; }
-  function isPhone() { return window.innerWidth <= 480; }
+/* ---------- Step 3: statute table ---------- */
+(function fillLawTable() {
+  const tbody = document.querySelector('#law-table tbody');
+  const chipColor = { 'Weak': '#94a3b8', 'Moderate': '#60a5fa', 'Moderate-Strong': '#2563eb', 'Strong': '#0f172a' };
+  tbody.innerHTML = LAWS.map(function (d) {
+    return '<tr>' +
+      '<td class="data-cell">' + d.name + '</td>' +
+      '<td class="num">' + d.date + '</td>' +
+      '<td class="num">' + d.remedy + '</td>' +
+      '<td class="num">' + d.breadth + '</td>' +
+      '<td class="num">' + d.scope + '</td>' +
+      '<td class="num">' + (d.gf ? '−1' : '—') + '</td>' +
+      '<td class="num">' + (d.ps ? '−1' : '—') + '</td>' +
+      '<td class="num" style="font-weight:700;">' + d.comp + '</td>' +
+      '<td><span class="chip solid" style="background:' + chipColor[d.label] + ';">' + d.label + '</span></td>' +
+      '</tr>';
+  }).join('');
+})();
 
-  function chartHeight(desktopH, tabletH, phoneH) {
-    if (isPhone()) return phoneH;
-    if (isMobile()) return tabletH;
-    return desktopH;
-  }
-
-  // ---- Plotly defaults ----
-  function getPlotlyConfig() {
-    return {
-      responsive: true,
-      displayModeBar: !isMobile(),
-      modeBarButtonsToRemove: ['select2d','lasso2d','autoScale2d'],
-      displaylogo: false,
-      scrollZoom: false,
-      toImageButtonOptions: { format: 'png', scale: 2 }
-    };
-  }
-
-  var fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-
-  // ---- Outcome labels ----
-  var outcomeLabels = {
-    'arrest_rate': 'Arrest Clearance',
-    'exc_rate': 'Exceptional Clearance',
-    'clear_rate': 'Any Clearance'
-  };
-
-  // ---- State names ----
-  var stateNames = {
-    'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California',
-    'CO':'Colorado','CT':'Connecticut','DE':'Delaware','FL':'Florida','GA':'Georgia',
-    'HI':'Hawaii','ID':'Idaho','IL':'Illinois','IN':'Indiana','IA':'Iowa','KS':'Kansas',
-    'KY':'Kentucky','LA':'Louisiana','ME':'Maine','MD':'Maryland','MA':'Massachusetts',
-    'MI':'Michigan','MN':'Minnesota','MS':'Mississippi','MO':'Missouri','MT':'Montana',
-    'NE':'Nebraska','NV':'Nevada','NH':'New Hampshire','NJ':'New Jersey','NM':'New Mexico',
-    'NY':'New York','NC':'North Carolina','ND':'North Dakota','OH':'Ohio','OK':'Oklahoma',
-    'OR':'Oregon','PA':'Pennsylvania','RI':'Rhode Island','SC':'South Carolina',
-    'SD':'South Dakota','TN':'Tennessee','TX':'Texas','UT':'Utah','VT':'Vermont',
-    'VA':'Virginia','WA':'Washington','WI':'Wisconsin','WY':'Wyoming'
-  };
-
-  var controlStates = ['AL','AK','AZ','AR','CA','CT','FL','GA','HI','ID','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NH','NJ','NM','NY','NC','ND','OH','OK','PA','RI','SC','SD','TN','TX','VA','VT','WA','WI','WY'];
-
-  // ---- All state-level results by outcome ----
-  var stateResults = {
-    'arrest_rate': {
-      'IL': { att: 1.31, p: 0.118, ciLo: -0.33, ciHi: 2.96 },
-      'OR': { att: 2.80, p: 0.0006, ciLo: 1.20, ciHi: 4.41 },
-      'UT': { att: 0.07, p: 0.928, ciLo: -1.44, ciHi: 1.58 },
-      'DE': { att: 3.09, p: 0.0002, ciLo: 1.48, ciHi: 4.70 },
-      'NV': { att: 1.91, p: 0.003, ciLo: 0.63, ciHi: 3.18 },
-      'IN': { att: 1.64, p: 0.022, ciLo: 0.24, ciHi: 3.03 },
-      'CO': { att: 0.07, p: 0.924, ciLo: -1.29, ciHi: 1.42 }
+/* ---------- Step 2: map ---------- */
+function renderMap() {
+  const narrow = isNarrow();
+  const treated = {
+    type: 'choropleth', locationmode: 'USA-states',
+    locations: LAWS.map(function (d) { return d.st; }),
+    z: LAWS.map(function (d) { return d.comp; }),
+    zmin: 2, zmax: 8,
+    colorscale: [[0, '#93c5fd'], [0.5, '#3b82f6'], [1, '#1e40af']],
+    marker: { line: { color: '#ffffff', width: 1 } },
+    colorbar: {
+      title: { text: 'Statute<br>strength', font: { size: 11, color: '#64748b' } },
+      thickness: 10, len: 0.55, x: 1.0,
+      tickvals: [2, 5, 8], tickfont: { size: 10.5, color: '#64748b' }
     },
-    'exc_rate': {
-      'IL': { att: -0.08, p: 0.810, ciLo: -0.76, ciHi: 0.59 },
-      'OR': { att: 1.63, p: 7.09e-7, ciLo: 0.99, ciHi: 2.28 },
-      'UT': { att: 0.23, p: 0.484, ciLo: -0.41, ciHi: 0.86 },
-      'DE': { att: -3.32, p: 1.60e-20, ciLo: -4.02, ciHi: -2.62 },
-      'NV': { att: 0.55, p: 0.012, ciLo: 0.12, ciHi: 0.98 },
-      'IN': { att: -1.15, p: 8.88e-5, ciLo: -1.72, ciHi: -0.57 },
-      'CO': { att: -2.13, p: 4.33e-12, ciLo: -2.73, ciHi: -1.52 }
-    },
-    'clear_rate': {
-      'IL': { att: 1.23, p: 0.189, ciLo: -0.61, ciHi: 3.07 },
-      'OR': { att: 4.43, p: 8.73e-7, ciLo: 2.67, ciHi: 6.20 },
-      'UT': { att: 0.30, p: 0.725, ciLo: -1.35, ciHi: 1.94 },
-      'DE': { att: -0.23, p: 0.778, ciLo: -1.81, ciHi: 1.36 },
-      'NV': { att: 2.46, p: 0.0001, ciLo: 1.19, ciHi: 3.73 },
-      'IN': { att: 0.49, p: 0.499, ciLo: -0.93, ciHi: 1.91 },
-      'CO': { att: -2.06, p: 0.003, ciLo: -3.44, ciHi: -0.68 }
-    }
+    showscale: !narrow,
+    customdata: LAWS.map(function (d) { return [d.name, d.date, d.comp, d.label]; }),
+    hovertemplate: '<b>%{customdata[0]}</b><br>Ban effective %{customdata[1]}<br>Statute strength %{customdata[2]} of 8 (%{customdata[3]})<extra></extra>'
   };
-
-  // ---- State law details ----
-  var stateLawDetails = [
-    { name: 'Illinois', abbr: 'IL', date: 'Jan 1, 2022', strength: 'Moderate' },
-    { name: 'Oregon', abbr: 'OR', date: 'Jan 1, 2022', strength: 'Strong' },
-    { name: 'Utah', abbr: 'UT', date: 'May 4, 2022', strength: 'Weak' },
-    { name: 'Delaware', abbr: 'DE', date: 'Oct 10, 2022', strength: 'Weak-Moderate' },
-    { name: 'Indiana', abbr: 'IN', date: 'Jul 1, 2023', strength: 'Weak-Moderate' },
-    { name: 'Colorado', abbr: 'CO', date: 'Aug 7, 2023', strength: 'Moderate-Strong' },
-    { name: 'Nevada', abbr: 'NV', date: 'Jul 1, 2024', strength: 'Weak' }
-  ];
-
-  function sigMarker(p) {
-    if (p < 0.001) return '***';
-    if (p < 0.01) return '**';
-    if (p < 0.05) return '*';
-    return '';
-  }
-
-  function effectClass(att, p) {
-    if (p < 0.05) return att >= 0 ? 'positive sig' : 'negative sig';
-    if (att > 0.5) return 'positive';
-    if (att < -0.5) return 'negative';
-    return 'neutral';
-  }
-
-  // ---- Current overview outcome ----
-  var currentOverviewOutcome = 'clear_rate';
-
-  // ---- TAB 1: Choropleth Map ----
-  function renderMap(outcome) {
-    var treatedMap = {};
-    var states = ['IL','OR','UT','DE','NV','IN','CO'];
-    states.forEach(function(s) {
-      treatedMap[s] = stateResults[outcome][s].att;
-    });
-
-    var allStates = controlStates.concat(Object.keys(treatedMap));
-    allStates = allStates.filter(function(v, i, a) { return a.indexOf(v) === i; });
-
-    var locations = [];
-    var zValues = [];
-    var textLabels = [];
-
-    allStates.forEach(function(s) {
-      locations.push(s);
-      var name = stateNames[s] || s;
-      if (treatedMap.hasOwnProperty(s)) {
-        zValues.push(treatedMap[s]);
-        var sign = treatedMap[s] >= 0 ? '+' : '';
-        textLabels.push('<b>' + name + '</b><br>Effect: ' + sign + treatedMap[s].toFixed(2) + ' pp<br><i>Treated state</i>');
-      } else {
-        zValues.push(null);
-        textLabels.push('<b>' + name + '</b><br><i>Control state</i>');
-      }
-    });
-
-    var data = [{
-      type: 'choropleth',
-      locationmode: 'USA-states',
-      locations: locations,
-      z: zValues,
-      text: textLabels,
-      hoverinfo: 'text',
-      colorscale: [
-        [0, '#dc2626'],
-        [0.35, '#fca5a5'],
-        [0.5, '#f8fafc'],
-        [0.65, '#93c5fd'],
-        [1, '#1d4ed8']
-      ],
-      zmin: -5,
-      zmax: 5,
-      colorbar: {
-        title: { text: 'Effect (pp)', font: { size: 12, family: fontFamily } },
-        thickness: 15,
-        len: 0.6,
-        tickfont: { size: 11, family: fontFamily }
-      },
-      marker: {
-        line: { color: '#94a3b8', width: 0.5 }
-      }
-    }];
-
-    var mapH = chartHeight(500, 380, 300);
-    document.getElementById('map-overview').style.height = mapH + 'px';
-
-    var layout = {
-      geo: {
-        scope: 'usa',
-        bgcolor: 'rgba(0,0,0,0)',
-        lakecolor: '#e2e8f0',
-        landcolor: '#e2e8f0',
-        showlakes: true,
-        showframe: false,
-        projection: { type: 'albers usa' }
-      },
-      height: mapH,
-      margin: isMobile() ? { t: 5, b: 5, l: 5, r: 5 } : { t: 10, b: 10, l: 10, r: 10 },
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: fontFamily, size: isMobile() ? 10 : 12 }
-    };
-
-    Plotly.newPlot('map-overview', data, layout, getPlotlyConfig());
-    document.getElementById('map-title').textContent = 'State Effects on ' + outcomeLabels[outcome] + ' Rate';
-  }
-
-  // ---- TAB 1: State Law Table ----
-  function renderLawTable(outcome) {
-    var tbody = document.getElementById('state-law-tbody');
-    tbody.innerHTML = '';
-    document.getElementById('state-law-effect-header').textContent = 'Effect on ' + outcomeLabels[outcome] + ' (pp)';
-
-    stateLawDetails.forEach(function(s) {
-      var r = stateResults[outcome][s.abbr];
-      var sign = r.att >= 0 ? '+' : '';
-      var sig = sigMarker(r.p);
-      var cls = effectClass(r.att, r.p);
-      var nvWarning = s.abbr === 'NV' ? ' \u26A0' : '';
-      var tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + s.name + '</td>' +
-        '<td>' + s.date + '</td>' +
-        '<td>' + s.strength + '</td>' +
-        '<td class="' + cls + '">' + sign + r.att.toFixed(2) + sig + nvWarning + '</td>';
-      tbody.appendChild(tr);
-    });
-  }
-
-  // ---- Overview outcome toggle handler ----
-  document.querySelectorAll('#overview-outcome-toggle .outcome-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('#overview-outcome-toggle .outcome-btn').forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      currentOverviewOutcome = this.getAttribute('data-outcome');
-      renderMap(currentOverviewOutcome);
-      renderLawTable(currentOverviewOutcome);
-    });
+  const controls = {
+    type: 'choropleth', locationmode: 'USA-states',
+    locations: CONTROLS,
+    z: CONTROLS.map(function () { return 0; }),
+    colorscale: [[0, '#e2e8f0'], [1, '#e2e8f0']], showscale: false,
+    marker: { line: { color: '#ffffff', width: 1 } },
+    hovertemplate: '<b>%{location}</b><br>Never adopted — control<extra></extra>'
+  };
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 300 : 440,
+    margin: { l: 0, r: 0, t: 0, b: 0 },
+    geo: {
+      scope: 'usa', projection: { type: 'albers usa' },
+      showlakes: false, bgcolor: 'rgba(0,0,0,0)',
+      landcolor: '#e2e8f0', subunitcolor: '#ffffff'
+    },
+    showlegend: false
   });
+  Plotly.newPlot('chart-map', [controls, treated], layout, CONFIG);
+}
 
-  // ---- TAB 2: Heatmap ----
-  function renderHeatmap() {
-    var states = ['CO','DE','IL','IN','NV','OR','UT'];
-    var outcomes = ['Arrest Clearance','Exceptional Clearance','Any Clearance'];
-    var outcomeKeys = ['arrest_rate','exc_rate','clear_rate'];
-
-    var att = [];
-    var pvals = [];
-    states.forEach(function(s) {
-      var row = [];
-      var prow = [];
-      outcomeKeys.forEach(function(o) {
-        row.push(stateResults[o][s].att);
-        prow.push(stateResults[o][s].p);
+/* ---------- generic horizontal dot-interval renderer ---------- */
+function dotChart(divId, rows, opts) {
+  /* rows: [{y, m, lo, hi, color, symbol, hover}] ; range rows have m=null */
+  const narrow = isNarrow();
+  const o = opts || {};
+  const traces = [];
+  rows.forEach(function (r) {
+    if (r.m === null || r.m === undefined) {
+      traces.push({
+        type: 'scatter', mode: 'lines',
+        x: [r.lo, r.hi], y: [r.y, r.y],
+        line: { color: r.color || '#64748b', width: 5 },
+        opacity: 0.55,
+        hovertemplate: (r.hover || '') + '<extra></extra>',
+        showlegend: false
       });
-      att.push(row);
-      pvals.push(prow);
-    });
-
-    var annotations = [];
-    var hoverText = [];
-    for (var i = 0; i < states.length; i++) {
-      var row = [];
-      for (var j = 0; j < outcomes.length; j++) {
-        var sign = att[i][j] >= 0 ? '+' : '';
-        var sig = sigMarker(pvals[i][j]);
-        var label = sign + att[i][j].toFixed(2) + sig;
-        annotations.push({
-          x: outcomes[j],
-          y: states[i],
-          text: label,
-          showarrow: false,
-          font: {
-            size: 13,
-            color: Math.abs(att[i][j]) > 2.5 ? '#ffffff' : '#1e293b',
-            family: fontFamily,
-            weight: 600
-          }
-        });
-        row.push('<b>' + states[i] + ' \u2014 ' + outcomes[j] + '</b><br>ATT: ' + sign + att[i][j].toFixed(2) + ' pp<br>p = ' + pvals[i][j].toExponential(2));
-      }
-      hoverText.push(row);
+    } else {
+      traces.push({
+        type: 'scatter', mode: 'markers',
+        x: [r.m], y: [r.y],
+        error_x: {
+          type: 'data', symmetric: false,
+          array: [r.hi - r.m], arrayminus: [r.m - r.lo],
+          color: r.color || '#2563eb', thickness: 1.5, width: 0
+        },
+        marker: {
+          color: (r.symbol === 'circle-open') ? '#ffffff' : (r.color || '#2563eb'),
+          size: narrow ? 8 : 10,
+          symbol: 'circle',
+          line: { color: r.color || '#2563eb', width: 1.8 }
+        },
+        hovertemplate: (r.hover || '') + '<extra></extra>',
+        showlegend: false
+      });
     }
+  });
+  const layout = baseLayout({
+    width: chartW(),
+    height: o.height || (rows.length * (narrow ? 34 : 40) + 110),
+    margin: { l: 10, r: narrow ? 8 : 30, t: o.topMargin || 24, b: 52 },
+    showlegend: false,
+    xaxis: axis({
+      title: { text: narrow ? (o.xTitleNarrow || 'Estimated change (pp)') : (o.xTitle || 'Estimated change (percentage points)'), font: { size: narrow ? 11.5 : 12.5 } },
+      range: o.xRange
+    }),
+    yaxis: axis({
+      showgrid: false, automargin: true, autorange: 'reversed',
+      categoryorder: 'array', categoryarray: rows.map(function (r) { return r.y; }),
+      ticksuffix: ' ', tickfont: { size: narrow ? 10 : 12, color: '#64748b' }
+    }),
+    shapes: [zeroLine()].concat(o.shapes || []),
+    annotations: o.annotations || []
+  });
+  Plotly.newPlot(divId, traces, layout, CONFIG);
+}
 
-    var heatH = chartHeight(420, 360, 320);
-    document.getElementById('heatmap-state').style.height = heatH + 'px';
+/* ---------- Step 5: headline ---------- */
+function renderHeadline() {
+  const narrow = isNarrow();
+  dotChart('chart-headline', [
+    { y: narrow ? 'Arrest<br>clearance' : 'Arrest clearance', m: PRIMARY.arrest.m, lo: PRIMARY.arrest.lo, hi: PRIMARY.arrest.hi, color: '#2563eb',
+      hover: '<b>Arrest clearance</b><br>+2.25 pp (95% CrI +0.99 to +3.60)<br>P(decline) = .005' },
+    { y: narrow ? 'Prosecution<br>declined' : 'Prosecution declined', m: PRIMARY.prosec.m, lo: PRIMARY.prosec.lo, hi: PRIMARY.prosec.hi, color: '#d97706',
+      hover: '<b>Prosecution declined</b><br>−0.26 pp (95% CrI −0.76 to +0.25)<br>P(increase) = .13' }
+  ], {
+    height: narrow ? 210 : 230,
+    xRange: [-1.6, 4.2],
+    xTitle: 'Change after adoption (percentage points)',
+    annotations: [
+      { x: 0, yref: 'paper', y: 1.14, text: '0 = no change', showarrow: false,
+        font: { size: narrow ? 10 : 11, color: '#64748b' } }
+    ],
+    topMargin: 38
+  });
+}
 
-    var data = [{
-      type: 'heatmap',
-      z: att,
-      x: outcomes,
-      y: states,
-      text: hoverText,
-      hoverinfo: 'text',
-      colorscale: [
-        [0, '#dc2626'],
-        [0.35, '#fca5a5'],
-        [0.5, '#f1f5f9'],
-        [0.65, '#93c5fd'],
-        [1, '#1d4ed8']
-      ],
-      zmid: 0,
-      zmin: -5,
-      zmax: 5,
-      colorbar: {
-        title: { text: 'ATT (pp)', font: { size: isMobile() ? 9 : 11, family: fontFamily } },
-        thickness: isMobile() ? 10 : 15,
-        tickfont: { size: isMobile() ? 8 : 10, family: fontFamily }
-      },
-      xgap: 3,
-      ygap: 3
-    }];
-
-    // Adjust annotation font size for mobile
-    annotations.forEach(function(a) {
-      a.font.size = isMobile() ? 10 : 13;
+/* ---------- Step 7: method forest with outcome toggle ---------- */
+let forestOutcome = 'arrest';
+function renderForest() {
+  const narrow = isNarrow();
+  const isA = forestOutcome === 'arrest';
+  const rows = FOREST.map(function (f) {
+    const d = isA ? f.a : f.p;
+    const annot = isA ? f.annotA : f.annotP;
+    const label = f.label + (annot ? '<br><span style="font-size:0.82em;color:#94a3b8">' + annot + '</span>' : '');
+    if (f.range) {
+      return { y: label, m: null, lo: d.lo, hi: d.hi, color: CAT_COLOR[f.cat],
+               hover: '<b>' + f.label + '</b><br>' + pp(d.lo) + ' to ' + pp(d.hi) + ' pp across the set' };
+    }
+    return { y: label, m: d.m, lo: d.lo, hi: d.hi, color: CAT_COLOR[f.cat],
+             hover: '<b>' + f.label + '</b>' + (annot ? ' (' + annot + ')' : '') + '<br>' + pp(d.m) + ' pp [' + pp(d.lo) + ', ' + pp(d.hi) + ']' };
+  });
+  dotChart('chart-forest', rows, {
+    height: narrow ? 580 : 620,
+    xRange: isA ? [-5.8, 9.4] : [-3.9, 2.4],
+    xTitle: (isA ? 'Arrest clearance' : 'Prosecution declined') + ': estimated change (percentage points)',
+    annotations: [
+      { xref: 'paper', x: 0.99, yref: 'paper', y: 1.045, xanchor: 'right', showarrow: false,
+        text: '<span style="color:#2563eb">● Primary</span>  <span style="color:#0d9488">● Convergence</span>  <span style="color:#7c3aed">● Robustness</span>  <span style="color:#d97706">● Placebo</span>',
+        font: { size: narrow ? 9.5 : 11 } }
+    ],
+    topMargin: 42
+  });
+}
+document.querySelectorAll('.tab-btn[data-outcome]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    forestOutcome = b.getAttribute('data-outcome');
+    document.querySelectorAll('.tab-btn[data-outcome]').forEach(function (x) {
+      const on = x === b;
+      x.classList.toggle('active', on);
+      x.setAttribute('aria-selected', on ? 'true' : 'false');
     });
+    renderForest();
+  });
+});
 
-    var layout = {
-      height: heatH,
-      annotations: annotations,
-      margin: isMobile() ? { t: 20, b: 60, l: 40, r: 50 } : { t: 30, b: 80, l: 50, r: 80 },
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: fontFamily },
-      xaxis: { side: 'bottom', tickfont: { size: isMobile() ? 9 : 12 } },
-      yaxis: { tickfont: { size: isMobile() ? 10 : 12 }, autorange: 'reversed' }
+/* ---------- Step 8: BSCM per state ---------- */
+function renderBscm() {
+  const narrow = isNarrow();
+  const rows = BSCM.map(function (d) {
+    return {
+      y: d.name + (d.short ? ' ⚠' : ''),
+      m: d.m, lo: d.lo, hi: d.hi,
+      color: d.st === 'IN' ? '#1e40af' : '#3b82f6',
+      symbol: d.short ? 'circle-open' : 'circle',
+      hover: '<b>' + d.name + '</b><br>' + pp(d.m) + ' pp [' + pp(d.lo) + ', ' + pp(d.hi) + ']<br>' +
+             d.pre + ' pre / ' + d.post + ' post months · pre-fit MAE ' + d.mae.toFixed(2) + ' pp<br>P(decline) = ' + d.pDec
     };
+  });
+  dotChart('chart-bscm', rows, {
+    height: narrow ? 440 : 480,
+    xRange: [-9.6, 13.2],
+    xTitle: 'Arrest clearance: state-specific synthetic-control estimate (pp)',
+    annotations: [
+      { xref: 'paper', x: 0.99, yref: 'paper', y: 1.05, xanchor: 'right', showarrow: false,
+        text: '9 of 9 point estimates positive', font: { size: narrow ? 10 : 11.5, color: '#0f172a' } }
+    ],
+    topMargin: 42
+  });
+}
 
-    Plotly.newPlot('heatmap-state', data, layout, getPlotlyConfig());
-  }
-
-  // ---- TAB 2: Bar chart ----
-  var currentBarOutcome = 'arrest_rate';
-
-  function renderBarChart(outcome) {
-    currentBarOutcome = outcome;
-    var label = outcomeLabels[outcome];
-
-    // Sort states by ATT value for display
-    var stateOrder = ['IL','OR','UT','DE','NV','IN','CO'];
-    var sorted = stateOrder.map(function(s) {
-      return { abbr: s, data: stateResults[outcome][s] };
-    }).sort(function(a, b) { return a.data.att - b.data.att; });
-
-    var states = sorted.map(function(d) { return d.abbr; });
-    var values = sorted.map(function(d) { return d.data.att; });
-    var ciLo = sorted.map(function(d) { return d.data.ciLo; });
-    var ciHi = sorted.map(function(d) { return d.data.ciHi; });
-
-    var barColors = values.map(function(v) {
-      return v >= 0 ? '#3b82f6' : '#ef4444';
-    });
-
-    var errorYLow = values.map(function(v, i) { return v - ciLo[i]; });
-    var errorYHigh = values.map(function(v, i) { return ciHi[i] - v; });
-
-    var barH = chartHeight(400, 340, 300);
-    document.getElementById('bar-arrest').style.height = barH + 'px';
-
-    var data = [{
-      type: 'bar',
-      x: states,
-      y: values,
-      marker: { color: barColors, cornerradius: 4 },
+/* ---------- Step 9: dose-response ---------- */
+function renderDose() {
+  const narrow = isNarrow();
+  const xlab = DOSE.arrest.map(function (d) {
+    return (narrow ? '' : 'Composite ') + d.comp + '<br><span style="font-size:0.82em;color:#94a3b8">' + d.states + '</span>';
+  });
+  function mkTrace(set, color, name, probLabel, shift) {
+    return {
+      type: 'scatter', mode: 'markers', name: name,
+      x: set.map(function (d, i) { return i + shift; }),
+      y: set.map(function (d) { return d.m; }),
       error_y: {
-        type: 'data',
-        symmetric: false,
-        array: errorYHigh,
-        arrayminus: errorYLow,
-        color: '#475569',
-        thickness: 1.5,
-        width: isMobile() ? 4 : 6
+        type: 'data', symmetric: false,
+        array: set.map(function (d) { return d.hi - d.m; }),
+        arrayminus: set.map(function (d) { return d.m - d.lo; }),
+        color: color, thickness: 1.5, width: 0
       },
-      hovertemplate: '<b>%{x}</b><br>ATT: %{y:.2f} pp<br>95% CI: [%{customdata[0]:.2f}, %{customdata[1]:.2f}]<extra></extra>',
-      customdata: states.map(function(s, i) { return [ciLo[i], ciHi[i]]; })
-    }];
-
-    var layout = {
-      height: barH,
-      margin: isMobile() ? { t: 15, b: 40, l: 45, r: 10 } : { t: 20, b: 50, l: 60, r: 20 },
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: fontFamily },
-      xaxis: {
-        tickfont: { size: isMobile() ? 10 : 13, color: '#1e293b' }
-      },
-      yaxis: {
-        title: { text: 'Change in ' + label + ' Rate (pp)', font: { size: isMobile() ? 10 : 12 } },
-        tickfont: { size: isMobile() ? 9 : 11 },
-        zeroline: true,
-        zerolinecolor: '#94a3b8',
-        zerolinewidth: 1.5,
-        gridcolor: '#e2e8f0'
-      },
-      shapes: [{
-        type: 'line',
-        x0: -0.5, x1: 6.5,
-        y0: 0, y1: 0,
-        line: { color: '#475569', width: 1, dash: 'dash' }
-      }]
+      marker: { color: color, size: narrow ? 8 : 10, line: { color: '#ffffff', width: 1.5 } },
+      customdata: set.map(function (d) { return [d.states, d.lo, d.hi, d.pCost, d.comp]; }),
+      hovertemplate: '<b>' + name + ' · strength %{customdata[4]}</b> (%{customdata[0]})<br>%{y:.2f} pp/yr [%{customdata[1]:.2f}, %{customdata[2]:.2f}]<br>' + probLabel + ' = %{customdata[3]}<extra></extra>'
     };
-
-    Plotly.newPlot('bar-arrest', data, layout, getPlotlyConfig());
-    document.getElementById('bar-title').textContent = label + ' Effects by State';
-    document.getElementById('bar-subtitle').textContent = 'Estimated change in ' + label.toLowerCase() + ' rate (pp) with 95% confidence intervals.';
   }
-
-  // ---- Bar chart outcome toggle handler ----
-  document.querySelectorAll('#bar-outcome-toggle .outcome-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('#bar-outcome-toggle .outcome-btn').forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      renderBarChart(this.getAttribute('data-outcome'));
-    });
+  const tA = mkTrace(DOSE.arrest, '#2563eb', 'Arrest clearance', 'P(annual decline)', -0.08);
+  const tP = mkTrace(DOSE.prosec, '#d97706', 'Prosecution declined', 'P(annual increase)', 0.08);
+  const layout = baseLayout({
+    width: chartW(),
+    height: narrow ? 340 : 400,
+    margin: { l: narrow ? 44 : 62, r: narrow ? 8 : 30, t: 34, b: narrow ? 62 : 70 },
+    showlegend: true,
+    legend: { orientation: 'h', y: 1.12, x: 0, font: { size: narrow ? 10.5 : 12 } },
+    xaxis: axis({
+      tickvals: [0, 1, 2, 3, 4], ticktext: xlab, showgrid: false,
+      title: narrow ? undefined : { text: 'Statute strength (composite score)', font: { size: 12.5 } },
+      tickfont: { size: narrow ? 9.5 : 11.5, color: '#64748b' },
+      range: [-0.5, 4.5]
+    }),
+    yaxis: axis({ title: { text: narrow ? 'pp per year' : 'Estimated post-adoption trend (pp per year)', font: { size: narrow ? 11 : 12.5 } }, range: [-2.1, 4.0] }),
+    shapes: [{ type: 'line', xref: 'paper', x0: 0, x1: 1, y0: 0, y1: 0,
+               line: { color: '#94a3b8', width: 1.5, dash: 'dot' } }]
   });
+  Plotly.newPlot('chart-dose', [tA, tP], layout, CONFIG);
+}
 
-  // ---- TAB 3: Time series data (all three outcomes) ----
-  var timeData = {
-    'arrest_rate': {
-      'IL': {
-        label: 'Illinois', effectiveDate: 'Jan 1, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [1.31,1.67,1.72,1.51,1.80,1.54,0.97,-0.25],
-        ciLo: [-0.33,0.02,0.12,-0.08,0.25,0.02,-0.44,-1.66],
-        ciHi: [2.96,3.31,3.32,3.10,3.34,3.06,2.37,1.16]
-      },
-      'OR': {
-        label: 'Oregon', effectiveDate: 'Jan 1, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [2.80,2.91,3.08,3.37,3.40,4.56,3.68,3.73],
-        ciLo: [1.20,1.29,1.48,1.77,1.84,3.03,2.22,2.28],
-        ciHi: [4.41,4.53,4.68,4.96,4.96,6.09,5.13,5.17]
-      },
-      'UT': {
-        label: 'Utah', effectiveDate: 'May 4, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [0.07,-0.50,-0.51,-0.67,-0.75,-1.62,-0.61,-0.63],
-        ciLo: [-1.44,-2.02,-2.04,-2.19,-2.26,-3.07,-2.06,-2.02],
-        ciHi: [1.58,1.03,1.02,0.85,0.76,-0.16,0.84,0.76]
-      },
-      'DE': {
-        label: 'Delaware', effectiveDate: 'Oct 10, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [3.09,2.03,0.95,0.78,0.53,1.25,4.52,2.32],
-        ciLo: [1.48,0.42,-0.66,-0.84,-1.07,-0.31,3.05,1.03],
-        ciHi: [4.70,3.64,2.56,2.39,2.12,2.80,5.99,3.61]
-      },
-      'IN': {
-        label: 'Indiana', effectiveDate: 'Jul 1, 2023',
-        months: [0,1,2,3,4,6,9,12],
-        att: [1.64,1.65,1.16,1.22,0.82,-0.37,-0.10,-0.33],
-        ciLo: [0.24,0.30,-0.12,-0.04,-0.42,-1.66,-1.32,-1.56],
-        ciHi: [3.03,3.00,2.44,2.47,2.05,0.92,1.11,0.90]
-      },
-      'CO': {
-        label: 'Colorado', effectiveDate: 'Aug 7, 2023',
-        months: [0,1,2,3,4,6,9,12],
-        att: [0.07,0.11,0.18,0.06,0.47,0.58,-0.86,-1.45],
-        ciLo: [-1.29,-1.20,-1.11,-1.21,-0.82,-0.75,-2.04,-2.74],
-        ciHi: [1.42,1.42,1.46,1.34,1.76,1.92,0.32,-0.17]
-      },
-      'NV': {
-        label: 'Nevada', effectiveDate: 'Jul 1, 2024',
-        months: [0,1,2,3,4],
-        att: [1.91,1.60,-1.36,-1.25,-3.87],
-        ciLo: [0.63,0.28,-2.47,-2.38,-4.60],
-        ciHi: [3.18,2.93,-0.25,-0.12,-3.13]
-      }
-    },
-    'exc_rate': {
-      'IL': {
-        label: 'Illinois', effectiveDate: 'Jan 1, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [-0.08,-0.06,0.05,0.22,0.30,0.30,0.06,0.12],
-        ciLo: [-0.76,-0.71,-0.61,-0.39,-0.32,-0.35,-0.51,-0.43],
-        ciHi: [0.59,0.59,0.71,0.83,0.92,0.94,0.62,0.66]
-      },
-      'OR': {
-        label: 'Oregon', effectiveDate: 'Jan 1, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [1.63,1.42,1.54,2.04,2.00,1.90,1.51,1.58],
-        ciLo: [0.99,0.78,0.90,1.44,1.39,1.26,0.92,1.00],
-        ciHi: [2.28,2.06,2.19,2.65,2.62,2.54,2.11,2.16]
-      },
-      'UT': {
-        label: 'Utah', effectiveDate: 'May 4, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [0.23,0.17,0.00,-0.46,-0.42,-0.36,-0.77,-0.29],
-        ciLo: [-0.41,-0.48,-0.66,-1.09,-1.02,-0.96,-1.36,-0.87],
-        ciHi: [0.86,0.83,0.66,0.17,0.19,0.24,-0.18,0.30]
-      },
-      'DE': {
-        label: 'Delaware', effectiveDate: 'Oct 10, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [-3.32,-2.94,-2.63,-2.83,-2.44,-3.69,-4.73,-3.81],
-        ciLo: [-4.02,-3.64,-3.32,-3.50,-3.11,-4.35,-5.36,-4.41],
-        ciHi: [-2.62,-2.25,-1.95,-2.15,-1.77,-3.02,-4.11,-3.21]
-      },
-      'IN': {
-        label: 'Indiana', effectiveDate: 'Jul 1, 2023',
-        months: [0,1,2,3,4,6,9,12],
-        att: [-1.15,-1.12,-1.34,-1.55,-1.64,-1.67,-1.35,-1.43],
-        ciLo: [-1.72,-1.69,-1.89,-2.08,-2.16,-2.16,-1.84,-1.93],
-        ciHi: [-0.57,-0.55,-0.79,-1.02,-1.11,-1.18,-0.86,-0.94]
-      },
-      'CO': {
-        label: 'Colorado', effectiveDate: 'Aug 7, 2023',
-        months: [0,1,2,3,4,6,9,12],
-        att: [-2.13,-2.36,-2.58,-2.47,-2.12,-2.54,-2.05,-1.77],
-        ciLo: [-2.73,-2.95,-3.15,-3.04,-2.69,-3.05,-2.62,-2.43],
-        ciHi: [-1.52,-1.77,-2.01,-1.90,-1.55,-2.03,-1.48,-1.12]
-      },
-      'NV': {
-        label: 'Nevada', effectiveDate: 'Jul 1, 2024',
-        months: [0,1,2,3,4],
-        att: [0.55,0.60,0.56,0.70,1.14],
-        ciLo: [0.12,0.16,0.16,0.28,0.77],
-        ciHi: [0.98,1.04,0.96,1.12,1.51]
-      }
-    },
-    'clear_rate': {
-      'IL': {
-        label: 'Illinois', effectiveDate: 'Jan 1, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [1.23,1.61,1.77,1.73,2.09,1.84,1.02,-0.13],
-        ciLo: [-0.61,-0.25,-0.01,-0.01,0.41,0.19,-0.43,-1.56],
-        ciHi: [3.07,3.46,3.56,3.47,3.78,3.48,2.48,1.29]
-      },
-      'OR': {
-        label: 'Oregon', effectiveDate: 'Jan 1, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [4.43,4.33,4.62,5.41,5.40,6.46,5.19,5.30],
-        ciLo: [2.67,2.52,2.85,3.68,3.71,4.82,3.68,3.85],
-        ciHi: [6.20,6.13,6.39,7.15,7.09,8.10,6.69,6.76]
-      },
-      'UT': {
-        label: 'Utah', effectiveDate: 'May 4, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [0.30,-0.33,-0.51,-1.13,-1.17,-1.98,-1.38,-0.92],
-        ciLo: [-1.35,-2.00,-2.16,-2.75,-2.76,-3.47,-2.84,-2.35],
-        ciHi: [1.94,1.35,1.14,0.50,0.43,-0.48,0.09,0.52]
-      },
-      'DE': {
-        label: 'Delaware', effectiveDate: 'Oct 10, 2022',
-        months: [0,1,2,3,4,6,9,12],
-        att: [-0.23,-0.91,-1.68,-2.05,-1.92,-2.44,-0.21,-1.50],
-        ciLo: [-1.81,-2.48,-3.24,-3.60,-3.45,-3.94,-1.64,-2.72],
-        ciHi: [1.36,0.66,-0.13,-0.50,-0.38,-0.94,1.22,-0.27]
-      },
-      'IN': {
-        label: 'Indiana', effectiveDate: 'Jul 1, 2023',
-        months: [0,1,2,3,4,6,9,12],
-        att: [0.49,0.53,-0.18,-0.33,-0.82,-2.04,-1.45,-1.76],
-        ciLo: [-0.93,-0.84,-1.48,-1.58,-2.04,-3.31,-2.67,-3.03],
-        ciHi: [1.91,1.90,1.12,0.91,0.40,-0.78,-0.23,-0.50]
-      },
-      'CO': {
-        label: 'Colorado', effectiveDate: 'Aug 7, 2023',
-        months: [0,1,2,3,4,6,9,12],
-        att: [-2.06,-2.25,-2.40,-2.41,-1.65,-1.96,-2.91,-3.23],
-        ciLo: [-3.44,-3.59,-3.69,-3.68,-2.94,-3.28,-4.13,-4.53],
-        ciHi: [-0.68,-0.90,-1.12,-1.14,-0.37,-0.63,-1.69,-1.92]
-      },
-      'NV': {
-        label: 'Nevada', effectiveDate: 'Jul 1, 2024',
-        months: [0,1,2,3,4],
-        att: [2.46,2.20,-0.80,-0.55,-2.73],
-        ciLo: [1.19,0.88,-1.89,-1.58,-3.43],
-        ciHi: [3.73,3.52,0.28,0.48,-2.02]
-      }
-    }
-  };
-
-  var currentTimeState = 'IL';
-  var currentTimeOutcome = 'arrest_rate';
-
-  function renderTimeSeries(stateCode, outcome) {
-    currentTimeState = stateCode;
-    currentTimeOutcome = outcome;
-    var label = outcomeLabels[outcome];
-    var d = timeData[outcome][stateCode];
-
-    // Show/hide NV warning
-    document.getElementById('nv-warning').style.display = stateCode === 'NV' ? 'block' : 'none';
-
-    // Update selector buttons
-    document.querySelectorAll('#time-state-selector .state-btn').forEach(function(b) {
-      b.classList.toggle('active', b.getAttribute('data-state') === stateCode);
-    });
-
-    var xLabels = d.months.map(function(m) { return 'Month ' + m; });
-
-    var timeH = chartHeight(450, 360, 320);
-    document.getElementById('time-chart').style.height = timeH + 'px';
-
-    var traceLine = {
-      x: xLabels,
-      y: d.att,
-      type: 'scatter',
-      mode: 'lines+markers',
-      name: 'ATT',
-      line: { color: '#3b82f6', width: isMobile() ? 2 : 2.5 },
-      marker: { size: isMobile() ? 5 : 7, color: '#3b82f6' },
-      hovertemplate: '<b>' + d.label + '</b><br>%{x}<br>ATT: %{y:.2f} pp<extra></extra>'
+/* ---------- Step 10: placebo / DDD ---------- */
+function renderPlacebo() {
+  const narrow = isNarrow();
+  const rows = PLACEBO.map(function (d) {
+    const grpLabel = narrow ? d.grp.replace('Prosecution declined', 'Prosec. declined').replace(' clearance', '') : d.grp;
+    return {
+      y: grpLabel + ' · ' + d.row,
+      m: d.m, lo: d.lo, hi: d.hi, color: d.color,
+      hover: '<b>' + d.grp + ' — ' + d.row.replace('&#8722;', '−') + '</b><br>' + pp(d.m) + ' pp [' + pp(d.lo) + ', ' + pp(d.hi) + ']'
     };
+  });
+  dotChart('chart-placebo', rows, {
+    height: narrow ? 330 : 360,
+    xRange: [-2.6, 4.3],
+    xTitle: 'Estimated change (percentage points)'
+  });
+}
 
-    var traceBand = {
-      x: xLabels.concat(xLabels.slice().reverse()),
-      y: d.ciHi.concat(d.ciLo.slice().reverse()),
-      type: 'scatter',
-      fill: 'toself',
-      fillcolor: 'rgba(59,130,246,0.15)',
-      line: { color: 'transparent' },
-      showlegend: false,
-      hoverinfo: 'skip'
+/* ---------- Step 11a: demographics ---------- */
+function renderDemog() {
+  const narrow = isNarrow();
+  const rows = DEMOG.map(function (d) {
+    return {
+      y: d.label, m: d.a.m, lo: d.a.lo, hi: d.a.hi, color: '#2563eb',
+      hover: '<b>' + d.label.replace('&#8211;', '–') + '</b><br>Arrest clearance: ' + pp(d.a.m) + ' pp [' + pp(d.a.lo) + ', ' + pp(d.a.hi) + '], P(decline) = ' + d.a.p +
+             '<br>Prosecution declined: ' + pp(d.x.m) + ' pp [' + pp(d.x.lo) + ', ' + pp(d.x.hi) + '], P(increase) = ' + d.x.pr
     };
+  });
+  dotChart('chart-demog', rows, {
+    height: narrow ? 290 : 320,
+    xRange: [-1.7, 5.1],
+    xTitle: 'Arrest clearance: estimated change by subgroup (pp)'
+  });
+}
 
-    var mobile = isMobile();
-    var layout = {
-      height: timeH,
-      title: {
-        text: d.label + ' \u2014 ' + label + ' Effect Over Time',
-        font: { size: mobile ? 12 : 15, family: fontFamily, color: '#1e293b' },
-        x: 0.02, xanchor: 'left'
-      },
-      annotations: [{
-        x: 1, y: 1.08, xref: 'paper', yref: 'paper',
-        text: 'Ban effective: ' + d.effectiveDate,
-        showarrow: false,
-        font: { size: mobile ? 9 : 11, color: '#64748b', family: fontFamily },
-        xanchor: 'right'
-      }],
-      margin: mobile ? { t: 50, b: 40, l: 42, r: 10 } : { t: 60, b: 50, l: 60, r: 30 },
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: fontFamily },
-      xaxis: {
-        tickfont: { size: mobile ? 9 : 11 },
-        gridcolor: '#f1f5f9',
-        tickangle: mobile ? -45 : 0
-      },
-      yaxis: {
-        title: { text: 'Change in ' + label + ' (pp)', font: { size: mobile ? 10 : 12 } },
-        tickfont: { size: mobile ? 9 : 11 },
-        zeroline: true,
-        zerolinecolor: '#475569',
-        zerolinewidth: 1.5,
-        gridcolor: '#e2e8f0'
-      },
-      shapes: [{
-        type: 'line',
-        x0: -0.5,
-        x1: xLabels.length - 0.5,
-        y0: 0, y1: 0,
-        line: { color: '#475569', width: 1.5, dash: 'dash' }
-      }],
-      showlegend: false
+/* ---------- Step 11b: offense types ---------- */
+function renderCrime() {
+  const narrow = isNarrow();
+  const rows = CRIME.map(function (d) {
+    return {
+      y: d.label + (narrow ? '' : '  <span style="font-size:0.82em;color:#94a3b8">n=' + fmt(d.n) + '</span>'),
+      m: d.a.m, lo: d.a.lo, hi: d.a.hi,
+      color: d.a.m >= 0 ? '#2563eb' : '#94a3b8',
+      hover: '<b>' + d.label.replace(' †', '') + '</b> (n = ' + fmt(d.n) + ' incidents)<br>Arrest clearance: ' + pp(d.a.m) + ' pp [' + pp(d.a.lo) + ', ' + pp(d.a.hi) + '], P(decline) = ' + d.a.p +
+             '<br>Prosecution declined: ' + (d.x ? (pp(d.x.m) + ' pp [' + pp(d.x.lo) + ', ' + pp(d.x.hi) + '], P(increase) = ' + d.x.pr) : 'not estimable †')
     };
-
-    Plotly.newPlot('time-chart', [traceBand, traceLine], layout, getPlotlyConfig());
-  }
-
-  // ---- Time series state selector handler ----
-  document.querySelectorAll('#time-state-selector .state-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      renderTimeSeries(this.getAttribute('data-state'), currentTimeOutcome);
-    });
   });
-
-  // ---- Time series outcome toggle handler ----
-  document.querySelectorAll('#time-outcome-toggle .outcome-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('#time-outcome-toggle .outcome-btn').forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      currentTimeOutcome = this.getAttribute('data-outcome');
-      renderTimeSeries(currentTimeState, currentTimeOutcome);
-    });
+  dotChart('chart-crime', rows, {
+    height: narrow ? 400 : 440,
+    xRange: [-9.4, 8.9],
+    xTitle: 'Arrest clearance: estimated change by offense type (pp)'
   });
+}
 
-  // ---- Initial renders ----
-  renderMap('clear_rate');
-  renderLawTable('clear_rate');
+/* ---------- initial render ---------- */
+renderMap();
+renderHeadline();
+renderForest();
+renderBscm();
+renderDose();
+renderPlacebo();
+renderDemog();
+renderCrime();
 
-  // Deferred renders for hidden tabs
-  var rendered = { overview: true };
-
-  function ensureRendered(tabId) {
-    if (rendered[tabId]) return;
-    rendered[tabId] = true;
-    if (tabId === 'state-results') {
-      renderHeatmap();
-      renderBarChart('arrest_rate');
-    } else if (tabId === 'time-effects') {
-      renderTimeSeries('IL', 'arrest_rate');
-    }
-  }
-
-  tabBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var tabId = this.getAttribute('data-tab');
-      ensureRendered(tabId);
-    });
-  });
+/* ---------- resize: re-render at the new measured width ---------- */
+let resizeTimer, lastW = chartW();
+function rerenderAll() {
+  const w = chartW();
+  if (Math.abs(w - lastW) < 2) return;
+  lastW = w;
+  renderMap();
+  renderHeadline();
+  renderForest();
+  renderBscm();
+  renderDose();
+  renderPlacebo();
+  renderDemog();
+  renderCrime();
+}
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(rerenderAll, 220);
+});
+window.addEventListener('orientationchange', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(rerenderAll, 350);
+});
 
 })();
 </script>
-
 </body>
 </html>

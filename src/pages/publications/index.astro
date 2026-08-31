@@ -9,7 +9,7 @@ const sorted = allPublications.sort((a, b) => b.data.date.getTime() - a.data.dat
 // Group by year
 const byYear = new Map<number, typeof sorted>();
 for (const pub of sorted) {
-  const year = pub.data.date.getFullYear();
+  const year = pub.data.date.getUTCFullYear();
   if (!byYear.has(year)) byYear.set(year, []);
   byYear.get(year)!.push(pub);
 }

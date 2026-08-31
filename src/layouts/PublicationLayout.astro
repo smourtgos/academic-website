@@ -14,7 +14,7 @@ interface Props {
 }
 
 const { title, authors, publication, date, doi, pdfUrl, codeUrl, datasetUrl, abstract } = Astro.props;
-const year = date.getFullYear();
+const year = date.getUTCFullYear();
 ---
 
 <BaseLayout title={`${title} | Scott M. Mourtgos`} description={abstract}>

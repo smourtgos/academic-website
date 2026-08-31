@@ -1,15 +1,18 @@
 ---
-title: "Do Deceptive Interrogation Bans Affect Juvenile Case Resolution? Nine-State Results, Forthcoming in Crime & Delinquency"
+title: "Do Deceptive Interrogation Bans Affect Juvenile Case Resolution? Nine-State Results, Now Out in Crime & Delinquency"
 date: 2026-08-22
 summary: "Nine states banned deceptive interrogation tactics for juveniles between 2022 and 2024, raising concerns among some that the tradeoff would be fewer cases solved. Across 510,582 juvenile-involved incidents in NIBRS (2021-2024), arrest clearances did not decline after adoption --- estimates are null to modestly positive across every method --- and prosecution declinations, the one measure that fell, fell for adults in the same states too."
+lastModified: 2026-08-31
 tags: ["juvenile justice", "interrogation", "deception bans", "NIBRS", "Bayesian DiD", "synthetic control"]
 featured: true
 ---
 
-> **Update (August 2026):** This post describes the final, peer-reviewed version of the study, now
-> forthcoming at *Crime & Delinquency*. It replaces an earlier preliminary post based on a seven-state
-> analysis; the [interactive dashboard](/dashboards/juvenile-deception-ban/dashboard.html) has been
-> fully rebuilt around the accepted results.
+> **Update (August 2026):** This post describes the final, peer-reviewed version of the study, published
+> online at *Crime & Delinquency* on August 30, 2026
+> ([doi:10.1177/00111287261480039](https://doi.org/10.1177/00111287261480039)). It replaces an earlier
+> preliminary post based on a seven-state analysis; the
+> [interactive dashboard](/dashboards/juvenile-deception-ban/dashboard.html) has been fully rebuilt
+> around the published results.
 
 ## The question
 
@@ -21,9 +24,10 @@ Connecticut (October 2023), and Nevada and California (July 2024).
 
 Restrictions on interrogation can be understood not only as safeguards against unreliable admissions
 but also as potential constraints on police fact-development, raising the hypothesis of a public-safety
-tradeoff: fewer confessions, fewer cases solved, more prosecutions refused. Our study, "Do Deceptive
-Interrogation Bans Affect Case Resolution? Evidence from Juvenile Justice Reforms" (Mourtgos & Adams,
-forthcoming in *Crime & Delinquency*), tests whether that hypothesized cost appears in the data.
+tradeoff: fewer confessions, fewer cases solved, more prosecutions refused. Our study, ["Do Deceptive
+Interrogation Bans Affect Case Resolution? Evidence from Juvenile Justice
+Reforms"](https://doi.org/10.1177/00111287261480039) (Mourtgos & Adams, 2026, *Crime & Delinquency*),
+tests whether that hypothesized cost appears in the data.
 
 ## What we did
 
@@ -94,3 +98,9 @@ Open the Interactive Dashboard
   permutations), augmented synthetic control (multisynth)
 - **Placebos and robustness**: adult-offender triple-difference, leave-one-state-out, drop-California
   refit, consistent-reporter restriction, extended 2016-2024 panel, pre-trend diagnostics
+
+## Reference
+
+Mourtgos, S. M., & Adams, I. T. (2026). Do deceptive interrogation bans affect case resolution?
+Evidence from juvenile justice reforms. *Crime & Delinquency*. Advance online publication.
+[https://doi.org/10.1177/00111287261480039](https://doi.org/10.1177/00111287261480039)

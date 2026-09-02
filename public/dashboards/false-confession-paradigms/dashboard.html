@@ -497,8 +497,9 @@ details.robust[open] summary::after { content: "\2212"; }
       what those numbers do, and do not, tell us about real interrogation rooms.
     </p>
     <p class="byline">
-      Scott M. Mourtgos &amp; Ian T. Adams &middot; <em>Journal of Quantitative Criminology</em> (in press)
-      &middot; Interactive companion to the peer-reviewed article
+      Scott M. Mourtgos &amp; Ian T. Adams &middot; <em>Journal of Quantitative Criminology</em> (2026)
+      &middot; Interactive companion to the peer-reviewed article &middot;
+      <a href="https://doi.org/10.1007/s10940-026-09687-1" target="_blank" rel="noopener">doi.org/10.1007/s10940-026-09687-1</a>
     </p>
   </div>
 </header>
@@ -596,18 +597,18 @@ details.robust[open] summary::after { content: "\2212"; }
 <!-- STEP 3: The baseline -->
 <section class="section" id="baseline">
   <span class="section-kicker">Step 3 &middot; The baseline</span>
-  <h2 class="section-title">37% confess before interrogation even starts</h2>
+  <h2 class="section-title">37% confess in control conditions</h2>
   <p class="section-lede">
-    In 30 control conditions, the experimenter simply stated the accusation &mdash; no false evidence,
-    no minimization, no pressure tactics of any kind. <strong>37% of innocent participants signed
-    anyway.</strong> The most coercive tactic in the literature, the false evidence ploy, averages 62%
-    &mdash; which means the no-tactic baseline already accounts for 60% of it.
+    In 30 control conditions, the experimenter most often simply states the accusation.
+    <strong>37% of innocent participants signed anyway.</strong> The most coercive tactic in the
+    literature, the false evidence ploy, averages 62%
+    &mdash; which means the control baseline already accounts for 60% of it.
   </p>
   <div id="chart-ladder" class="chart-wrap" aria-label="Bar chart of mean false confession rate by interrogation method, ordered by theoretical coerciveness"></div>
   <p class="chart-note">Unweighted mean false confession rate by interrogation method, ordered from least to most
   coercive (computed directly from the 99 conditions; k = number of conditions). Dashed line: control baseline.</p>
   <div class="tile-row">
-    <div class="tile bad"><div class="tile-value">37%</div><div class="tile-label">Confess with no tactic at all (direct accusation only)</div></div>
+    <div class="tile bad"><div class="tile-value">37%</div><div class="tile-label">Confess in control conditions</div></div>
     <div class="tile bad"><div class="tile-value">60%</div><div class="tile-label">Share of the false evidence rate already present at baseline</div></div>
     <div class="tile bad"><div class="tile-value">&lt;1%</div><div class="tile-label">Variation across conditions explained by tactic coerciveness (R&sup2; &lt; 0.1%)</div></div>
   </div>
@@ -681,7 +682,7 @@ details.robust[open] summary::after { content: "\2212"; }
     </thead>
     <tbody>
       <tr>
-        <td>Confessions when <em>no tactic</em> is applied</td>
+        <td>Confessions in the <em>control condition</em></td>
         <td>Rare</td>
         <td>Common</td>
         <td class="data-cell">37% <span class="data-sub">across 30 control conditions</span></td>
@@ -804,7 +805,7 @@ details.robust[open] summary::after { content: "\2212"; }
     researchers believe the field produces hundreds of thousands of false confessions a year. The point is
     the converse &mdash; because that implication is not reasonable, a laboratory rate that produces it cannot be
     measuring the same thing as real-world false confession. Even the <em>control</em> conditions alone
-    (37%, no tactics) imply roughly 278,000 per year.
+    (37%) imply roughly 278,000 per year.
   </p>
 </section>
 
@@ -893,7 +894,7 @@ details.robust[open] summary::after { content: "\2212"; }
       <h3>For researchers &amp; reviewers</h3>
       <p>Report absolute baselines alongside contrasts, and flag calibration limits when citing pooled
       rates. A 3&ndash;93% prediction interval means &ldquo;the&rdquo; laboratory false confession rate
-      does not exist; a 37% no-tactic baseline means the outcome needs a construct label chosen with care.</p>
+      does not exist; a 37% control-condition baseline means the outcome needs a construct label chosen with care.</p>
     </div>
   </div>
   <div class="offer-panel">
@@ -934,7 +935,8 @@ details.robust[open] summary::after { content: "\2212"; }
       Interactive analysis by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina, and
       Ian T. Adams, Ph.D., University of South Carolina &nbsp;|&nbsp; Based on Mourtgos &amp; Adams,
       &ldquo;What Do Laboratory False Confession Paradigms Measure? A Calibration Meta-Analysis,&rdquo;
-      <em>Journal of Quantitative Criminology</em> (in press).<!-- TODO: link DOI when assigned -->
+      <em>Journal of Quantitative Criminology</em> (2026),
+      <a href="https://doi.org/10.1007/s10940-026-09687-1" target="_blank" rel="noopener">https://doi.org/10.1007/s10940-026-09687-1</a>.
     </div>
     <div>
       Methods: multilevel Bayesian binomial model (conditions nested within papers; brms/CmdStan) and
@@ -1028,14 +1030,14 @@ const P_LABEL = { AltKey: 'Alt-Key', Cheating: 'Cheating', FakeVideo: 'Fake vide
 const P_COLOR = { AltKey: '#2563eb', Cheating: '#d97706', FakeVideo: '#7c3aed', TheftAccusation: '#0d9488' };
 const METHODS = ['CTRL', 'INFO', 'MIN', 'MAX', 'MIX', 'FEP'];
 const M_LABEL = {
-  CTRL: 'No tactic (direct accusation)',
+  CTRL: 'Control condition',
   INFO: 'Information gathering',
   MIN:  'Minimization',
   MAX:  'Maximization',
   MIX:  'Mixed accusatorial',
   FEP:  'False evidence ploy'
 };
-const M_SHORT = { CTRL: 'No tactic', INFO: 'Info-gathering', MIN: 'Minimization', MAX: 'Maximization', MIX: 'Mixed accusatorial', FEP: 'False evidence' };
+const M_SHORT = { CTRL: 'Control', INFO: 'Info-gathering', MIN: 'Minimization', MAX: 'Maximization', MIX: 'Mixed accusatorial', FEP: 'False evidence' };
 
 (function () {
 'use strict';
@@ -1171,7 +1173,7 @@ function renderStrip() {
 function renderLadder() {
   const narrow = isNarrow();
   const ramp = ['#bfdbfe', '#93c5fd', '#60a5fa', '#3b82f6', '#2563eb', '#1e40af'];
-  const M_TINY = { CTRL: 'None', INFO: 'Info', MIN: 'Min', MAX: 'Max', MIX: 'Mixed', FEP: 'False<br>evid.' };
+  const M_TINY = { CTRL: 'Control', INFO: 'Info', MIN: 'Min', MAX: 'Max', MIX: 'Mixed', FEP: 'False<br>evid.' };
   const trace = {
     type: 'bar',
     x: methodMeans.map((_, i) => i),
@@ -1186,7 +1188,7 @@ function renderLadder() {
   };
   const annotations = [
     { x: 3, y: ctrlMean, xanchor: 'center', yanchor: 'top', yshift: -4,
-      text: narrow ? ('Baseline ' + ctrlMean.toFixed(0) + '%') : ('Control baseline: ' + ctrlMean.toFixed(0) + '% — no tactics at all'),
+      text: narrow ? ('Baseline ' + ctrlMean.toFixed(0) + '%') : ('Control baseline: ' + ctrlMean.toFixed(0) + '%'),
       showarrow: false, font: { size: narrow ? 10 : 11.5, color: '#ef4444' } }
   ];
   if (!narrow) {
@@ -1229,7 +1231,7 @@ function dotIntervalLayout(height, extra) {
 function renderCells() {
   const narrow = isNarrow();
   const P_TINY = { AltKey: 'Alt-Key', Cheating: 'Cheating', FakeVideo: 'Fake video', TheftAccusation: 'Theft' };
-  const M_TINY = { CTRL: 'No tactic', INFO: 'Info', MIN: 'Min.', MAX: 'Max.', MIX: 'Mixed', FEP: 'False ev.' };
+  const M_TINY = { CTRL: 'Control', INFO: 'Info', MIN: 'Min.', MAX: 'Max.', MIX: 'Mixed', FEP: 'False ev.' };
   const labels = [], traces = [];
   PARADIGMS.forEach(p => {
     const cells = RESULTS.cells[p];

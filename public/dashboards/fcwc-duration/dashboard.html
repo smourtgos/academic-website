@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interrogation Duration and FCWC Risk</title>
+<meta property="og:title" content="Interrogation Duration and FCWC Risk" />
+<meta name="description" content="Why the reported six- and twelve-hour false confession wrongful conviction risk thresholds are not stable estimates of population risk. Interactive reanalysis of the duration model in Smith et al. (2026)." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1e293b;
+  --navy-light: #334155;
+  --navy-dark: #0f172a;
+  --blue: #3b82f6;
+  --blue-light: #60a5fa;
+  --blue-dark: #2563eb;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --red: #ef4444;
+  --red-light: #fca5a5;
+  --green: #22c55e;
+  --green-light: #dcfce7;
+  --green-dark: #166534;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --amber-dark: #92400e;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--gray-50);
+  color: var(--navy);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--navy-dark);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.navbar-brand {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.navbar-brand:hover { color: var(--blue-light); }
+.navbar-back {
+  color: var(--gray-400);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.navbar-back:hover { color: var(--white); }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  padding: 2.5rem 2rem 2rem;
+  color: var(--white);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.category-badge {
+  display: inline-block;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.header h1 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  max-width: 800px;
+}
+.header .subtitle {
+  font-size: 0.95rem;
+  color: var(--gray-300);
+  font-weight: 400;
+  max-width: 700px;
+  margin-bottom: 0.5rem;
+}
+.header .citation-line {
+  font-size: 0.82rem;
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* Tab navigation */
+.tab-nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  position: sticky;
+  top: 56px;
+  z-index: 999;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-nav::-webkit-scrollbar { height: 0; }
+.tab-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 1rem;
+  gap: 0;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 1.25rem;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--navy); background: var(--gray-50); }
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+/* Main content */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* KPI cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.kpi-card {
+  background: var(--navy);
+  color: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.kpi-card .kpi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+.kpi-card .kpi-sub {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  margin-top: 0.3rem;
+}
+.kpi-card .kpi-label {
+  font-size: 0.75rem;
+  color: var(--gray-300);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Dark explanatory boxes */
+.explain-box {
+  background: var(--navy);
+  color: var(--gray-200);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.explain-box p { margin-bottom: 0.75rem; }
+.explain-box p:last-child { margin-bottom: 0; }
+.explain-box strong { color: var(--white); font-weight: 600; }
+
+/* Section headings */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 2rem 0 1rem;
+}
+.section-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy-light);
+  margin: 1.5rem 0 0.75rem;
+}
+
+/* Chart containers */
+.chart-container {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid var(--gray-200);
+}
+.chart-container .chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.chart-container .chart-subtitle {
+  font-size: 0.82rem;
+  color: var(--gray-500);
+  margin-bottom: 1rem;
+}
+
+/* Tables */
+.styled-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.styled-table thead {
+  background: var(--navy);
+  color: var(--white);
+}
+.styled-table thead th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.styled-table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+.styled-table tbody tr:hover { background: var(--gray-50); }
+.styled-table tbody tr:last-child td { border-bottom: none; }
+
+/* Two-panel layout */
+.two-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Slider controls */
+.slider-group { margin-bottom: 1.5rem; }
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+}
+.slider-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+.slider-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+.slider-hint {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--gray-400);
+  margin-top: 0.25rem;
+}
+.slider-anchors {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--gray-500);
+  margin-top: 0.15rem;
+}
+.slider-anchor {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+.slider-anchor:hover { color: var(--blue); }
+
+/* Toggle buttons */
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.toggle-group-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+  display: block;
+}
+.toggle-group-hint {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.toggle-btn:hover { border-color: var(--blue-light); color: var(--blue); }
+.toggle-btn.active {
+  background: var(--blue);
+  color: var(--white);
+  border-color: var(--blue);
+  font-weight: 600;
+}
+
+/* Preset buttons */
+.preset-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-200);
+}
+.preset-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.preset-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: var(--white);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.preset-btn:hover { border-color: var(--blue); color: var(--blue); }
+.preset-btn.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+/* Result display */
+.result-panel {
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+.result-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--blue-light);
+  margin-bottom: 0.25rem;
+}
+.result-kpi-value {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+.result-description {
+  font-size: 0.88rem;
+  color: var(--gray-300);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.result-ci {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-bottom: 1rem;
+}
+.result-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.result-badge.acceptable {
+  background: var(--green);
+  color: var(--white);
+}
+.result-badge.exceeds {
+  background: var(--red);
+  color: var(--white);
+}
+.result-threshold {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 0.5rem;
+}
+.result-estimates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--navy-light);
+}
+.result-est {
+  text-align: center;
+}
+.result-est-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-400);
+}
+.result-est-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Acceptability reference cards */
+.ref-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.ref-card {
+  background: var(--white);
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ref-card:hover { border-color: var(--blue-light); }
+.ref-card.active { border-color: var(--blue); background: rgba(59,130,246,0.04); }
+.ref-card-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+}
+.ref-card-lambda {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--blue);
+  margin-bottom: 0.5rem;
+}
+.ref-card-quote {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+.ref-card-threshold {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* Collapsible sections */
+.collapsible {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  transition: background 0.2s;
+  border-left: 4px solid var(--blue);
+}
+.collapsible-header:hover { background: var(--gray-50); }
+.collapsible-arrow {
+  transition: transform 0.3s;
+  color: var(--gray-400);
+}
+.collapsible.open .collapsible-arrow { transform: rotate(180deg); }
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+.collapsible.open .collapsible-body { max-height: 2000px; }
+.collapsible-content {
+  padding: 0 1.5rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+}
+.collapsible-content p { margin-bottom: 0.75rem; }
+.collapsible-content strong { color: var(--navy); }
+
+/* Formula box */
+.formula-box {
+  background: var(--navy);
+  color: var(--white);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.88rem;
+  text-align: center;
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+.formula-annotation {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  text-align: center;
+  font-family: var(--font);
+  font-style: italic;
+}
+
+/* Citation box */
+.citation-box {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-top: 2rem;
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+.citation-box .cite-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+}
+
+/* Rho explanation banner */
+.rho-banner {
+  background: rgba(6,182,212,0.08);
+  border-left: 4px solid #06b6d4;
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.rho-banner strong { color: var(--navy); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 2rem;
+}
+.footer a { color: var(--blue); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* Responsive — Tablets */
+@media (max-width: 768px) {
+  .navbar { padding: 0 1rem; }
+  .navbar-back { font-size: 0.75rem; }
+  .header { padding: 1.5rem 1rem 1.25rem; }
+  .header h1 { font-size: 1.3rem; }
+  .main { padding: 1.25rem 0.75rem 3rem; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .tab-btn { padding: 0.75rem 0.85rem; font-size: 0.78rem; }
+  .explain-box { padding: 1.25rem; font-size: 0.85rem; }
+  .two-panel { grid-template-columns: 1fr; }
+  .ref-cards { grid-template-columns: 1fr; }
+  .result-panel { margin-bottom: 1rem; }
+  .chart-container { padding: 1rem; }
+  .styled-table { font-size: 0.8rem; }
+  .styled-table thead th, .styled-table tbody td { padding: 0.6rem 0.65rem; white-space: normal; }
+  .toggle-btn { padding: 0.5rem 0.5rem; font-size: 0.78rem; min-height: 44px; }
+}
+
+/* Responsive — Phones */
+@media (max-width: 480px) {
+  .navbar { height: 48px; }
+  .navbar-brand { font-size: 0.82rem; }
+  .navbar-brand svg { width: 15px; height: 15px; }
+  .navbar-back { display: none; }
+  .header { padding: 1.25rem 0.75rem 1rem; }
+  .header h1 { font-size: 1.15rem; }
+  .header .subtitle { font-size: 0.82rem; }
+  .category-badge { font-size: 0.6rem; padding: 0.25rem 0.6rem; }
+  .tab-nav { top: 48px; }
+  .tab-btn { padding: 0.6rem 0.65rem; font-size: 0.72rem; }
+  .main { padding: 1rem 0.5rem 2rem; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .kpi-card { padding: 1rem; }
+  .kpi-card .kpi-value { font-size: 1.5rem; }
+  .kpi-card .kpi-label { font-size: 0.65rem; }
+  .explain-box { padding: 1rem; font-size: 0.82rem; }
+  .section-title { font-size: 1.1rem; }
+  .result-kpi-value { font-size: 2.2rem; }
+  .result-estimates { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .result-est-value { font-size: 1.1rem; }
+  .ref-card { padding: 1rem; }
+  .ref-card-lambda { font-size: 1.2rem; }
+  .toggle-btn { font-size: 0.72rem; min-height: 44px; }
+  .preset-btn { font-size: 0.72rem; padding: 0.4rem 0.75rem; }
+  .slider-label { font-size: 0.82rem; }
+  .collapsible-header { padding: 1rem 1.25rem; font-size: 0.92rem; }
+}
+</style>
+<style>
+/* additions specific to this dashboard */
+.readout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.readout {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+}
+.readout.r-red   { border-left-color: var(--blue-dark); }
+.readout.r-both  { border-left-color: var(--amber); }
+.readout.r-dl    { border-left-color: var(--red); }
+.readout-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin-bottom: 0.35rem;
+}
+.readout-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.1;
+}
+.readout-sub {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 0.3rem;
+}
+.note-box {
+  background: var(--amber-light);
+  border-left: 4px solid var(--amber);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.87rem;
+  color: var(--amber-dark);
+}
+.note-box strong { color: var(--amber-dark); }
+.caveat-box {
+  background: var(--gray-100);
+  border-left: 4px solid var(--gray-400);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.87rem;
+  color: var(--gray-700);
+}
+.swap-controls {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.num { font-variant-numeric: tabular-nums; }
+.pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--gray-200);
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pill-pub { background: var(--blue); color: var(--white); }
+@media (max-width: 768px) {
+  .readout-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+  .two-panel { grid-template-columns: 1fr; }
+  .readout-value { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    Scott M. Mourtgos, Ph.D.
+  </a>
+  <a href="/dashboards" class="navbar-back">&larr; Back to Dashboards</a>
+</nav>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <div class="category-badge">Interactive Analysis</div>
+    <h1>Interrogation Duration and the Estimation of FCWC Risk</h1>
+    <p class="subtitle">Does a six-hour interrogation carry a 10% risk of producing a false confession wrongful conviction? Move the inputs and watch the answer move with them.</p>
+    <p class="citation-line">Based on Mourtgos &amp; Adams, a reply to Smith et al. (2026), forthcoming in the <em>Journal of Criminal Justice</em></p>
+  </div>
+</div>
+
+<!-- Tab navigation -->
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="findings">Key Findings</button>
+    <button class="tab-btn" data-tab="swap">Which Study?</button>
+    <button class="tab-btn" data-tab="sensitivity">Moving the Threshold</button>
+    <button class="tab-btn" data-tab="evidence">The Evidence</button>
+    <button class="tab-btn" data-tab="method">The Denominator</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ===== TAB 1: KEY FINDINGS ===== -->
+<div class="tab-panel active" id="panel-findings">
+
+  <div class="explain-box">
+    <p><strong>The short version.</strong> Smith et al. (2026) replicated our earlier analysis of false confession wrongful conviction (FCWC) risk &mdash; and their replication confirms its central point. They then asked a further question: does FCWC risk rise with interrogation duration? Their model reports roughly 10% risk at six hours and 25% at twelve.</p>
+    <p>We examined whether the available evidence supports those numbers. It does not. The two duration distributions the model compares are built from different populations, different outcomes, different units of observation, and different measures of duration. Change which false confession study supplies one of them &mdash; changing nothing else &mdash; and the twelve-hour estimate moves from 26.3% to 72.6%.</p>
+    <p><strong>What this does not show.</strong> Nothing here establishes that prolonged interrogations are safe, or that duration is unrelated to false confession. The finding is narrower and about measurement: the reported thresholds are not stable estimates of population risk.</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">26.3% &rarr; 72.6%</div>
+      <div class="kpi-label">Swapping One Study</div>
+      <div class="kpi-sub">Estimated risk at 12.06 hours</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">4.0%</div>
+      <div class="kpi-label">Within One Study</div>
+      <div class="kpi-sub">Same-sample comparison at 12.06 h</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">3.9 &ndash; 14.8 h</div>
+      <div class="kpi-label">Where 10% Falls</div>
+      <div class="kpi-sub">Spread &plusmn;25%; at +50% it is never reached</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">0.116%</div>
+      <div class="kpi-label">Data Behind the Tail</div>
+      <div class="kpi-sub">Fitted comparison mass above 12.06 h</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">One Change, Three Different Answers</h2>
+  <p class="section-subtitle">Every curve below holds the base rate at .019, the comparison distribution, the lognormal family, and the 0&ndash;48-hour truncation fixed. The <em>only</em> thing that changes is which false confession study supplies the FCWC duration distribution.</p>
+  <div class="chart-container">
+    <div class="chart-title">Estimated FCWC Risk by Interrogation Duration</div>
+    <div class="chart-subtitle">Dashed vertical lines mark 6.28 and 12.06 hours; the dotted horizontal line marks 10%.</div>
+    <div id="chart-findings" style="width:100%;"></div>
+  </div>
+
+  <div class="note-box">
+    <strong>Why this matters.</strong> These three estimates do not bracket a true value. They show that the model's answer is determined substantially by inputs that neither underlying study was designed to estimate. A quantity that moves from roughly one-quarter to nearly three-quarters on a choice of source is not a calibrated risk boundary.
+  </div>
+
+  <h2 class="section-title">The Same Number, Read Four Ways</h2>
+  <div class="styled-table-wrapper">
+    <table class="styled-table">
+      <thead>
+        <tr><th>Specification</th><th>At 6.28 h</th><th>At 12.06 h</th><th>Reaches 10% at</th></tr>
+      </thead>
+      <tbody id="tbl-findings"></tbody>
+    </table>
+  </div>
+  <p style="font-size:0.8rem;color:var(--gray-500);margin-top:-1rem;margin-bottom:2rem;">All rows computed live in your browser from the published model, with the FCWC base rate fixed at .019.</p>
+
+</div>
+
+<!-- ===== TAB 2: WHICH STUDY ===== -->
+<div class="tab-panel" id="panel-swap">
+
+  <div class="explain-box">
+    <p><strong>Where the false confession curve comes from.</strong> Smith et al. motivate the duration contrast with Drizin and Leo's (2004) documented false confession cases, which had a reported mean interrogation length of 16.3 hours. But their model does not use those cases. It uses Redlich et al. (2011): 35 people with serious mental illness who self-reported a false confession, with a mean <em>total</em> questioning time of 3.07 hours across multiple sittings.</p>
+    <p>The two sources describe very different interrogations. Drag the slider to any duration and compare what each choice implies.</p>
+  </div>
+
+  <div class="swap-controls">
+    <div class="slider-group" style="margin-bottom:0.5rem;">
+      <div class="slider-header">
+        <span class="slider-label">Interrogation duration</span>
+        <span class="slider-value num" id="val-hours">12.06 hours</span>
+      </div>
+      <div class="slider-hint">The duration at which the estimated risk is read off each curve.</div>
+      <input type="range" id="slider-hours" min="0.25" max="24" step="0.01" value="12.06">
+      <div class="slider-range-labels"><span>15 minutes</span><span>24 hours</span></div>
+      <div class="slider-anchors">
+        <span class="slider-anchor" data-h="1.53">1.53 h</span>
+        <span class="slider-anchor" data-h="3.07">3.07 h</span>
+        <span class="slider-anchor" data-h="6.28">6.28 h</span>
+        <span class="slider-anchor" data-h="12.06">12.06 h</span>
+        <span class="slider-anchor" data-h="16.23">16.23 h</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="readout-grid">
+    <div class="readout r-red">
+      <div class="readout-name">Redlich only <span class="pill pill-pub">Published</span></div>
+      <div class="readout-value num" id="out-red">26.3%</div>
+      <div class="readout-sub">35 self-reported false confessors with serious mental illness; mean 3.07 h total questioning</div>
+    </div>
+    <div class="readout r-both">
+      <div class="readout-name">Both, sample-size weighted</div>
+      <div class="readout-value num" id="out-both">62.1%</div>
+      <div class="readout-sub">Redlich et al. and Drizin &amp; Leo combined, as the deposited code defines them</div>
+    </div>
+    <div class="readout r-dl">
+      <div class="readout-name">Drizin &amp; Leo only</div>
+      <div class="readout-value num" id="out-dl">72.6%</div>
+      <div class="readout-sub">44 documented cases with a reported length; mean 16.3 h, median 12 h</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-title">Estimated FCWC Risk Under Three Choices of False Confession Source</div>
+    <div class="chart-subtitle">The vertical line follows the slider.</div>
+    <div id="chart-swap" style="width:100%;"></div>
+  </div>
+
+  <h2 class="section-title">Neither Source Estimates What the Model Needs</h2>
+  <div class="two-panel">
+    <div class="chart-container" style="margin-bottom:0;">
+      <div class="chart-title" style="margin-bottom:0.75rem;">Drizin &amp; Leo (2004)</div>
+      <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.6;">Duration is reported for only 44 of 125 false confession cases. The authors note in a footnote that some reported durations may reflect time in custody rather than active questioning, and that some newspaper accounts could not be independently verified. Only 44 cases ended in conviction, and the published table does not report their durations separately.</p>
+    </div>
+    <div class="chart-container" style="margin-bottom:0;">
+      <div class="chart-title" style="margin-bottom:0.75rem;">Redlich et al. (2011)</div>
+      <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.6;">Cases are self-reported false confessions rather than verified wrongful convictions; 17% reportedly ended in dismissal. The authors caution that retrospective time estimates are vulnerable to memory error, that mental illness may compound this, and that their findings may not generalize to offenders without mental health problems.</p>
+    </div>
+  </div>
+
+  <div class="caveat-box" style="margin-top:1.5rem;">
+    The fitted Redlich distribution places about <strong>12.1%</strong> of its mass at six hours or more and <strong>3.2%</strong> at twelve hours or more. In Drizin and Leo's duration table the corresponding proportions are <strong>84%</strong> and <strong>at least 50%</strong>. Treating either source as the duration distribution of FCWCs requires assuming it can stand in for false confessions that produced wrongful convictions.
+  </div>
+
+</div>
+
+<!-- ===== TAB 3: MOVING THE THRESHOLD ===== -->
+<div class="tab-panel" id="panel-sensitivity">
+
+  <div class="explain-box">
+    <p><strong>Six hours is not a fixed feature of the data.</strong> The reported thresholds sit far out in the tails of fitted curves, where almost nothing was actually observed. Under the published specification, only about 0.116% of the fitted comparison distribution lies above 12.06 hours, and 0.0024% above 34 hours. Those are outputs of an assumed curve, not observed frequencies.</p>
+    <p>So the estimate depends heavily on how fast the comparison curve is assumed to fall toward zero, and on which studies are allowed into it. Change either below.</p>
+  </div>
+
+  <div class="two-panel">
+    <div class="swap-controls" style="margin-bottom:0;">
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-label">Comparison-curve spread</span>
+          <span class="slider-value num" id="val-disp">&times;1.00</span>
+        </div>
+        <div class="slider-hint">Scales every comparison component's log-scale spread. Log-scale locations are unchanged; arithmetic mean durations change.</div>
+        <input type="range" id="slider-disp" min="0.6" max="1.6" step="0.01" value="1">
+        <div class="slider-range-labels"><span>&times;0.60 (tighter)</span><span>&times;1.60 (wider)</span></div>
+        <div class="slider-anchors">
+          <span class="slider-anchor" data-k="0.75">&times;0.75</span>
+          <span class="slider-anchor" data-k="1">&times;1.00</span>
+          <span class="slider-anchor" data-k="1.25">&times;1.25</span>
+          <span class="slider-anchor" data-k="1.5">&times;1.50</span>
+        </div>
+      </div>
+      <span class="toggle-group-label">Which studies form the comparison group?</span>
+      <span class="toggle-group-hint">The published model pools twelve sets of summary statistics from eight studies, weighted by sample size.</span>
+      <div class="toggle-group" style="flex-wrap:wrap;">
+        <button class="toggle-btn active" data-arm="published">Published pooled</button>
+        <button class="toggle-btn" data-arm="equal">Equal weights</button>
+        <button class="toggle-btn" data-arm="noofficer">Drop officer surveys</button>
+        <button class="toggle-btn" data-arm="recorded">Recorded only</button>
+        <button class="toggle-btn" data-arm="within">Within one study</button>
+      </div>
+    </div>
+
+    <div class="result-panel" style="margin-bottom:0;">
+      <div class="result-kpi-label">Duration at which estimated risk reaches 10%</div>
+      <div class="result-kpi-value num" id="out-crossing">6.07 hours</div>
+      <div class="result-description" id="out-crossing-desc">Published specification, base rate fixed at .019.</div>
+      <div class="result-estimates" style="margin-top:1.25rem;">
+        <div class="result-est">
+          <div class="result-est-label">At 6.28 hours</div>
+          <div class="result-est-value num" id="out-s628">10.6%</div>
+        </div>
+        <div class="result-est">
+          <div class="result-est-label">At 12.06 hours</div>
+          <div class="result-est-value num" id="out-s1206">26.3%</div>
+        </div>
+        <div class="result-est">
+          <div class="result-est-label">Peak, 0&ndash;48 h</div>
+          <div class="result-est-value num" id="out-smax">57.2%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-title">How the Threshold Moves</div>
+    <div class="chart-subtitle">Grey curve: the published specification. Blue curve: your current settings. Dotted line: the 10% threshold.</div>
+    <div id="chart-sens" style="width:100%;"></div>
+  </div>
+
+  <h2 class="section-title">Uncertainty Within the Published Specification</h2>
+  <p class="section-subtitle">Applying Smith et al.'s own bootstrap procedure to both duration likelihoods and carrying the draws through Bayes' theorem, with the base rate fixed at .019, gives these 95% intervals. At the point where the published estimate reaches 10%, the uncertainty in the fitted likelihoods places the risk on either side of that threshold.</p>
+  <div class="chart-container">
+    <div class="chart-title">Bootstrap Intervals at Two Durations</div>
+    <div class="chart-subtitle">Point: estimate with the base rate fixed. Bar: 95% interval over study-level duration parameters (400 replications).</div>
+    <div id="chart-boot" style="width:100%;"></div>
+  </div>
+  <div class="caveat-box">
+    The bootstrap still assumes the selected studies, measurements, weights and lognormal family are appropriate. It quantifies uncertainty <em>inside</em> the model; it cannot resolve the comparability problems that motivated this reply.
+  </div>
+
+</div>
+
+<!-- ===== TAB 4: THE EVIDENCE ===== -->
+<div class="tab-panel" id="panel-evidence">
+
+  <div class="explain-box">
+    <p><strong>What the comparison group is made of.</strong> The non-FCWC likelihood pools twelve sets of summary statistics from eight studies, weighted by sample size. But those sample sizes count different things &mdash; and the weighting does not know the difference.</p>
+  </div>
+
+  <div class="two-panel">
+    <div class="chart-container" style="margin-bottom:0;">
+      <div class="chart-title">Weight by What the Study Counted</div>
+      <div class="chart-subtitle">Share of sample-size weight in the pooled comparison distribution.</div>
+      <div id="chart-weights" style="width:100%;"></div>
+    </div>
+    <div class="chart-container" style="margin-bottom:0;">
+      <div class="chart-title">Two Studies, Two Units</div>
+      <div class="chart-subtitle">What one unit of <em>n</em> means in each.</div>
+      <div style="padding:0.5rem 0 0;">
+        <p style="font-size:0.86rem;color:var(--gray-600);line-height:1.7;">Kassin et al.'s (2007) <strong>n = 601</strong> counts <strong>officers estimating their typical interrogation length</strong>. Kelly et al.'s (2016) <strong>n = 29</strong> counts <strong>29 recorded interrogations</strong>.</p>
+        <p style="font-size:0.86rem;color:var(--gray-600);line-height:1.7;margin-top:0.75rem;">Weighting by sample size gives the officer survey about <strong>21 times</strong> the influence of the recorded study, although the two count and measure different things.</p>
+        <p style="font-size:0.86rem;color:var(--gray-600);line-height:1.7;margin-top:0.75rem;">The same issue affects the reported variation. Kassin et al.'s standard deviation describes variation <em>across officers' estimates of a typical interrogation</em>, not variation across individual interrogations. The model nonetheless uses it to determine how often individual interrogations run into the right tail.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">The Twelve Components of the Comparison Group</h2>
+  <div class="styled-table-wrapper">
+    <table class="styled-table">
+      <thead>
+        <tr><th>Study</th><th>What <em>n</em> counts</th><th>Mean (h)</th><th>SD</th><th><em>n</em></th><th>Weight</th></tr>
+      </thead>
+      <tbody id="tbl-nonfcwc"></tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">A Comparison Within One Study</h2>
+  <div class="explain-box">
+    <p>Redlich et al. (2011) allow a more comparable, though still limited, check: both confession groups came from the same population and answered the same questions. Keeping the false confession curve and replacing the pooled comparison group with Redlich's own 30 true confessors gives a very different picture.</p>
+  </div>
+  <div class="styled-table-wrapper">
+    <table class="styled-table">
+      <thead>
+        <tr><th>Comparison group</th><th>At 6.28 h</th><th>At 12.06 h</th><th>Highest value, 0&ndash;48 h</th><th>Reaches 10% at</th></tr>
+      </thead>
+      <tbody id="tbl-within"></tbody>
+    </table>
+  </div>
+  <div class="caveat-box">
+    This is <strong>not</strong> a corrected population estimate. Redlich et al.'s sample is small, retrospective, and restricted to persons with serious mental illness. What it shows is narrower: the sharp increase in the published model does not come from the difference observed between the two groups <em>within</em> that study. It appears when that study's false confessors are compared against the narrower pooled distribution assembled from other sources.
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header">
+      <span>Total duration is partly an outcome, not just exposure</span>
+      <span class="collapsible-arrow">&#9660;</span>
+    </div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>Smith et al. justify conditioning on duration by arguing that longer exposure necessarily raises the cumulative probability of a false confession. That argument requires duration to measure exposure <em>preceding</em> the confession. The measure used does not.</p>
+      <p>Suppose a suspect confesses after two hours and is questioned for four more. The model codes the confession as occurring in a six-hour interrogation, although only two hours preceded it. Part of the measured exposure therefore occurs after the outcome it is meant to explain.</p>
+      <p>The model can estimate an association between FCWC and completed duration. It cannot show how the probability of an initial false confession changes with each additional hour of questioning.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header">
+      <span>Custodial delay and active questioning are different measures</span>
+      <span class="collapsible-arrow">&#9660;</span>
+    </div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>Cleary and Bull's (2021) field study of 249 jail detainees measured the time between detention and interrogation separately from the duration of the interrogation itself. Neither measure was significantly associated with whether respondents reported a full confession, a partial admission, or a denial.</p>
+      <p>Because the researchers did not ask participants whether they were guilty, these findings cannot establish a relationship between duration and false confession. They do demonstrate that custodial delay and active questioning are distinct measures, and that neither was significantly related to confession outcome in that sample.</p>
+    </div></div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header">
+      <span>What the within-study duration test actually found</span>
+      <span class="collapsible-arrow">&#9660;</span>
+    </div>
+    <div class="collapsible-body"><div class="collapsible-content">
+      <p>Redlich et al.'s duration measure was cumulative questioning across multiple sittings. Total questioning averaged 3.07 hours among the 35 false confessors and 1.94 hours among the 30 true confessors &mdash; a difference that was not statistically significant (<em>F</em>(1, 63) = 1.45, <em>p</em> = .23, <em>d</em> = 0.30).</p>
+      <p>A nonsignificant result in a sample this small does not establish equivalence. But it does mean the study itself does not establish a pronounced difference in total duration. When the authors examined the longest individual questioning period, roughly 6&ndash;7% of <em>both</em> groups reported a session lasting six hours or more.</p>
+    </div></div>
+  </div>
+
+</div>
+
+<!-- ===== TAB 5: THE DENOMINATOR ===== -->
+<div class="tab-panel" id="panel-method">
+
+  <div class="explain-box">
+    <p><strong>The underlying problem is a missing denominator.</strong> False confessions unquestionably occur, and prolonged interrogations may well increase their risk. Neither fact tells us the probability that an interrogation of a given length produces a false confession and a wrongful conviction.</p>
+    <p>Finding that prolonged questioning is common among known false confessors does not tell us whether a six-hour interrogation carries a 2%, 10%, or 50% risk &mdash; unless we also know how often six-hour interrogations occur <em>without</em> producing an FCWC.</p>
+  </div>
+
+  <h2 class="section-title">What the Model Computes</h2>
+  <div class="formula-box">
+    P(FCWC | h) &nbsp;=&nbsp; &pi; &middot; f<sub>1</sub>(h) &nbsp;&divide;&nbsp; [ &pi; &middot; f<sub>1</sub>(h) &nbsp;+&nbsp; (1 &minus; &pi;) &middot; f<sub>0</sub>(h) ]
+  </div>
+  <p class="formula-annotation">&pi; is the FCWC base rate; f<sub>1</sub> and f<sub>0</sub> are fitted duration densities for FCWC and non-FCWC cases.</p>
+
+  <div class="explain-box">
+    <p>At a fixed base rate, the estimate depends on the ratio f<sub>1</sub>(h) / f<sub>0</sub>(h): how much more common a duration is under the fitted FCWC curve than under the fitted comparison curve. A large estimate can therefore appear simply because the comparison curve approaches zero &mdash; even when <em>both</em> curves rest on very few observations at that duration.</p>
+    <p>So the empirical meaning of the output depends entirely on whether the two curves represent comparable measurements from comparable populations, especially in their tails. Here they differ in outcome, population, unit of observation, and duration measure. The resulting likelihood ratio reflects those differences alongside any real association between duration and FCWC status.</p>
+  </div>
+
+  <h2 class="section-title">What the Field Still Needs</h2>
+  <p class="section-subtitle">The exchange leaves a concrete empirical task, and one on which both sets of authors agree: code actual interrogations for tactic presence, duration and outcome as recordings become more widely available. Recording alone, though, will not supply the denominator. Researchers would also need to:</p>
+  <div class="styled-table-wrapper">
+    <table class="styled-table">
+      <thead><tr><th>Requirement</th><th>Why it is needed</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Define the sampling population</strong></td><td>Population risk cannot be estimated without knowing which interrogations could have entered the sample.</td></tr>
+        <tr><td><strong>Separate sessions from cumulative questioning</strong></td><td>A 3.07-hour total across multiple sittings is not a 3.07-hour interrogation.</td></tr>
+        <tr><td><strong>Record the time of first admission</strong></td><td>Otherwise questioning that followed the confession is counted as exposure preceding it.</td></tr>
+        <tr><td><strong>Link interrogation features to case outcomes</strong></td><td>Duration data without outcomes cannot identify risk.</td></tr>
+        <tr><td><strong>Distinguish a false confession from one that produced a wrongful conviction</strong></td><td>These are different events, and the model's target quantity is the second.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note-box">
+    <strong>On the magnitude and the judgment.</strong> How large the risk is and whether it is acceptable are separate questions. Smith et al. conclude that even a 1% FCWC rate is problematic. We agree &mdash; as our original article put it, a society may judge even low probabilities unacceptable, and such judgments are ethical and political rather than empirical. The disagreement here concerns whether the available evidence establishes the magnitude. The seriousness of an outcome informs how much risk society should tolerate; it cannot establish how often that outcome occurs.
+  </div>
+
+  <div class="citation-box">
+    <div class="cite-label">Reproducibility</div>
+    <p>Every figure on this page is computed in your browser from the published model &mdash; the study inputs and model functions are those in Smith et al.'s deposited code, with the FCWC base rate fixed at .019. The values match the reply's replication package exactly.</p>
+    <p style="margin-top:0.75rem;">Data and code: <a href="https://github.com/smourtgos/fcwc-duration-reply" target="_blank" rel="noopener noreferrer">github.com/smourtgos/fcwc-duration-reply</a></p>
+  </div>
+
+  <div class="citation-box">
+    <div class="cite-label">Citation</div>
+    <p>Mourtgos, S. M., &amp; Adams, I. T. (forthcoming). Interrogation duration and the estimation of false confession wrongful conviction risk: A reply to Smith and colleagues. <em>Journal of Criminal Justice</em>.</p>
+    <p style="margin-top:0.75rem;">Replying to: Smith, T. B., Catlin, M., May, B., Redlich, A. D., Meissner, C. A., &amp; Kelly, C. E. (2026). Simulating the probability of false confession-wrongful conviction conditional on features of police interrogation. <em>Journal of Criminal Justice, 107</em>, 102742.</p>
+  </div>
+
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  Interactive analysis by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina &nbsp;|&nbsp; Figures are computed live from the published duration model with the FCWC base rate held fixed at .019.
+</div>
+<script>
+(function() {
+  'use strict';
+
+  /* ========== Responsive helpers ========== */
+  function isMobile() { return window.innerWidth <= 768; }
+  function isPhone()  { return window.innerWidth <= 480; }
+  function chartHeight(d, t, p) { return isPhone() ? p : (isMobile() ? t : d); }
+  function plotConfig() {
+    return {
+      responsive: true,
+      displayModeBar: !isMobile(),
+      modeBarButtonsToRemove: ['select2d','lasso2d','autoScale2d'],
+      displaylogo: false,
+      scrollZoom: false,
+      toImageButtonOptions: { format: 'png', scale: 2 }
+    };
+  }
+  function baseLayout(xTitle, yTitle) {
+    return {
+      margin: { t: 20, r: 25, b: 55, l: 58 },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      font: { family: 'Inter, sans-serif', size: isMobile() ? 10 : 12, color: '#64748b' },
+      xaxis: { title: { text: xTitle, font: { size: isMobile() ? 10 : 13 } }, gridcolor: '#e2e8f0' },
+      yaxis: { title: { text: yTitle, font: { size: isMobile() ? 10 : 13 } }, gridcolor: '#e2e8f0' },
+      hovermode: 'x unified'
+    };
+  }
+
+  var C = { pub: '#2563eb', both: '#f59e0b', dl: '#ef4444', grey: '#94a3b8', navy: '#1e293b', green: '#22c55e' };
+
+  /* ===================================================================
+     MODEL — Smith et al.'s duration model (their deposited script 2).
+     Study inputs and model functions follow the deposited code; the
+     FCWC base rate is fixed at .019 throughout.
+     Reproduces the reply's replication package exactly.
+     =================================================================== */
+
+  var PI_FCWC = 0.019;
+
+  // Hart (1968) double-precision normal CDF
+  function normCDF(x) {
+    var z = Math.abs(x), c;
+    if (z > 37) { c = 0; }
+    else {
+      var e = Math.exp(-z * z / 2);
+      if (z < 7.07106781186547) {
+        var b = 3.52624965998911e-02 * z + 0.700383064443688;
+        b = b * z + 6.37396220353165;  b = b * z + 33.912866078383;
+        b = b * z + 112.079291497871;  b = b * z + 221.213596169931;
+        b = b * z + 220.206867912376;
+        var d = 8.83883476483184e-02 * z + 1.75566716318264;
+        d = d * z + 16.064177579207;   d = d * z + 86.7807322029461;
+        d = d * z + 296.564248779674;  d = d * z + 637.333633378831;
+        d = d * z + 793.826512519948;  d = d * z + 440.413735824752;
+        c = e * b / d;
+      } else {
+        var f = z + 1 / (z + 2 / (z + 3 / (z + 4 / (z + 0.65))));
+        c = e / (2.506628274631 * f);
+      }
+    }
+    return x > 0 ? 1 - c : c;
+  }
+  function plnorm(x, m, s) { return x <= 0 ? 0 : normCDF((Math.log(x) - m) / s); }
+  function dlnorm(x, m, s) {
+    if (x <= 0) return 0;
+    var t = (Math.log(x) - m) / s;
+    return Math.exp(-0.5 * t * t) / (x * s * Math.sqrt(2 * Math.PI));
+  }
+  function dlnormTrunc(x, m, s) {
+    if (x <= 0 || x >= 48) return 0;
+    return dlnorm(x, m, s) / plnorm(48, m, s);
+  }
+  function lognormalPars(mean, sd) {
+    var sdlog = Math.sqrt(Math.log(1 + Math.pow(sd / mean, 2)));
+    return { meanlog: Math.log(mean) - 0.5 * sdlog * sdlog, sdlog: sdlog };
+  }
+  function mixtureDist(studies, weighting) {
+    var tot = studies.reduce(function(a, s) { return a + s.n; }, 0);
+    return studies.map(function(s) {
+      var p = lognormalPars(s.mean, s.sd);
+      return { study: s.study, label: s.label, unit: s.unit, mean: s.mean, sd: s.sd, n: s.n,
+               source: s.source, meanlog: p.meanlog, sdlog: p.sdlog,
+               weight: weighting === 'equal' ? 1 / studies.length : s.n / tot };
+    });
+  }
+  function mixLik(h, mix) {
+    return mix.reduce(function(a, c) { return a + c.weight * dlnormTrunc(h, c.meanlog, c.sdlog); }, 0);
+  }
+  function postH(h, f1, f0) {
+    var L1 = mixLik(h, f1), L0 = mixLik(h, f0);
+    return (L1 * PI_FCWC) / (L1 * PI_FCWC + L0 * (1 - PI_FCWC));
+  }
+  function scaleSdlog(mix, k) {
+    return mix.map(function(c) {
+      return { study: c.study, meanlog: c.meanlog, sdlog: c.sdlog * k, weight: c.weight };
+    });
+  }
+  function massAbove(h, mix) {
+    return mix.reduce(function(a, c) {
+      return a + c.weight * (1 - plnorm(h, c.meanlog, c.sdlog) / plnorm(48, c.meanlog, c.sdlog));
+    }, 0);
+  }
+
+  // evaluation grid: 0.05 to 47.95 by 0.01, as in the replication script
+  var HGRID = [];
+  for (var gi = 0; gi <= 4790; gi++) HGRID.push(Math.round((0.05 + gi * 0.01) * 100) / 100);
+
+  function curve(f1, f0) { return HGRID.map(function(h) { return postH(h, f1, f0); }); }
+
+  // first duration at which the curve rises through the threshold; scanned,
+  // not solved, because the curve is not monotone for some specifications
+  function crossing(p, thr) {
+    thr = thr || 0.10;
+    for (var i = 1; i < p.length; i++) {
+      if (Math.sign(p[i] - thr) - Math.sign(p[i - 1] - thr) > 0) return HGRID[i];
+    }
+    return null;
+  }
+
+  /* ========== Study inputs (Smith et al.'s deposited values) ========== */
+
+  var FCWC_STUDIES = [
+    { study: 'Leo_2004',     label: 'Drizin &amp; Leo (2004)',  mean: 16.23, sd: 15.05, n: 44 },
+    { study: 'Redlich_2011', label: 'Redlich et al. (2011)',    mean: 3.07,  sd: 4.21,  n: 35 }
+  ];
+
+  var NONFCWC_STUDIES = [
+    { study: 'Kassin_2007',       label: 'Kassin et al. (2007)',      unit: 'Officers estimating a typical interrogation', mean: 1.6,        sd: 0.89,       n: 601, source: 'officer survey' },
+    { study: 'Brimbal_2024',      label: 'Brimbal et al. (2024)',     unit: 'Officers estimating a typical interrogation', mean: 1.5,        sd: 1.17,       n: 484, source: 'officer survey' },
+    { study: 'Redlich_2011',      label: 'Redlich et al. (2011)',     unit: 'Suspect self-reports (true confessors)',      mean: 1.94,       sd: 3.14,       n: 30,  source: 'suspect self-report' },
+    { study: 'Cleary&Bull_2021',  label: 'Cleary &amp; Bull (2021)',  unit: 'Suspect self-reports',                        mean: 1.49,       sd: 1.84,       n: 249, source: 'suspect self-report' },
+    { study: 'Kelly_et_al_2016',  label: 'Kelly et al. (2016)',       unit: 'Recorded interrogations',                     mean: 1.53028,    sd: 1.046667,   n: 29,  source: 'recorded' },
+    { study: 'Cleary_2014',       label: 'Cleary (2014)',             unit: 'Recorded interrogations (juveniles)',         mean: 1.093333,   sd: 0.983333,   n: 57,  source: 'recorded' },
+    { study: 'Russano_2024_ncf',  label: 'Russano et al. (2024)',     unit: 'Recorded interrogations (no confession)',     mean: 1.1345,     sd: 0.77066667, n: 40,  source: 'recorded' },
+    { study: 'Russano_2024_pcf',  label: 'Russano et al. (2024)',     unit: 'Recorded interrogations (partial)',           mean: 1.2991667,  sd: 0.9425,     n: 63,  source: 'recorded' },
+    { study: 'Russano_2024_fcf',  label: 'Russano et al. (2024)',     unit: 'Recorded interrogations (full)',              mean: 1.3268333,  sd: 1.0845,     n: 38,  source: 'recorded' },
+    { study: 'Russano_2026_ncf',  label: 'Russano et al. (2026)',     unit: 'Recorded interrogations (no confession)',     mean: 1.658333,   sd: 1.72066667, n: 34,  source: 'recorded' },
+    { study: 'Russano_2026_pcf',  label: 'Russano et al. (2026)',     unit: 'Recorded interrogations (partial)',           mean: 1.73233333, sd: 1.73416667, n: 78,  source: 'recorded' },
+    { study: 'Russano_2026_fcf',  label: 'Russano et al. (2026)',     unit: 'Recorded interrogations (full)',              mean: 1.81616667, sd: 1.4491667,  n: 36,  source: 'recorded' }
+  ];
+
+  // FCWC arms
+  var MIX_RED  = mixtureDist([FCWC_STUDIES[1]], 'sample_size');
+  var MIX_BOTH = mixtureDist(FCWC_STUDIES, 'sample_size');
+  var MIX_DL   = mixtureDist([FCWC_STUDIES[0]], 'sample_size');
+
+  // comparison arms
+  var MIX_NON       = mixtureDist(NONFCWC_STUDIES, 'sample_size');
+  var MIX_NON_EQ    = mixtureDist(NONFCWC_STUDIES, 'equal');
+  var MIX_NON_NOOFF = mixtureDist(NONFCWC_STUDIES.filter(function(s) { return s.source !== 'officer survey'; }), 'sample_size');
+  var MIX_NON_REC   = mixtureDist(NONFCWC_STUDIES.filter(function(s) { return s.source === 'recorded'; }), 'sample_size');
+  var MIX_WITHIN    = mixtureDist([NONFCWC_STUDIES[2]], 'sample_size');
+
+  // cached published curves
+  var CURVE_RED  = curve(MIX_RED,  MIX_NON);
+  var CURVE_BOTH = curve(MIX_BOTH, MIX_NON);
+  var CURVE_DL   = curve(MIX_DL,   MIX_NON);
+  var CURVE_WITHIN = curve(MIX_RED, MIX_WITHIN);
+
+  /* ========== Formatting ========== */
+  function pct(x, d) { return (100 * x).toFixed(d === undefined ? 1 : d) + '%'; }
+  function hrs(x) { return x === null ? 'never' : x.toFixed(2) + ' h'; }
+  function hrsLong(x) { return x === null ? 'Never reaches 10%' : x.toFixed(2) + ' hours'; }
+
+  // display grid for plotting (coarser than the evaluation grid)
+  var PLOT_H = [];
+  for (var pi2 = 25; pi2 <= 2400; pi2 += 5) PLOT_H.push(pi2 / 100);
+  function plotCurve(f1, f0) { return PLOT_H.map(function(h) { return 100 * postH(h, f1, f0); }); }
+
+  /* ========== Tab 1: Key findings ========== */
+  function renderFindings() {
+    var el = document.getElementById('chart-findings');
+    var traces = [
+      { x: PLOT_H, y: plotCurve(MIX_RED, MIX_NON), name: 'Redlich only (published)', mode: 'lines',
+        line: { color: C.pub, width: 3 }, hovertemplate: '%{y:.1f}%<extra>Redlich only</extra>' },
+      { x: PLOT_H, y: plotCurve(MIX_BOTH, MIX_NON), name: 'Both, sample-size weighted', mode: 'lines',
+        line: { color: C.both, width: 2.5, dash: 'dash' }, hovertemplate: '%{y:.1f}%<extra>Both sources</extra>' },
+      { x: PLOT_H, y: plotCurve(MIX_DL, MIX_NON), name: 'Drizin & Leo only', mode: 'lines',
+        line: { color: C.dl, width: 2.5, dash: 'dot' }, hovertemplate: '%{y:.1f}%<extra>Drizin & Leo only</extra>' }
+    ];
+    var layout = baseLayout('Interrogation duration (hours)', 'Estimated FCWC risk (%)');
+    layout.height = chartHeight(440, 380, 330);
+    layout.xaxis.range = [0, 24];
+    layout.yaxis.range = [0, 100];
+    layout.legend = { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.88)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: isMobile() ? 9 : 11 } };
+    layout.shapes = [
+      { type: 'line', x0: 6.28, x1: 6.28, y0: 0, y1: 1, yref: 'paper', line: { color: C.grey, width: 1.3, dash: 'dash' } },
+      { type: 'line', x0: 12.06, x1: 12.06, y0: 0, y1: 1, yref: 'paper', line: { color: C.grey, width: 1.3, dash: 'dash' } },
+      { type: 'line', x0: 0, x1: 24, y0: 10, y1: 10, line: { color: C.navy, width: 1.2, dash: 'dot' } }
+    ];
+    layout.annotations = [
+      { x: 6.28, y: 1.04, yref: 'paper', text: '6.28 h', showarrow: false, font: { size: isMobile() ? 9 : 11, color: '#64748b' } },
+      { x: 12.06, y: 1.04, yref: 'paper', text: '12.06 h', showarrow: false, font: { size: isMobile() ? 9 : 11, color: '#64748b' } }
+    ];
+    Plotly.newPlot(el, traces, layout, plotConfig());
+
+    var rows = [
+      { name: 'Redlich only <span class="pill pill-pub">Published</span>', f1: MIX_RED,  f0: MIX_NON, c: CURVE_RED },
+      { name: 'Both sources, sample-size weighted',                        f1: MIX_BOTH, f0: MIX_NON, c: CURVE_BOTH },
+      { name: 'Drizin &amp; Leo only',                                 f1: MIX_DL,   f0: MIX_NON, c: CURVE_DL },
+      { name: 'Within one study (Redlich, both groups)',                   f1: MIX_RED,  f0: MIX_WITHIN, c: CURVE_WITHIN }
+    ];
+    document.getElementById('tbl-findings').innerHTML = rows.map(function(r) {
+      return '<tr><td>' + r.name + '</td><td class="num">' + pct(postH(6.28, r.f1, r.f0)) +
+             '</td><td class="num">' + pct(postH(12.06, r.f1, r.f0)) +
+             '</td><td class="num">' + hrsLong(crossing(r.c)) + '</td></tr>';
+    }).join('');
+  }
+
+  /* ========== Tab 2: Which study ========== */
+  var swapPlotted = false;
+  function renderSwap(h) {
+    document.getElementById('val-hours').textContent = h.toFixed(2) + ' hours';
+    document.getElementById('out-red').textContent  = pct(postH(h, MIX_RED,  MIX_NON));
+    document.getElementById('out-both').textContent = pct(postH(h, MIX_BOTH, MIX_NON));
+    document.getElementById('out-dl').textContent   = pct(postH(h, MIX_DL,   MIX_NON));
+
+    var el = document.getElementById('chart-swap');
+    if (!swapPlotted) {
+      var traces = [
+        { x: PLOT_H, y: plotCurve(MIX_RED, MIX_NON), name: 'Redlich only (published)', mode: 'lines',
+          line: { color: C.pub, width: 3 }, hovertemplate: '%{y:.1f}%<extra>Redlich only</extra>' },
+        { x: PLOT_H, y: plotCurve(MIX_BOTH, MIX_NON), name: 'Both, sample-size weighted', mode: 'lines',
+          line: { color: C.both, width: 2.5, dash: 'dash' }, hovertemplate: '%{y:.1f}%<extra>Both sources</extra>' },
+        { x: PLOT_H, y: plotCurve(MIX_DL, MIX_NON), name: 'Drizin & Leo only', mode: 'lines',
+          line: { color: C.dl, width: 2.5, dash: 'dot' }, hovertemplate: '%{y:.1f}%<extra>Drizin & Leo only</extra>' }
+      ];
+      var layout = baseLayout('Interrogation duration (hours)', 'Estimated FCWC risk (%)');
+      layout.height = chartHeight(430, 370, 320);
+      layout.xaxis.range = [0, 24];
+      layout.yaxis.range = [0, 100];
+      layout.legend = { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.88)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: isMobile() ? 9 : 11 } };
+      layout.shapes = [{ type: 'line', x0: h, x1: h, y0: 0, y1: 1, yref: 'paper', line: { color: C.navy, width: 2 } }];
+      Plotly.newPlot(el, traces, layout, plotConfig());
+      swapPlotted = true;
+    } else {
+      Plotly.relayout(el, { 'shapes[0].x0': h, 'shapes[0].x1': h });
+    }
+  }
+
+  /* ========== Tab 3: Moving the threshold ========== */
+  var ARM_LABELS = {
+    published: 'Published pooled comparison group (12 components, sample-size weighted).',
+    equal:     'Every component weighted equally, instead of by sample size.',
+    noofficer: 'Officer surveys excluded from the comparison group.',
+    recorded:  'Recorded interrogations only.',
+    within:    'Redlich et al.’s own 30 true confessors as the comparison group.'
+  };
+  var currentArm = 'published', currentK = 1, sensPlotted = false;
+
+  function armMix(arm) {
+    if (arm === 'equal')     return MIX_NON_EQ;
+    if (arm === 'noofficer') return MIX_NON_NOOFF;
+    if (arm === 'recorded')  return MIX_NON_REC;
+    if (arm === 'within')    return MIX_WITHIN;
+    return MIX_NON;
+  }
+
+  function renderSens() {
+    var f0 = scaleSdlog(armMix(currentArm), currentK);
+    var c  = curve(MIX_RED, f0);
+    var cr = crossing(c);
+    var mx = Math.max.apply(null, c);
+
+    document.getElementById('val-disp').textContent = '×' + currentK.toFixed(2);
+    document.getElementById('out-crossing').textContent = hrsLong(cr);
+    document.getElementById('out-crossing-desc').textContent =
+      ARM_LABELS[currentArm] + (currentK === 1 ? '' : ' Spread scaled by ×' + currentK.toFixed(2) + '.');
+    document.getElementById('out-s628').textContent  = pct(postH(6.28, MIX_RED, f0));
+    document.getElementById('out-s1206').textContent = pct(postH(12.06, MIX_RED, f0));
+    document.getElementById('out-smax').textContent  = pct(mx);
+
+    var el = document.getElementById('chart-sens');
+    var yNow = PLOT_H.map(function(h) { return 100 * postH(h, MIX_RED, f0); });
+    if (!sensPlotted) {
+      var traces = [
+        { x: PLOT_H, y: plotCurve(MIX_RED, MIX_NON), name: 'Published specification', mode: 'lines',
+          line: { color: C.grey, width: 2, dash: 'dash' }, hovertemplate: '%{y:.1f}%<extra>Published</extra>' },
+        { x: PLOT_H, y: yNow, name: 'Your settings', mode: 'lines',
+          line: { color: C.pub, width: 3 }, hovertemplate: '%{y:.1f}%<extra>Your settings</extra>' }
+      ];
+      var layout = baseLayout('Interrogation duration (hours)', 'Estimated FCWC risk (%)');
+      layout.height = chartHeight(430, 370, 320);
+      layout.xaxis.range = [0, 24];
+      layout.yaxis.range = [0, 100];
+      layout.legend = { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.88)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: isMobile() ? 9 : 11 } };
+      layout.shapes = [{ type: 'line', x0: 0, x1: 24, y0: 10, y1: 10, line: { color: C.navy, width: 1.2, dash: 'dot' } }];
+      Plotly.newPlot(el, traces, layout, plotConfig());
+      sensPlotted = true;
+    } else {
+      Plotly.restyle(el, { y: [yNow] }, [1]);
+    }
+  }
+
+  /* Bootstrap intervals: precomputed in the replication package
+     (Smith et al.'s parametric-bootstrap likelihood procedure, 400
+     replications, both likelihoods, base rate fixed at .019). */
+  var BOOT = [
+    { h: '6.28 hours',  point: 10.6, lo: 5.7, hi: 14.6 },
+    { h: '12.06 hours', point: 26.3, lo: 7.1, hi: 42.3 }
+  ];
+  function renderBoot() {
+    var el = document.getElementById('chart-boot');
+    var traces = [{
+      type: 'scatter', mode: 'markers', orientation: 'h',
+      x: BOOT.map(function(b) { return b.point; }),
+      y: BOOT.map(function(b) { return b.h; }),
+      marker: { color: C.pub, size: 13, symbol: 'diamond' },
+      error_x: {
+        type: 'data', symmetric: false,
+        array:      BOOT.map(function(b) { return b.hi - b.point; }),
+        arrayminus: BOOT.map(function(b) { return b.point - b.lo; }),
+        color: C.pub, thickness: 3, width: 9
+      },
+      hovertemplate: '%{x:.1f}%<extra></extra>', showlegend: false
+    }];
+    var layout = baseLayout('Estimated FCWC risk (%)', '');
+    layout.height = chartHeight(260, 240, 220);
+    layout.xaxis.range = [0, 50];
+    layout.margin = { t: 20, r: 30, b: 55, l: isMobile() ? 80 : 105 };
+    layout.hovermode = 'closest';
+    layout.shapes = [{ type: 'line', x0: 10, x1: 10, y0: 0, y1: 1, yref: 'paper', line: { color: C.navy, width: 1.2, dash: 'dot' } }];
+    layout.annotations = [{ x: 10, y: 1.12, yref: 'paper', text: '10% threshold', showarrow: false, font: { size: isMobile() ? 9 : 11, color: '#64748b' } }];
+    Plotly.newPlot(el, traces, layout, plotConfig());
+  }
+
+  /* ========== Tab 4: The evidence ========== */
+  function renderEvidence() {
+    var groups = [
+      { key: 'officer survey',      name: 'Officer surveys',       color: C.dl },
+      { key: 'recorded',            name: 'Recorded interrogations', color: C.green },
+      { key: 'suspect self-report', name: 'Suspect self-reports',  color: C.both }
+    ];
+    var tot = NONFCWC_STUDIES.reduce(function(a, s) { return a + s.n; }, 0);
+    var shares = groups.map(function(g) {
+      return 100 * NONFCWC_STUDIES.filter(function(s) { return s.source === g.key; })
+                                  .reduce(function(a, s) { return a + s.n; }, 0) / tot;
+    });
+    var el = document.getElementById('chart-weights');
+    var traces = [{
+      type: 'bar', orientation: 'h',
+      x: shares, y: groups.map(function(g) { return g.name; }),
+      marker: { color: groups.map(function(g) { return g.color; }) },
+      text: shares.map(function(s) { return s.toFixed(1) + '%'; }),
+      textposition: 'auto', textfont: { size: 12, color: '#ffffff' },
+      hovertemplate: '%{x:.1f}% of weight<extra></extra>'
+    }];
+    var layout = baseLayout('Share of sample-size weight (%)', '');
+    layout.height = chartHeight(260, 240, 230);
+    layout.xaxis.range = [0, 70];
+    layout.margin = { t: 20, r: 25, b: 55, l: isMobile() ? 100 : 140 };
+    layout.hovermode = 'closest';
+    Plotly.newPlot(el, traces, layout, plotConfig());
+
+    document.getElementById('tbl-nonfcwc').innerHTML = MIX_NON.map(function(c) {
+      return '<tr><td>' + c.label + '</td><td style="color:var(--gray-500);font-size:0.82rem;">' + c.unit +
+             '</td><td class="num">' + c.mean.toFixed(2) + '</td><td class="num">' + c.sd.toFixed(2) +
+             '</td><td class="num">' + c.n + '</td><td class="num">' + (100 * c.weight).toFixed(1) + '%</td></tr>';
+    }).join('');
+
+    var wr = [
+      { name: 'Smith et al.’s pooled comparison group', f0: MIX_NON,    c: CURVE_RED },
+      { name: 'Redlich et al.’s own true confessors',   f0: MIX_WITHIN, c: CURVE_WITHIN }
+    ];
+    document.getElementById('tbl-within').innerHTML = wr.map(function(r) {
+      return '<tr><td>' + r.name + '</td><td class="num">' + pct(postH(6.28, MIX_RED, r.f0)) +
+             '</td><td class="num">' + pct(postH(12.06, MIX_RED, r.f0)) +
+             '</td><td class="num">' + pct(Math.max.apply(null, r.c)) +
+             '</td><td class="num">' + hrsLong(crossing(r.c)) + '</td></tr>';
+    }).join('');
+  }
+
+  /* ========== Wiring ========== */
+  var deferred = {};
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('panel-' + id).classList.add('active');
+      if (deferred[id]) { deferred[id](); deferred[id] = null; }
+    });
+  });
+
+  document.querySelectorAll('.collapsible-header').forEach(function(h) {
+    h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
+  });
+
+  var sh = document.getElementById('slider-hours');
+  sh.addEventListener('input', function() { renderSwap(parseFloat(this.value)); });
+  document.querySelectorAll('.slider-anchor[data-h]').forEach(function(a) {
+    a.addEventListener('click', function() {
+      var h = parseFloat(this.getAttribute('data-h'));
+      sh.value = h; renderSwap(h);
+    });
+  });
+
+  var sd = document.getElementById('slider-disp');
+  sd.addEventListener('input', function() { currentK = parseFloat(this.value); renderSens(); });
+  document.querySelectorAll('.slider-anchor[data-k]').forEach(function(a) {
+    a.addEventListener('click', function() {
+      currentK = parseFloat(this.getAttribute('data-k'));
+      sd.value = currentK; renderSens();
+    });
+  });
+
+  document.querySelectorAll('.toggle-btn[data-arm]').forEach(function(b) {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('.toggle-btn[data-arm]').forEach(function(x) { x.classList.remove('active'); });
+      this.classList.add('active');
+      currentArm = this.getAttribute('data-arm');
+      renderSens();
+    });
+  });
+
+  /* ========== Initial render ========== */
+  renderFindings();
+  deferred.swap = function() { renderSwap(parseFloat(sh.value)); };
+  deferred.sensitivity = function() { renderSens(); renderBoot(); };
+  deferred.evidence = function() { renderEvidence(); };
+
+  var rt;
+  window.addEventListener('resize', function() {
+    clearTimeout(rt);
+    rt = setTimeout(function() {
+      ['chart-findings','chart-swap','chart-sens','chart-boot','chart-weights'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && el.data) Plotly.Plots.resize(el);
+      });
+    }, 180);
+  });
+
+})();
+</script>
+</body>
+</html>

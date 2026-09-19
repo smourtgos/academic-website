@@ -98,7 +98,7 @@ risk boundary established by observed interrogations.
 
 ## Where we agree
 
-More of this exchange is agreement than disagreement, and it is worth being explicit about that.
+More of this exchange is agreement than disagreement.
 Smith et al.'s replication is a real contribution, and it confirms our central result. Both papers
 agree on what the field should do next: code actual interrogations for tactic presence, duration, and
 outcome as recordings become more widely available. Both agree that even a 1% FCWC rate would be

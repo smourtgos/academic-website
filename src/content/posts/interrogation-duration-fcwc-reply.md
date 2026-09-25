@@ -6,8 +6,9 @@ tags: ["false confessions", "interrogation", "wrongful convictions", "Bayesian",
 featured: true
 ---
 
-> **Status:** This paper is forthcoming in the *Journal of Criminal Justice*. The DOI will be added
-> here once it is published. All data and code are already available at
+> **Status:** This paper is now published in the *Journal of Criminal Justice*, 107, 102747:
+> [https://doi.org/10.1016/j.jcrimjus.2026.102747](https://www.sciencedirect.com/science/article/pii/S0047235226001546).
+> All data and code are available at
 > [github.com/smourtgos/fcwc-duration-reply](https://github.com/smourtgos/fcwc-duration-reply).
 
 ## The exchange
@@ -145,8 +146,9 @@ Open the Interactive Dashboard
 
 ## References
 
-Mourtgos, S. M., & Adams, I. T. (forthcoming). Interrogation duration and the estimation of false
-confession wrongful conviction risk: A reply to Smith and colleagues. *Journal of Criminal Justice*.
+Mourtgos, S. M., & Adams, I. T. (2026). Interrogation duration and the estimation of false
+confession wrongful conviction risk: A reply to Smith and colleagues. *Journal of Criminal Justice, 107*, 102747.
+[https://doi.org/10.1016/j.jcrimjus.2026.102747](https://www.sciencedirect.com/science/article/pii/S0047235226001546)
 
 Mourtgos, S. M., & Adams, I. T. (2026). Recalibrating the risk of false confession wrongful
 convictions: Interrogation tactics and inverse probability. *Journal of Criminal Justice, 103*, 102600.

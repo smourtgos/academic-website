@@ -2,7 +2,8 @@
 title: "Interrogation Duration and the Estimation of False Confession Wrongful Conviction Risk: A Reply to Smith and Colleagues"
 date: 2026-09-19
 authors: ["Scott M. Mourtgos", "Ian T. Adams"]
-publication: "Journal of Criminal Justice (forthcoming)"
+publication: "Journal of Criminal Justice, 107, 102747"
+doi: "10.1016/j.jcrimjus.2026.102747"
 codeUrl: "https://github.com/smourtgos/fcwc-duration-reply"
 featured: true
 tags: ["false confessions", "interrogation", "wrongful convictions", "measurement"]

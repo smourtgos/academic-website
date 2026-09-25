@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100% of Shark Attack Victims Were Wet</title>
+<meta property="og:title" content="100% of Shark Attack Victims Were Wet" />
+<meta name="description" content="A short, friendly tour of why data selected on the outcome can describe the cases but cannot say how risky anything is. Two silly stories, one switch, one slider." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #fbf4e4;
+  --paper: #fffdf8;
+  --ink: #1c1917;
+  --ink-2: #44403c;
+  --ink-3: #78716c;
+  --line: #d6cdb8;
+  --folder: #f5d78e;
+  --folder-dark: #e6bd5a;
+  --note: #fff08a;
+  --sky: #dbeafe;
+  --sea: #bfdbfe;
+  --orange: #f97316;
+  --orange-dark: #c2410c;
+  --teal: #0f766e;
+  --teal-light: #ccfbf1;
+  --red: #dc2626;
+  --gold: #fbbf24;
+  --lime: #bef264;
+  --yellow: #fde047;
+  --display: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  --body: 'Nunito', system-ui, -apple-system, sans-serif;
+  --shadow: 6px 6px 0 var(--ink);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  background: var(--cream);
+  background-image: radial-gradient(rgba(28,25,23,0.07) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--teal); }
+
+/* top bar */
+.top {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.top a { color: var(--ink-2); text-decoration: none; }
+.top a:hover { color: var(--orange-dark); }
+
+/* hero */
+.hero {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+}
+.kicker {
+  display: inline-block;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--note);
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  transform: rotate(-2deg);
+  margin-bottom: 0.9rem;
+}
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  max-width: 780px;
+}
+.hero h1 em { font-style: normal; color: var(--orange); }
+.hero p {
+  margin-top: 1rem;
+  font-size: 1.08rem;
+  color: var(--ink-2);
+  max-width: 640px;
+}
+.hero-doodle { width: 180px; height: auto; }
+
+/* layout */
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem 4rem; }
+
+/* one-sentence rule */
+.rule {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.5rem;
+  margin: 1rem 0 2.25rem;
+  font-size: 1.05rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.rule .big { font-family: var(--display); font-weight: 800; font-size: 2.4rem; line-height: 1; color: var(--orange); }
+.rule strong { font-weight: 800; }
+
+/* steps */
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.6rem 0 0;
+}
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink-3);
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem 0.3rem 0.4rem;
+  transition: all 0.25s;
+}
+.step .n {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-grid; place-items: center;
+  background: var(--line); color: var(--paper);
+  font-size: 0.85rem; font-weight: 800;
+}
+.step.on { color: var(--ink); border-color: var(--ink); }
+.step.on .n { background: var(--ink); }
+.step.done { color: var(--teal); border-color: var(--teal); }
+.step.done .n { background: var(--teal); }
+
+/* stage */
+.stage {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+.stage-head { margin-bottom: 1.1rem; }
+.stage-title { font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1.1; }
+.stage-setup { color: var(--ink-2); font-size: 1rem; margin-top: 0.25rem; max-width: 720px; }
+
+.stage-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* scene */
+.scene { position: relative; }
+.scene svg.grid { width: 100%; height: auto; display: block; }
+.cell { transition: opacity 0.4s ease, transform 0.4s ease; transform-box: fill-box; transform-origin: center; }
+.cell.hidden { opacity: 0; transform: scale(0.4); pointer-events: none; }
+.folder-tab { font-family: var(--display); font-weight: 800; font-size: 12px; fill: var(--ink); letter-spacing: 0.06em; }
+.folder-sub { font-family: var(--body); font-weight: 700; font-size: 11px; fill: var(--ink-2); }
+.stamp { font-family: var(--display); font-weight: 800; font-size: 13px; fill: var(--red); letter-spacing: 0.12em; }
+.stamp-box { fill: none; stroke: var(--red); stroke-width: 2.5; }
+.crowd-label { font-family: var(--display); font-weight: 800; font-size: 13px; fill: var(--ink-3); letter-spacing: 0.06em; transition: opacity 0.4s; }
+.missing-txt { font-family: var(--display); font-weight: 800; font-size: 18px; fill: var(--ink-3); text-anchor: middle; transition: opacity 0.4s; }
+.missing-sub { font-family: var(--body); font-weight: 700; font-size: 13px; fill: var(--ink-3); text-anchor: middle; transition: opacity 0.4s; }
+.missing-box { fill: rgba(255,255,255,0.35); stroke: var(--ink-3); stroke-width: 2.5; stroke-dasharray: 8 6; transition: opacity 0.4s; }
+.gone { opacity: 0; pointer-events: none; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin-top: 0.75rem; font-size: 0.82rem; font-weight: 700; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.legend svg { width: 24px; height: 24px; }
+
+/* switch */
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background: var(--cream);
+  border: 2px dashed var(--line);
+  border-radius: 14px;
+}
+.switch {
+  position: relative;
+  width: 74px; height: 40px;
+  background: var(--line);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  transition: transform 0.25s cubic-bezier(.5,1.6,.5,1);
+}
+.switch[aria-checked="true"] { background: var(--teal); }
+.switch[aria-checked="true"]::after { transform: translateX(34px); }
+.switch:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.switch-label { font-family: var(--display); font-weight: 800; font-size: 1.1rem; line-height: 1.1; }
+.switch-sub { font-size: 0.82rem; color: var(--ink-3); font-weight: 600; }
+
+/* right column */
+.side { display: grid; gap: 1rem; }
+
+.note {
+  background: var(--note);
+  padding: 1.5rem 1.1rem 1rem;
+  border-radius: 4px;
+  transform: rotate(-1.5deg);
+  box-shadow: 3px 4px 10px rgba(28,25,23,0.18);
+  position: relative;
+}
+.note::before {
+  content: '';
+  position: absolute;
+  top: -9px; left: 50%;
+  width: 18px; height: 18px;
+  margin-left: -9px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 2px solid var(--ink);
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+}
+.note-k { font-family: var(--display); font-weight: 700; font-size: 0.82rem; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.note-v { font-family: var(--display); font-weight: 800; font-size: 3.2rem; line-height: 1; margin: 0.1rem 0; font-variant-numeric: tabular-nums; }
+.note-s { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); line-height: 1.4; }
+.note-s b { color: var(--ink); }
+
+.gauge-card {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 0.9rem 1rem 0.6rem;
+  position: relative;
+}
+.gauge-k { font-family: var(--display); font-weight: 800; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
+.tag {
+  font-family: var(--body); font-weight: 800; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.12rem 0.5rem; border-radius: 999px; background: var(--line); color: var(--ink-2);
+}
+.tag.ok { background: var(--teal-light); color: var(--teal); }
+.gauge-card svg { width: 100%; height: auto; display: block; margin-top: 0.2rem; }
+.g-arc { fill: none; stroke-width: 18; stroke-linecap: butt; }
+.g-tick { font-family: var(--body); font-weight: 700; font-size: 11px; fill: var(--ink-3); text-anchor: middle; }
+.g-zone { font-family: var(--display); font-weight: 800; font-size: 11px; fill: var(--ink-2); text-anchor: middle; letter-spacing: 0.05em; }
+.g-needle { transition: transform 0.6s cubic-bezier(.4,1.4,.5,1); transform-origin: 150px 140px; }
+.g-val { font-family: var(--display); font-weight: 800; font-size: 40px; fill: var(--ink); text-anchor: middle; }
+.g-lock { transition: opacity 0.3s; }
+.gauge-s { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); line-height: 1.4; min-height: 2.6em; }
+
+/* mini stat for the missing half */
+.mini {
+  display: flex; align-items: baseline; gap: 0.6rem;
+  font-size: 0.85rem; color: var(--ink-2); font-weight: 600;
+  padding: 0.5rem 0.2rem 0;
+}
+.mini b { font-family: var(--display); font-size: 1.5rem; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.mini.locked b { color: var(--ink-3); }
+
+/* slider */
+.slider { margin-top: 0.25rem; }
+.slider-label { font-family: var(--display); font-weight: 800; font-size: 1rem; line-height: 1.2; }
+.slider-label small { display: block; font-family: var(--body); font-weight: 600; font-size: 0.8rem; color: var(--ink-3); margin-top: 0.15rem; }
+.slider-row { display: flex; align-items: center; gap: 0.75rem; }
+.slider-val { font-family: var(--display); font-weight: 800; font-size: 1.4rem; min-width: 3.2ch; text-align: right; font-variant-numeric: tabular-nums; }
+input[type=range] {
+  flex: 1; height: 44px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; min-width: 0;
+}
+input[type=range]::-webkit-slider-runnable-track { height: 10px; background: var(--line); border: 2px solid var(--ink); border-radius: 999px; }
+input[type=range]::-moz-range-track { height: 10px; background: var(--line); border: 2px solid var(--ink); border-radius: 999px; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; background: var(--orange); border: 3px solid var(--ink); margin-top: -12px; box-shadow: 2px 2px 0 var(--ink); }
+input[type=range]::-moz-range-thumb { width: 30px; height: 30px; border-radius: 50%; background: var(--orange); border: 3px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+input[type=range]:disabled { opacity: 0.35; cursor: not-allowed; }
+.nudge { font-size: 0.82rem; font-weight: 800; color: var(--orange-dark); margin-top: -0.2rem; min-height: 1.3em; }
+
+/* punchline bubble */
+.bubble {
+  margin-top: 1.4rem;
+  position: relative;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.bubble::before {
+  content: '';
+  position: absolute;
+  left: 44px; top: -16px;
+  width: 24px; height: 24px;
+  background: var(--paper);
+  border-left: 3px solid var(--ink);
+  border-top: 3px solid var(--ink);
+  transform: rotate(45deg);
+}
+.bubble strong { font-weight: 800; }
+
+details.tbl { margin-top: 1rem; }
+details.tbl summary { cursor: pointer; font-weight: 800; color: var(--teal); font-size: 0.9rem; list-style: none; user-select: none; }
+details.tbl summary::-webkit-details-marker { display: none; }
+details.tbl summary::before { content: '▸ '; }
+details.tbl[open] summary::before { content: '▾ '; }
+.t22 { width: 100%; max-width: 560px; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.t22 th, .t22 td { padding: 0.45rem 0.6rem; border: 2px solid var(--line); text-align: right; }
+.t22 th { background: var(--cream); text-align: left; font-weight: 800; }
+.t22 th.c { text-align: right; }
+.t22 td.unk { color: var(--ink-3); font-style: italic; }
+.t22-foot { font-size: 0.8rem; color: var(--ink-2); margin-top: 0.5rem; max-width: 560px; }
+
+/* section headings */
+.sec-k { font-family: var(--display); font-weight: 800; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-dark); }
+.sec-h { font-family: var(--display); font-weight: 800; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.1; margin: 0.1rem 0 0.5rem; }
+.sec-p { color: var(--ink-2); font-size: 1rem; max-width: 720px; margin-bottom: 1.1rem; }
+
+/* worlds */
+.worlds-card { background: var(--paper); border: 3px solid var(--ink); border-radius: 22px; box-shadow: var(--shadow); padding: 1.5rem; margin-bottom: 2.5rem; }
+.worlds-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.worlds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.world { background: var(--cream); border: 2px solid var(--ink); border-radius: 14px; padding: 0.8rem; }
+.world-h { font-family: var(--display); font-weight: 800; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.world-h .rr { font-size: 1.3rem; transition: opacity 0.3s; font-variant-numeric: tabular-nums; }
+.world-h .rr.q { color: var(--ink-3); }
+.world-s { font-size: 0.8rem; color: var(--ink-2); font-weight: 600; min-height: 2.4em; margin-bottom: 0.4rem; }
+.world svg { width: 100%; height: auto; display: block; }
+
+/* serious section */
+.serious { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 1.25rem 0; }
+.panel { background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; padding: 1.25rem; }
+.panel h3 { font-family: var(--display); font-weight: 800; font-size: 1.15rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
+.panel ul { list-style: none; display: grid; gap: 0.6rem; }
+.panel li { padding-left: 1.4rem; position: relative; font-size: 0.95rem; color: var(--ink-2); }
+.panel li::before { content: '→'; position: absolute; left: 0; font-weight: 800; color: var(--orange); }
+.panel li b { color: var(--ink); }
+.panel.joke { background: var(--sky); }
+.prose { max-width: 760px; font-size: 1rem; color: var(--ink-2); }
+.prose p { margin-bottom: 0.9rem; }
+.callout {
+  background: var(--ink); color: var(--paper);
+  border-radius: 18px; padding: 1.25rem 1.5rem;
+  font-family: var(--display); font-weight: 700; font-size: 1.15rem; line-height: 1.35;
+  max-width: 760px; margin: 1.25rem 0;
+}
+.callout .k { display: block; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--note); margin-bottom: 0.3rem; }
+.refs { font-size: 0.82rem; color: var(--ink-3); max-width: 760px; margin-top: 1.5rem; line-height: 1.55; }
+.refs p { margin-bottom: 0.35rem; }
+
+.footer { text-align: center; padding: 2rem 1rem 0; font-size: 0.82rem; color: var(--ink-3); font-weight: 600; }
+.footer a { color: var(--teal); text-decoration: none; }
+.footer .j { display: block; margin-top: 0.3rem; font-style: italic; }
+
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 2000;
+  background: var(--ink); color: var(--paper);
+  font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.6rem; border-radius: 8px;
+  opacity: 0; transition: opacity 0.12s; white-space: nowrap;
+}
+.tooltip.show { opacity: 1; }
+
+@media (max-width: 900px) {
+  .stage-body { grid-template-columns: 1fr; }
+  .serious { grid-template-columns: 1fr; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-doodle { width: 120px; }
+}
+@media (max-width: 720px) {
+  .worlds { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .top, .hero, .wrap { padding-left: 16px; padding-right: 16px; }
+  .stage, .worlds-card { padding: 1rem; border-radius: 16px; box-shadow: 4px 4px 0 var(--ink); }
+  .rule { grid-template-columns: 1fr; padding: 1rem; }
+  .rule .big { font-size: 1.8rem; }
+  .note-v { font-size: 2.6rem; }
+  .switch-label { font-size: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- WEDDING: faces. fine = yellow smiley; sick = green, X eyes. Feature = salad bowl badge; no feature = cake badge -->
+    <g id="face-fine"><circle cx="15" cy="15" r="12" fill="#fde047" stroke="#1c1917" stroke-width="2"/><circle cx="10.5" cy="13" r="1.6" fill="#1c1917"/><circle cx="19.5" cy="13" r="1.6" fill="#1c1917"/><path d="M9.5 18.5q5.5 5 11 0" fill="none" stroke="#1c1917" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="face-sick"><circle cx="15" cy="15" r="12" fill="#bef264" stroke="#1c1917" stroke-width="2"/><path d="M8.5 11l4 4M12.5 11l-4 4M17.5 11l4 4M21.5 11l-4 4" stroke="#1c1917" stroke-width="2" stroke-linecap="round"/><path d="M9.5 20.5q2.7-2.5 5.5 0t5.5 0" fill="none" stroke="#1c1917" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="badge-salad"><circle cx="24" cy="24" r="7.5" fill="#fffdf8" stroke="#1c1917" stroke-width="1.8"/><path d="M19 24h10a5 5 0 0 1-10 0z" fill="#f97316" stroke="#1c1917" stroke-width="1.4"/><circle cx="21.5" cy="22" r="1.6" fill="#65a30d"/><circle cx="24.5" cy="21" r="1.6" fill="#65a30d"/><circle cx="27" cy="22.5" r="1.4" fill="#65a30d"/></g>
+    <g id="badge-cake"><circle cx="24" cy="24" r="7.5" fill="#fffdf8" stroke="#1c1917" stroke-width="1.8"/><path d="M20 27.5l4-8 4 8z" fill="#f9a8d4" stroke="#1c1917" stroke-width="1.4" stroke-linejoin="round"/><path d="M20 27.5h8" stroke="#1c1917" stroke-width="1.4"/><circle cx="24" cy="18.5" r="1.3" fill="#dc2626"/></g>
+    <symbol id="w-11" viewBox="0 0 32 32"><use href="#face-sick"/><use href="#badge-salad"/></symbol>
+    <symbol id="w-10" viewBox="0 0 32 32"><use href="#face-sick"/><use href="#badge-cake"/></symbol>
+    <symbol id="w-01" viewBox="0 0 32 32"><use href="#face-fine"/><use href="#badge-salad"/></symbol>
+    <symbol id="w-00" viewBox="0 0 32 32"><use href="#face-fine"/><use href="#badge-cake"/></symbol>
+
+    <!-- SHARK: swimmer heads. bitten = bandage + shocked; feature = swim cap; no feature = top hat + bow tie -->
+    <g id="water"><path d="M2 26q4-3 8 0t8 0 8 0 4 0" fill="none" stroke="#3b82f6" stroke-width="2.2" stroke-linecap="round"/></g>
+    <g id="head-ok"><circle cx="15" cy="16" r="9" fill="#fcd7b6" stroke="#1c1917" stroke-width="2"/><circle cx="12" cy="15" r="1.3" fill="#1c1917"/><circle cx="18" cy="15" r="1.3" fill="#1c1917"/><path d="M11.5 19q3.5 3 7 0" fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g id="head-bit"><circle cx="15" cy="16" r="9" fill="#fcd7b6" stroke="#1c1917" stroke-width="2"/><circle cx="12" cy="15" r="1.8" fill="none" stroke="#1c1917" stroke-width="1.6"/><circle cx="18" cy="15" r="1.8" fill="none" stroke="#1c1917" stroke-width="1.6"/><ellipse cx="15" cy="20.5" rx="2.2" ry="2.6" fill="#1c1917"/><rect x="17" y="8" width="9" height="4.5" rx="1.2" fill="#fffdf8" stroke="#1c1917" stroke-width="1.5" transform="rotate(-30 21.5 10)"/><path d="M19.5 9.5l4 1.5M20 12l3-3" stroke="#dc2626" stroke-width="1" transform="rotate(-30 21.5 10)"/><path d="M26 3l1 5M28.5 4.5l-2 3" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/></g>
+    <g id="cap"><path d="M6 15.5a9 9 0 0 1 18 0z" fill="#2563eb" stroke="#1c1917" stroke-width="2"/><path d="M8 14.5h14" stroke="#fffdf8" stroke-width="1.5"/></g>
+    <g id="tux"><rect x="9" y="1" width="12" height="7" fill="#1c1917"/><rect x="6" y="7" width="18" height="2.5" fill="#1c1917"/><path d="M11 24l4 1.5 4-1.5-4-1.5z" fill="#dc2626" stroke="#1c1917" stroke-width="1"/></g>
+    <symbol id="s-11" viewBox="0 0 32 32"><use href="#water"/><use href="#head-bit"/><use href="#cap"/></symbol>
+    <symbol id="s-10" viewBox="0 0 32 32"><use href="#water"/><use href="#head-bit"/><use href="#tux"/></symbol>
+    <symbol id="s-01" viewBox="0 0 32 32"><use href="#water"/><use href="#head-ok"/><use href="#cap"/></symbol>
+    <symbol id="s-00" viewBox="0 0 32 32"><use href="#water"/><use href="#head-ok"/><use href="#tux"/></symbol>
+  </defs>
+</svg>
+
+<div class="top">
+  <a href="/">Scott M. Mourtgos, Ph.D.</a>
+  <a href="/dashboards">&larr; Back to Dashboards</a>
+</div>
+
+<div class="hero">
+  <div>
+    <h1>100% of Shark Attack Victims <em>Were Wet.</em></h1>
+    <p>A short, friendly tour of why case files can describe the people something happened to, but can't tell you how risky anything is. Two silly stories, one switch, one slider.</p>
+  </div>
+  <svg class="hero-doodle" viewBox="0 0 180 130" aria-hidden="true">
+    <path d="M10 95q20-12 40 0t40 0 40 0 40 0" fill="none" stroke="#3b82f6" stroke-width="5" stroke-linecap="round"/>
+    <path d="M10 112q20-12 40 0t40 0 40 0 40 0" fill="none" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M70 92q10-52 48-48q-14 18-8 48z" fill="#1c1917"/>
+    <circle cx="140" cy="30" r="16" fill="#fde047" stroke="#1c1917" stroke-width="3"/>
+    <text x="40" y="60" font-family="Baloo 2, sans-serif" font-weight="800" font-size="22" fill="#1c1917" transform="rotate(-8 40 60)">wet!</text>
+  </svg>
+</div>
+
+<div class="wrap">
+
+  <div class="rule">
+    <div class="big">tl;dr</div>
+    <div>If the only people in your data are the people something happened to, <strong>you can describe them, but you can't say how much more likely that something was for anyone.</strong> A risk comparison is a ratio. A ratio needs two groups. Outcome-selected data has one.</div>
+  </div>
+
+  <div class="sec-k">Example one</div>
+  <h2 class="sec-h">The wedding buffet</h2>
+  <p class="sec-p">Forty guests got sick after the reception. Somebody with a clipboard interviewed all forty. Thirty-six of them had eaten the potato salad. Case closed?</p>
+  <div class="stage" data-stage="wedding"></div>
+
+  <div class="sec-k">Example two</div>
+  <h2 class="sec-h">Shark attacks</h2>
+  <p class="sec-p">A lifeguard reviews every shark attack on record. All sixteen victims were wet (obviously). Fifteen were wearing a swimsuit. Should you swim in a tuxedo?</p>
+  <div class="stage" data-stage="shark"></div>
+
+  <div class="sec-k">The part that matters</div>
+  <h2 class="sec-h">Same case file. Three different worlds.</h2>
+  <p class="sec-p">Three different wedding receptions. In every one, forty guests got sick and thirty-six of them ate the potato salad. The case files are identical. The worlds are not.</p>
+
+  <div class="worlds-card">
+    <div class="worlds-top">
+      <div id="w-claim" style="font-weight:700;color:var(--ink-2)"><b>Case files only.</b> Can you tell which world is which?</div>
+      <div class="switch-row" style="margin:0;padding:0.6rem 0.9rem">
+        <button class="switch" id="w-switch" role="switch" aria-checked="false" aria-label="Show everyone in all three worlds"></button>
+        <div class="switch-label" style="font-size:1rem">Show everyone</div>
+      </div>
+    </div>
+    <div class="worlds" id="worlds"></div>
+    <div class="bubble" id="w-punch"></div>
+  </div>
+
+  <div class="sec-k">Okay, but seriously</div>
+  <h2 class="sec-h">This is the same problem in my own field.</h2>
+  <div class="prose">
+    <p>I study false confessions and wrongful convictions, and a lot of what we know about them comes from case files: databases of exonerations, collections of proven false confessions, and so on. Those collections are enormously valuable. They tell us what wrongful convictions look like, demonstrate possible mechanisms behind them, and show what tends to appear in them. I rely on them constantly.</p>
+    <p>What they can't do is what the potato salad can't do. "X% of exonerees falsely confessed" is a fact about the people in the file. It is the sticky note. It does not, by itself, tell you how much more likely a wrongful conviction becomes when someone confesses, or when a particular interrogation tactic is used. That is the gauge, and the gauge needs the people who confessed, or were interrogated the same way, and were <b>not</b> wrongfully convicted. They aren't in the file, so we simply do not know that number.</p>
+  </div>
+
+  <div class="serious">
+    <div class="panel joke">
+      <h3>🥗 The potato salad</h3>
+      <ul>
+        <li><b>In the file:</b> 90% of the sick guests ate the salad.</li>
+        <li><b>Not in the file:</b> the guests who ate it and were fine.</li>
+        <li><b>The question people want answered:</b> "Is the salad dangerous?" Needs both.</li>
+        <li><b>Without both:</b> the slider can put the truth anywhere from "protective" to "very dangerous," and the file looks identical.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>⚖️ The research</h3>
+      <ul>
+        <li><b>In the file:</b> a large share of exonerees falsely confessed, or were questioned with tactic&nbsp;T.</li>
+        <li><b>Not in the file:</b> the people who confessed, or faced tactic&nbsp;T, and were never wrongfully convicted. (Also missing: the wrongfully convicted who were never exonerated.)</li>
+        <li><b>The question people want answered:</b> "How much does tactic&nbsp;T raise the risk of a wrongful conviction?" Needs both.</li>
+        <li><b>Without both:</b> the true risk could be large or small and the database looks the same.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="k">The rule</span>
+    If your sample was chosen because the outcome happened, you can describe the cases. You cannot say how much anything changed the odds of the outcome. That takes the people it didn't happen to.
+  </div>
+
+  <div class="prose">
+    <p>None of this is controversial in research methods. It is why the textbooks warn against "selecting on the dependent variable." I made this page because the idea is genuinely simple, and these examples make it easier to understand than the equations do.</p>
+    <p>If you'd like the grown-up version, with the actual studies and the actual numbers, the <a href="/dashboards/fcwc-duration/dashboard.html">interrogation duration</a> and <a href="/dashboards/fcwc-risk/dashboard.html">false confession risk</a> dashboards walk through what it would take to estimate the denominator for real.</p>
+  </div>
+
+  <div class="refs">
+    <p><b>My work on this problem.</b></p>
+    <p>Mourtgos, S. M., &amp; Adams, I. T. (2026). Recalibrating the risk of false confession wrongful convictions: Interrogation tactics and inverse probability. <i>Journal of Criminal Justice, 103</i>, 102600. <a href="https://doi.org/10.1016/j.jcrimjus.2026.102600">https://doi.org/10.1016/j.jcrimjus.2026.102600</a></p>
+    <p>Mourtgos, S. M., &amp; Adams, I. T. (2026). Interrogation duration and the estimation of false confession wrongful conviction risk: A reply to Smith and colleagues. <i>Journal of Criminal Justice, 107</i>, 102747. <a href="https://www.sciencedirect.com/science/article/pii/S0047235226001546">https://doi.org/10.1016/j.jcrimjus.2026.102747</a></p>
+    <p>Mourtgos, S. M., &amp; Adams, I. T. (2026). What do laboratory false confession paradigms measure? A calibration meta-analysis. <i>Journal of Quantitative Criminology</i>. <a href="https://doi.org/10.1007/s10940-026-09687-1">https://doi.org/10.1007/s10940-026-09687-1</a></p>
+    <p style="margin-top:0.9rem"><b>About the numbers.</b> Every population on this page is invented. Each has 200 people. The number of cases, and the share of cases with the feature, is fixed for each story; the slider only changes how common the feature is among the people the outcome didn't happen to. The risk ratio is P(outcome | feature) ÷ P(outcome | no feature), computed from the 2×2 table. Nothing here estimates anything about real weddings or sharks.</p>
+  </div>
+
+  <div class="footer">
+    Interactive explainer by <a href="/">Scott M. Mourtgos, Ph.D.</a>, University of South Carolina
+    <span class="j">No sharks were harmed. The potato salad remains under investigation.</span>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  var N = 200, COLS = 20;
+
+  var S = {
+    wedding: {
+      sym: 'w', title: 'Who ate the potato salad?',
+      outcome: 'got sick', outcomeNot: 'were fine', outcomePerf: 'gotten sick',
+      outL: 'Got sick', notL: 'Fine',
+      feat: 'ate the salad', featNot: 'had cake instead', featCap: 'Ate the salad', featNotCap: 'Had cake instead',
+      subject: 'Salad eaters', thing: 'the salad',
+      K: 40, a: 36, def: 90,
+      fileLabel: 'CASE FILE · the 40 who got sick', crowdLabel: 'EVERYONE ELSE · the 160 who were fine',
+      missing: 'The 160 guests who were fine',
+      noteK: 'Of the sick guests, share who ate the salad',
+      punchFile: '<strong>Nine out of ten sick guests ate the potato salad.</strong> Sounds damning. But how many of the guests who felt fine also ate it? The clipboard never asked them. Flip the switch.',
+      sliderLabel: 'Of the guests who were fine, how many also ate the salad?'
+    },
+    shark: {
+      sym: 's', title: 'Who was wearing a swimsuit?',
+      outcome: 'were bitten', outcomeNot: 'were not bitten', outcomePerf: 'been bitten',
+      outL: 'Bitten', notL: 'Not bitten',
+      feat: 'wore a swimsuit', featNot: 'wore a tuxedo', featCap: 'Swimsuit', featNotCap: 'Tuxedo',
+      subject: 'Swimsuit wearers', thing: 'the swimsuit',
+      K: 16, a: 15, def: 94,
+      fileLabel: 'CASE FILE · the 16 who were bitten', crowdLabel: 'EVERYONE ELSE · the 184 who swam home fine',
+      missing: 'The 184 swimmers who were not bitten',
+      noteK: 'Of the victims, share in a swimsuit',
+      punchFile: '<strong>94% of shark attack victims were wearing a swimsuit.</strong> The tuxedo-rental industry would like a word. But what share of everyone who went in the water was wearing one? Not in the file.',
+      sliderLabel: 'Of the swimmers who were not bitten, how many wore a swimsuit?'
+    }
+  };
+
+  function pct(x) { return Math.round(x * 100) + '%'; }
+  function fmtRR(rr) { if (!isFinite(rr)) return '∞'; if (rr >= 20) return '>20×'; return (rr < 10 ? rr.toFixed(1) : rr.toFixed(0)) + '×'; }
+  function rrWords(rr, s) {
+    if (!isFinite(rr)) return s.subject + ' were the only ones who ' + s.outcome + ' at all.';
+    if (rr >= 1.25) return s.subject + ' were ' + fmtRR(rr) + ' as likely to have ' + s.outcomePerf + '. Looks harmful.';
+    if (rr <= 0.8) return s.subject + ' were ' + fmtRR(rr) + ' as likely to have ' + s.outcomePerf + '. Looks protective.';
+    return s.subject + ' were about as likely to have ' + s.outcomePerf + ' as everyone else. No effect.';
+  }
+  function compute(s, p) {
+    var K = s.K, C = N - K, a = s.a, b = K - a, c = Math.round(p / 100 * C), d = C - c;
+    var pF = a / (a + c), pNF = (b + d) === 0 ? NaN : b / (b + d);
+    return { K: K, C: C, a: a, b: b, c: c, d: d, pF: pF, pNF: pNF, rr: pNF === 0 ? Infinity : pF / pNF, pCase: a / K, pCtrl: c / C };
+  }
+  function needleDeg(rr) {
+    var v = Math.max(0.1, Math.min(10, isFinite(rr) ? rr : 10));
+    return -90 + 180 * ((Math.log10(v) + 1) / 2);
+  }
+  function esc(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  /* ---------- scene grid ---------- */
+  function buildScene(svg, s, o) {
+    o = o || {};
+    var cell = o.cell || 30, ic = cell - 2, pad = 10, top = o.mini ? 16 : 30, gap = o.mini ? 14 : 44;
+    var K = s.K, C = N - K, caseRows = Math.ceil(K / COLS), ctrlRows = Math.ceil(C / COLS);
+    var gw = COLS * cell, W = gw + pad * 2, folderH = caseRows * cell + pad * 2;
+    var crowdY = top + folderH + gap, H = crowdY + ctrlRows * cell + pad;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var h = '';
+    var tabW = o.mini ? 90 : 262, tabH = o.mini ? 10 : 22;
+    h += '<path d="M0 ' + top + ' V' + (top - tabH) + ' q0 -4 4 -4 H' + (tabW - 12) + ' l12 ' + tabH + ' Z" fill="#e6bd5a" stroke="#1c1917" stroke-width="2.5" stroke-linejoin="round"/>';
+    h += '<rect x="0" y="' + top + '" width="' + W + '" height="' + folderH + '" rx="6" fill="#f5d78e" stroke="#1c1917" stroke-width="2.5"/>';
+    h += '<path d="M0 ' + (top + 2) + ' H' + tabW + '" stroke="#e6bd5a" stroke-width="4"/>';
+    if (!o.mini) {
+      h += '<text class="folder-tab" x="' + pad + '" y="' + (top - 7) + '">' + esc(s.fileLabel) + '</text>';
+      h += '<g transform="rotate(-4 ' + (W - 80) + ' ' + (top - 11) + ')"><rect class="stamp-box" x="' + (W - 156) + '" y="' + (top - 23) + '" width="152" height="22" rx="3"/><text class="stamp" x="' + (W - 80) + '" y="' + (top - 7) + '" text-anchor="middle">OUTCOME-SELECTED</text></g>';
+    }
+    var i, x, y;
+    for (i = 0; i < K; i++) {
+      x = pad + (i % COLS) * cell + 1; y = top + pad + Math.floor(i / COLS) * cell + 1;
+      h += '<use class="cell case" data-i="' + i + '" x="' + x + '" y="' + y + '" width="' + ic + '" height="' + ic + '" href="#' + s.sym + '-11"/>';
+    }
+    if (!o.mini) h += '<text class="crowd-label lbl-crowd gone" x="' + pad + '" y="' + (crowdY - 10) + '">' + esc(s.crowdLabel) + '</text>';
+    for (i = 0; i < C; i++) {
+      x = pad + (i % COLS) * cell + 1; y = crowdY + Math.floor(i / COLS) * cell + 1;
+      h += '<use class="cell ctrl hidden" data-i="' + (K + i) + '" x="' + x + '" y="' + y + '" width="' + ic + '" height="' + ic + '" href="#' + s.sym + '-00"/>';
+    }
+    var bx = 2, by = crowdY - 4, bw = W - 4, bh = ctrlRows * cell + 8;
+    h += '<g class="missing"><rect class="missing-box" x="' + bx + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10"/>';
+    if (o.mini) {
+      h += '<text class="missing-txt" x="' + (W / 2) + '" y="' + (by + bh / 2 + 7) + '">?</text>';
+    } else {
+      h += '<text class="missing-txt" x="' + (W / 2) + '" y="' + (by + bh / 2 - 6) + '">' + esc(s.missing) + '</text>';
+      h += '<text class="missing-sub" x="' + (W / 2) + '" y="' + (by + bh / 2 + 16) + '">Not in the file. Nobody asked them.</text>';
+    }
+    h += '</g>';
+    svg.innerHTML = h;
+  }
+  function paintScene(svg, s, st, all) {
+    var cells = svg.querySelectorAll('.cell'), i, c, idx, isCase, f;
+    for (i = 0; i < cells.length; i++) {
+      c = cells[i]; idx = +c.getAttribute('data-i'); isCase = idx < st.K;
+      f = isCase ? (idx < st.a) : ((idx - st.K) < st.c);
+      c.setAttribute('href', '#' + s.sym + '-' + (isCase ? 1 : 0) + (f ? 1 : 0));
+      c.setAttribute('data-f', f ? 1 : 0);
+      if (!isCase) c.classList.toggle('hidden', !all);
+    }
+    var m = svg.querySelector('.missing'); if (m) m.classList.toggle('gone', all);
+    var l = svg.querySelector('.lbl-crowd'); if (l) l.classList.toggle('gone', !all);
+  }
+
+  /* ---------- tooltip ---------- */
+  var tip = document.getElementById('tooltip');
+  function wireTip(svg, s) {
+    svg.addEventListener('mousemove', function (e) {
+      var t = e.target.closest ? e.target.closest('.cell') : null;
+      if (!t || t.classList.contains('hidden')) { tip.classList.remove('show'); return; }
+      var isCase = t.classList.contains('case'), f = t.getAttribute('data-f') === '1';
+      tip.textContent = (isCase ? s.outL : s.notL) + ' · ' + (f ? s.featCap : s.featNotCap);
+      tip.style.left = (e.clientX + 14) + 'px'; tip.style.top = (e.clientY - 12) + 'px';
+      tip.classList.add('show');
+    });
+    svg.addEventListener('mouseleave', function () { tip.classList.remove('show'); });
+  }
+
+  /* ---------- a full stage (scene + note + gauge + slider) ---------- */
+  function legendHTML(s) {
+    var item = function (code, txt) { return '<span><svg viewBox="0 0 32 32"><use href="#' + s.sym + '-' + code + '"/></svg>' + esc(txt) + '</span>'; };
+    return item('11', s.outL + ' · ' + s.featCap.toLowerCase()) + item('10', s.outL + ' · ' + s.featNotCap.toLowerCase()) +
+           item('01', s.notL + ' · ' + s.featCap.toLowerCase()) + item('00', s.notL + ' · ' + s.featNotCap.toLowerCase());
+  }
+
+  function stageHTML(s, key) {
+    return '' +
+    '<div class="stage-head">' +
+      '<div class="stage-title">' + esc(s.title) + '</div>' +
+      '<div class="steps" aria-label="How to use this">' +
+        '<span class="step on" data-step="1"><span class="n">1</span> Read the case file</span>' +
+        '<span class="step" data-step="2"><span class="n">2</span> Flip the switch</span>' +
+        '<span class="step" data-step="3"><span class="n">3</span> Drag the slider, watch which number moves</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="stage-body">' +
+      '<div>' +
+        '<div class="scene"><svg class="grid" data-role="scene" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grid of 200 people, split into the case file and everyone else"></svg></div>' +
+        '<div class="legend">' + legendHTML(s) + '</div>' +
+        '<div class="switch-row">' +
+          '<button class="switch" data-role="switch" role="switch" aria-checked="false" aria-label="Show everyone"></button>' +
+          '<div><div class="switch-label" data-role="sw-label">Show everyone</div><div class="switch-sub" data-role="sw-sub"></div></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="side">' +
+        '<div class="note">' +
+          '<div class="note-k">' + esc(s.noteK) + '</div>' +
+          '<div class="note-v" data-role="note-v"></div>' +
+          '<div class="note-s" data-role="note-s"></div>' +
+        '</div>' +
+        '<div class="gauge-card">' +
+          '<div class="gauge-k">Risk ratio <span class="tag" data-role="g-tag">needs both groups</span></div>' +
+          '<svg viewBox="0 0 300 165" aria-label="Risk ratio gauge">' +
+            '<path class="g-arc" d="M30 140 A120 120 0 0 1 86.4 38.4" stroke="#0f766e"/>' +
+            '<path class="g-arc" d="M86.4 38.4 A120 120 0 0 1 213.6 38.4" stroke="#d6cdb8"/>' +
+            '<path class="g-arc" d="M213.6 38.4 A120 120 0 0 1 270 140" stroke="#f97316"/>' +
+            '<text class="g-zone" x="52" y="62" transform="rotate(-58 52 62)">protective</text>' +
+            '<text class="g-zone" x="150" y="14">no effect</text>' +
+            '<text class="g-zone" x="248" y="62" transform="rotate(58 248 62)">harmful</text>' +
+            '<text class="g-tick" x="22" y="158">0.1×</text><text class="g-tick" x="150" y="45">1×</text><text class="g-tick" x="278" y="158">10×</text>' +
+            '<g class="g-needle" data-role="needle" style="transform: rotate(0deg)"><path d="M150 140 L144 132 L150 52 L156 132 Z" fill="#1c1917"/></g>' +
+            '<circle cx="150" cy="140" r="9" fill="#fffdf8" stroke="#1c1917" stroke-width="3"/>' +
+            '<g class="g-lock" data-role="lock"><rect x="110" y="82" width="80" height="48" rx="10" fill="#fffdf8" stroke="#1c1917" stroke-width="3"/><text x="150" y="118" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="34" fill="#78716c">?</text></g>' +
+          '</svg>' +
+          '<div class="gauge-s" data-role="g-sub"></div>' +
+          '<div class="mini locked" data-role="mini"><b data-role="mini-v">?</b><span data-role="mini-s"></span></div>' +
+        '</div>' +
+        '<div class="slider">' +
+          '<div class="slider-label"><label for="sl-' + key + '">' + esc(s.sliderLabel) + '</label><small>The number the case file can\'t give you.</small></div>' +
+          '<div class="slider-row">' +
+            '<input type="range" id="sl-' + key + '" data-role="slider" min="0" max="100" step="1" value="' + s.def + '" disabled>' +
+            '<div class="slider-val" data-role="sl-val">' + s.def + '%</div>' +
+          '</div>' +
+          '<div class="nudge" data-role="nudge"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="bubble" data-role="punch"></div>' +
+    '<details class="tbl"><summary>Show the 2×2 table</summary>' +
+      '<table class="t22"><thead><tr><th></th><th class="c">' + esc(s.outL) + '</th><th class="c">' + esc(s.notL) + '</th><th class="c">Total</th></tr></thead><tbody>' +
+        '<tr><th>' + esc(s.featCap) + '</th><td data-role="c-a"></td><td data-role="c-c"></td><td data-role="c-ac"></td></tr>' +
+        '<tr><th>' + esc(s.featNotCap) + '</th><td data-role="c-b"></td><td data-role="c-d"></td><td data-role="c-bd"></td></tr>' +
+        '<tr><th>Total</th><td data-role="c-k"></td><td data-role="c-n"></td><td data-role="c-N"></td></tr>' +
+      '</tbody></table><div class="t22-foot" data-role="c-foot"></div></details>';
+  }
+
+  function makeStage(el, key) {
+    var s = S[key], all = false, touched = false;
+    el.innerHTML = stageHTML(s, key);
+    var q = function (r) { return el.querySelector('[data-role="' + r + '"]'); };
+    var scene = q('scene'), slider = q('slider'), sw = q('switch');
+    buildScene(scene, s);
+    wireTip(scene, s);
+
+    function render() {
+      var st = compute(s, +slider.value);
+      paintScene(scene, s, st, all);
+      var steps = el.querySelectorAll('.step');
+      steps[0].className = 'step ' + (all ? 'done' : 'on');
+      steps[1].className = 'step ' + (all ? 'done' : '');
+      steps[2].className = 'step ' + (touched ? 'done' : (all ? 'on' : ''));
+
+      q('sw-label').textContent = all ? 'Everyone is on the table' : 'Show everyone';
+      q('sw-sub').textContent = all ? 'The ' + st.C + ' people the outcome didn\'t happen to are now in view.' : 'Right now you\'re looking at the case file only.';
+      q('note-v').textContent = pct(st.pCase);
+      q('note-s').innerHTML = st.a + ' of the ' + st.K + ' who ' + esc(s.outcome) + '. <b>This number never moves.</b> It comes from the file alone.';
+
+      slider.disabled = !all;
+      q('sl-val').textContent = slider.value + '%';
+      q('g-tag').textContent = all ? 'computable' : 'needs both groups';
+      q('g-tag').className = 'tag' + (all ? ' ok' : '');
+      q('lock').style.opacity = all ? 0 : 1;
+      q('needle').style.transform = 'rotate(' + (all ? needleDeg(st.rr) : 0) + 'deg)';
+      q('mini').className = 'mini' + (all ? '' : ' locked');
+
+      if (all) {
+        q('g-sub').innerHTML = '<b>' + fmtRR(st.rr) + '</b> — ' + esc(rrWords(st.rr, s));
+        q('mini-v').textContent = pct(st.pCtrl);
+        q('mini-s').textContent = 'of the ' + st.C + ' who ' + s.outcomeNot + ' ' + s.feat + ' (' + st.c + ' people).';
+        q('nudge').textContent = touched ? 'Notice which number moved, and which one didn\'t.' : 'Now drag the slider.';
+        q('punch').innerHTML = '<strong>' + esc(rrWords(st.rr, s)) + '</strong> And the sticky note still says ' + pct(st.pCase) + '. It said ' + pct(st.pCase) + ' when ' + esc(s.thing) + ' was protective, and it says ' + pct(st.pCase) + ' when ' + esc(s.thing) + ' is harmful. It was never measuring risk. It can\'t.';
+      } else {
+        q('g-sub').textContent = 'A ratio needs two groups. The file has one.';
+        q('mini-v').textContent = '?';
+        q('mini-s').textContent = 'of those who ' + s.outcomeNot + ' ' + s.feat + '. Nobody asked.';
+        q('nudge').textContent = 'Locked until you can see everyone.';
+        q('punch').innerHTML = s.punchFile;
+      }
+
+      q('c-a').textContent = st.a; q('c-b').textContent = st.b; q('c-k').textContent = st.K;
+      var unk = function (r, v) { var c = q(r); c.textContent = all ? v : '?'; c.classList.toggle('unk', !all); };
+      unk('c-c', st.c); unk('c-d', st.d); unk('c-n', st.C); unk('c-ac', st.a + st.c); unk('c-bd', st.b + st.d); unk('c-N', N);
+      q('c-foot').textContent = all
+        ? 'Risk ratio = (' + st.a + ' ÷ ' + (st.a + st.c) + ') ÷ (' + st.b + ' ÷ ' + (st.b + st.d) + ') = ' + (isFinite(st.rr) ? st.rr.toFixed(2) : '∞') + '. Change the right-hand column and the ratio changes. The left-hand column never does.'
+        : 'Only the left-hand column is in the file. You can compute ' + st.a + ' ÷ ' + st.K + ' = ' + pct(st.pCase) + ', and nothing else.';
+    }
+
+    sw.addEventListener('click', function () { all = !all; sw.setAttribute('aria-checked', all ? 'true' : 'false'); render(); });
+    slider.addEventListener('input', function () { touched = true; render(); });
+    render();
+  }
+
+  document.querySelectorAll('.stage[data-stage]').forEach(function (el) { makeStage(el, el.getAttribute('data-stage')); });
+
+  /* ---------- three worlds ---------- */
+  (function () {
+    var s = S.wedding, $ = function (id) { return document.getElementById(id); };
+    var worlds = [
+      { name: 'World A', tag: 'The salad was protective.', pct: 99 },
+      { name: 'World B', tag: 'The salad did nothing.', pct: 90 },
+      { name: 'World C', tag: 'The salad was dangerous.', pct: 64 }
+    ];
+    var host = $('worlds'), wsw = $('w-switch'), on = false;
+    worlds.forEach(function (w) {
+      var d = document.createElement('div'); d.className = 'world';
+      d.innerHTML = '<div class="world-h"><span>' + w.name + '</span><span class="rr q">?</span></div><div class="world-s"></div><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + w.name + '"></svg>';
+      host.appendChild(d);
+      w.svg = d.querySelector('svg'); w.rr = d.querySelector('.rr'); w.s = d.querySelector('.world-s');
+      buildScene(w.svg, s, { mini: true, cell: 18 });
+      wireTip(w.svg, s);
+    });
+    function render() {
+      worlds.forEach(function (w) {
+        var st = compute(s, w.pct);
+        paintScene(w.svg, s, st, on);
+        w.rr.textContent = on ? fmtRR(st.rr) : '?';
+        w.rr.className = 'rr' + (on ? '' : ' q');
+        w.s.textContent = on ? w.tag + ' ' + pct(st.pCtrl) + ' of the fine guests ate it.' : '36 of 40 sick guests ate the salad.';
+      });
+      $('w-claim').innerHTML = on ? '<b>Everyone at the party.</b> Three different truths, one identical case file.' : '<b>Case files only.</b> Can you tell which world is which?';
+      $('w-punch').innerHTML = on
+        ? 'In World A the salad roughly <strong>cut</strong> the chance of getting sick. In World C it roughly <strong>quadrupled</strong> it. In World B it did nothing. The case file was the same in every one. It can\'t tell you which world you\'re in, and that isn\'t a flaw in the file. It\'s what "selecting on the outcome" means.'
+        : 'Right now the three panels are indistinguishable. Any risk number you attach to the potato salad from this view is a guess wearing a lab coat. Flip the switch.';
+    }
+    wsw.addEventListener('click', function () { on = !on; wsw.setAttribute('aria-checked', on ? 'true' : 'false'); render(); });
+    render();
+  })();
+})();
+</script>
+</body>
+</html>

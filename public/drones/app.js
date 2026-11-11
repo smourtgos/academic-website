@@ -375,7 +375,7 @@ async function init() {
     return;
   }
   const upd = META.generated_at ? new Date(META.generated_at).toISOString().slice(0, 10) : "?";
-  $("meta").textContent = `${ALL.length.toLocaleString()} incidents · updated ${upd} · codebook v${META.codebook_version || "?"}`;
+  $("meta").textContent = `${ALL.length.toLocaleString()} incidents · updated ${upd}`;
   setupFilters();
   setupMap();
   setupTable();

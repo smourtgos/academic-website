@@ -56,16 +56,16 @@
 
   <section class="graphic" id="categories">
     <h2>How the mix of reported incidents has shifted</h2>
-    <p class="desc">Categories ranked by their count in each year, under the current filters other than category. The largest category is in black; a category you have filtered to is in red. Hover a line to follow it; click one to filter the page to that category.</p>
+    <p class="desc">Categories ranked by their count in each year, under the current filters other than category. The largest category is in black; a category you have filtered to in the filter bar is in red. Hover a line to follow it; click one to pin its highlight here.</p>
     <div class="chart-scroll"><div class="chart" id="chart-bump"></div></div>
     <h3 class="sub-h">Each category by quarter</h3>
-    <p class="desc">Each panel has its own scale, so read the shape within a panel, not the height across panels. The open dot is the current, partial quarter. Click a panel to filter by that category.</p>
+    <p class="desc">Each panel has its own scale, so read the shape within a panel, not the height across panels. The open dot is the current, partial quarter. Click a panel to highlight that category in the chart above.</p>
     <div class="multiples" id="multiples"></div>
   </section>
 
   <section class="graphic" id="flow">
     <h2>What the reports say happened next</h2>
-    <p class="desc">Each ribbon is a share of incidents, from the type of incident to the furthest legal stage its reports describe. Red marks a conviction, plea, or sentence. "None reported" means the reports mention no legal step, not that none happened; follow-up coverage is rarer than first reports. Hover a ribbon for the count; click a category to filter.</p>
+    <p class="desc">Each ribbon is a share of incidents, from the type of incident to the furthest legal stage its reports describe. Red marks a conviction, plea, or sentence. "None reported" means the reports mention no legal step, not that none happened; follow-up coverage is rarer than first reports. Hover a ribbon for the count; click a category to isolate its ribbons.</p>
     <div class="chart-scroll"><div class="chart" id="chart-flow"></div></div>
     <p class="source">Source: Drone Crime and Incident Tracker. Categories beyond the eight largest are grouped.</p>
   </section>
@@ -79,7 +79,7 @@
 
   <section class="graphic" id="map-card">
     <h2>Where incidents are reported</h2>
-    <p class="desc">One circle per place, sized by the number of incidents reported there; faded circles are places known only to the state or country. Locations are geocoded from the place names in news reports. Incidents with no usable location are left off the map but counted in the list.</p>
+    <p class="desc">One circle per place, sized by the number of incidents reported there; faded circles are places known only to the state or country. Locations are geocoded from the place names in news reports. Incidents with no usable location are left off the map but counted in the list. Click a country in the list to zoom the map to it; click a circle for that place's incidents.</p>
     <div class="map-grid">
       <div id="map"></div>
       <div class="countries"><h3>By country</h3><ol id="country-list"></ol></div>
@@ -90,6 +90,7 @@
     <h2>Incidents</h2>
     <div class="table-tools">
       <span class="count" id="table-count"></span>
+      <span class="local" id="table-local"></span>
       <span><a href="#" id="dl-filtered">Download filtered CSV</a> · <a href="data/incidents.json" download>Full dataset (JSON)</a></span>
     </div>
     <div class="table-scroll">

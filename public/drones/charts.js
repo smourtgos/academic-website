@@ -184,13 +184,14 @@ const Charts = (() => {
       const h = l.count * scale, y0 = lo[li[l.s]], y1 = roff.get(l);
       lo[li[l.s]] += h;
       const em = opts.emphasis && opts.emphasis(l.t);
-      s += `<path class="ribbon${em ? " em" : ""}" data-i="${idx}" d="M${LX + NW},${f1(y0)} C${f1(mx)},${f1(y0)} ${f1(mx)},${f1(y1)} ${RX},${f1(y1)} v${f1(h)} C${f1(mx)},${f1(y1 + h)} ${f1(mx)},${f1(y0 + h)} ${LX + NW},${f1(y0 + h)} Z"/>`;
+      const pk = opts.pick ? (l.s === opts.pick ? " pick" : " dim") : "";
+      s += `<path class="ribbon${em ? " em" : ""}${pk}" data-i="${idx}" d="M${LX + NW},${f1(y0)} C${f1(mx)},${f1(y0)} ${f1(mx)},${f1(y1)} ${RX},${f1(y1)} v${f1(h)} C${f1(mx)},${f1(y1 + h)} ${f1(mx)},${f1(y0 + h)} ${LX + NW},${f1(y0 + h)} Z"/>`;
     });
     const lLab = spread(left.map((nd, i) => ly[i] + nd.count * scale / 2), 14, m.t + 6, H - m.b - 6);
     const rLab = spread(right.map((nd, i) => ry[i] + nd.count * scale / 2), 14, m.t + 6, H - m.b - 6);
     left.forEach((nd, i) => {
       const h = Math.max(1, nd.count * scale);
-      s += `<g class="node left" data-key="${esc(nd.key)}" role="button" tabindex="0" aria-label="Filter to ${esc(nd.label)}"><rect x="${LX}" y="${f1(ly[i])}" width="${NW}" height="${f1(h)}"/><text x="${LX - 8}" y="${f1(lLab[i] + 4)}" text-anchor="end">${esc(nd.label)} <tspan class="pct">${fmt(nd.count)}</tspan></text></g>`;
+      s += `<g class="node left${opts.pick === nd.key ? " pick" : ""}" data-key="${esc(nd.key)}" role="button" tabindex="0" aria-label="Isolate ${esc(nd.label)}"><rect x="${LX}" y="${f1(ly[i])}" width="${NW}" height="${f1(h)}"/><text x="${LX - 8}" y="${f1(lLab[i] + 4)}" text-anchor="end">${esc(nd.label)} <tspan class="pct">${fmt(nd.count)}</tspan></text></g>`;
     });
     right.forEach((nd, i) => {
       const h = Math.max(1, nd.count * scale), em = opts.emphasis && opts.emphasis(nd.key);

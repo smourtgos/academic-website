@@ -117,6 +117,10 @@ svg text { font-family: var(--sans); }
 .ribbon { fill: var(--ink); fill-opacity: 0.12; cursor: default; }
 .ribbon.em { fill: var(--accent); fill-opacity: 0.35; }
 .ribbon.hover { fill-opacity: 0.6; }
+.ribbon.dim { fill-opacity: 0.035; }
+.ribbon.pick { fill-opacity: 0.32; }
+.ribbon.pick.em { fill-opacity: 0.7; }
+.node.left.pick text { font-weight: 600; }
 .node rect { fill: var(--ink); }
 .node.em rect { fill: var(--accent); }
 .node text { font-size: 12px; fill: var(--ink); }
@@ -167,6 +171,8 @@ svg text { font-family: var(--sans); }
 /* table */
 .table-tools { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; font-size: 13px; }
 .table-tools .count { color: var(--ink-2); }
+.table-tools .local:not(:empty) { color: var(--ink-2); border-left: 3px solid var(--accent); padding-left: 10px; }
+.table-tools .local button { font: 13px var(--sans); color: var(--accent); background: none; border: 0; padding: 0 0 0 6px; cursor: pointer; text-decoration: underline; }
 .table-scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; }
 #tbl { table-layout: fixed; }

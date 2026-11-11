@@ -46,6 +46,11 @@ let filtered = [];
 let exceptCategory = [];  // all filters applied except category (for the category graphics)
 let sortKey = "event_date", sortDir = -1, page = 0;
 let map, markerLayer, placeMarkers = [];
+// Selections made inside a graphic stay inside it. Only the filter bar filters the page.
+let pickCategory = null;   // bump chart line / sparkline panel pinned in the categories section
+let flowPick = null;       // category whose ribbons are isolated in the flow
+let pinnedCountry = null;  // country zoomed and highlighted on the map
+let tablePlace = null;     // place text the table alone is narrowed to
 
 function place(i) {
   return [i.facility_or_site, i.locality, i.admin1, i.country].filter(Boolean).join(", ");
@@ -76,8 +81,9 @@ function applyFilters() {
   render();
 }
 function setCategory(cat) {
-  $("f-category").value = $("f-category").value === cat ? "" : cat;
-  applyFilters();
+  pickCategory = pickCategory === cat ? null : cat;
+  renderBump();
+  renderMultiples();
 }
 function writeHash(f) {
   const p = new URLSearchParams(Object.entries(f).filter(([, v]) => v));
@@ -203,9 +209,9 @@ function renderBump() {
   });
   const lead = keys.map((c) => [c, counts[c].reduce((p, q) => p + q, 0)]).sort((a, b) => b[1] - a[1])[0][0];
   Charts.bumpChart($("chart-bump"), {
-    years, highlight: f.category || null, lead,
+    years, highlight: pickCategory || f.category || null, lead,
     series: keys.map((c) => ({ key: c, label: CATEGORY_LABELS[c], ranks: ranks[c], counts: counts[c] })),
-  }, { label: "Each category's rank among the twelve, by year; click a line to filter", onClick: setCategory });
+  }, { label: "Each category's rank among the twelve, by year; click a line to pin its highlight", onClick: setCategory });
 }
 
 /* ---------- sparklines by quarter ---------- */
@@ -234,8 +240,8 @@ function renderMultiples() {
   const order = Object.keys(CATEGORY_LABELS).sort((a, b) => (a === "other") - (b === "other") || per[b].total - per[a].total);
   for (const cat of order) {
     const div = document.createElement("div");
-    div.className = `multiple${f.category === cat ? " active" : ""}`;
-    div.innerHTML = `<button class="pick" type="button" aria-label="Filter to ${esc(CATEGORY_LABELS[cat])}"><h3>${esc(CATEGORY_LABELS[cat])}</h3><div class="n">${plural(per[cat].total, "incident")}</div><div class="chart"></div></button>`;
+    div.className = `multiple${(pickCategory || f.category) === cat ? " active" : ""}`;
+    div.innerHTML = `<button class="pick" type="button" aria-label="Highlight ${esc(CATEGORY_LABELS[cat])} in the chart above"><h3>${esc(CATEGORY_LABELS[cat])}</h3><div class="n">${plural(per[cat].total, "incident")}</div><div class="chart"></div></button>`;
     box.appendChild(div);
     Charts.sparkline(div.querySelector(".chart"), { keys: qs, values: per[cat].q, partialLast: true }, {
       label: `${CATEGORY_LABELS[cat]} by quarter`, firstLabel: qs[0].slice(0, 4), lastLabel: qs[qs.length - 1].slice(0, 4),
@@ -267,7 +273,8 @@ function renderFlow() {
   Charts.flowChart(el, { left, right, links }, {
     label: "Incidents by category and the furthest legal stage their reports describe",
     emphasis: (t) => t === "convicted_or_plea" || t === "sentenced",
-    onClick: (c) => { if (c !== "__other") setCategory(c); },
+    pick: flowPick,
+    onClick: (c) => { flowPick = flowPick === c ? null : c; renderFlow(); },
   });
 }
 
@@ -324,8 +331,8 @@ function setupMap() {
     const t = node.querySelector(".pp-table");
     if (t) t.addEventListener("click", (ev) => {
       ev.preventDefault();
-      $("f-q").value = t.dataset.q;
-      applyFilters();
+      setTablePlace(t.dataset.q);
+      map.closePopup();
       $("table-card").scrollIntoView({ behavior: "smooth" });
     });
   });
@@ -352,7 +359,7 @@ function renderMap() {
     const n = g.items.length;
     const mk = L.circleMarker([g.lat / n, g.lon / n], {
       radius: Math.min(18, 3 + 2.2 * Math.sqrt(n)), color: "#ffffff", weight: 1.5,
-      fillColor: "#121212", fillOpacity: g.approx ? 0.3 : 0.55,
+      fillColor: g.country === pinnedCountry ? "#b3261e" : "#121212", fillOpacity: g.approx ? 0.3 : 0.55,
     });
     mk.bindTooltip(`${esc(g.key)} · ${plural(n, "incident")}${g.approx ? ` (placed at ${esc(g.items[0].geo_precision)} level)` : ""}`, { direction: "top", offset: [0, -4] });
     mk.on("click", () => mk.bindPopup(placePopup(g), { maxWidth: 340 }).openPopup());
@@ -378,20 +385,26 @@ function renderCountries() {
   const top = rows.slice(0, 10), max = top.length ? top[0][1] : 1, f = readFilters();
   const list = $("country-list");
   list.innerHTML = top.map(([c, n]) =>
-    `<li data-country="${esc(c)}" class="${f.country === c ? "active" : ""}"><button type="button" aria-label="Filter to ${esc(c)}"><span class="cname">${esc(c)}</span><span class="cbar"><i style="width:${(100 * n / max).toFixed(1)}%"></i></span><span class="cn">${n.toLocaleString()}</span></button></li>`).join("")
+    `<li data-country="${esc(c)}" class="${pinnedCountry === c ? "active" : ""}"><button type="button" aria-label="Zoom the map to ${esc(c)}"><span class="cname">${esc(c)}</span><span class="cbar"><i style="width:${(100 * n / max).toFixed(1)}%"></i></span><span class="cn">${n.toLocaleString()}</span></button></li>`).join("")
     + (rows.length > 10 ? `<li class="more">${rows.length - 10} more ${rows.length - 10 === 1 ? "country" : "countries"}</li>` : "")
     + (rows.length === 0 ? `<li class="more">No incidents match the current filters.</li>` : "");
   list.querySelectorAll("li[data-country]").forEach((li) => {
     li.addEventListener("mouseenter", () => highlightCountry(li.dataset.country, true));
     li.addEventListener("mouseleave", () => highlightCountry(null, false));
-    li.querySelector("button").addEventListener("click", () => {
-      $("f-country").value = f.country === li.dataset.country ? "" : li.dataset.country;
-      applyFilters();
-    });
+    li.querySelector("button").addEventListener("click", () => zoomCountry(li.dataset.country));
   });
 }
+function zoomCountry(country) {
+  pinnedCountry = pinnedCountry === country ? null : country;
+  const mine = placeMarkers.filter((mk) => mk.country === pinnedCountry);
+  if (pinnedCountry && mine.length) map.fitBounds(L.latLngBounds(mine.map((mk) => mk.getLatLng())), { padding: [24, 24], maxZoom: 6 });
+  else if (!pinnedCountry) map.setView([25, 0], 2);
+  highlightCountry(null, false);
+  $("country-list").querySelectorAll("li[data-country]").forEach((li) => li.classList.toggle("active", li.dataset.country === pinnedCountry));
+}
 function highlightCountry(country, on) {
-  for (const mk of placeMarkers) mk.setStyle({ fillColor: on && mk.country === country ? "#b3261e" : "#121212" });
+  const lit = (c) => (on && c === country) || c === pinnedCountry;
+  for (const mk of placeMarkers) mk.setStyle({ fillColor: lit(mk.country) ? "#b3261e" : "#121212" });
   $("country-list").querySelectorAll("li[data-country]").forEach((li) => li.classList.toggle("hover", on && li.dataset.country === country));
 }
 
@@ -438,8 +451,21 @@ function cdText(i) {
   const r = (i.counter_drone_response || []).filter((c) => c !== "none_reported").map((c) => CD_LABELS[c] || c);
   return r.length ? ` · ${esc(r.join(", "))}` : "";
 }
+function setTablePlace(q) {
+  tablePlace = q || null;
+  page = 0;
+  renderTable();
+}
+function tableRows() {
+  if (!tablePlace) return filtered;
+  const q = tablePlace.toLowerCase();
+  return filtered.filter((i) => place(i).toLowerCase().includes(q));
+}
 function renderTable() {
-  const rows = [...filtered].sort((a, b) => {
+  const local = $("table-local");
+  local.innerHTML = tablePlace ? `Table narrowed to <b>${esc(tablePlace)}</b> <button type="button" id="table-local-clear">Show all</button>` : "";
+  if (tablePlace) $("table-local-clear").addEventListener("click", () => setTablePlace(null));
+  const rows = [...tableRows()].sort((a, b) => {
     const x = sortVal(a, sortKey), y = sortVal(b, sortKey);
     return (x > y ? 1 : x < y ? -1 : 0) * sortDir;
   });
@@ -453,7 +479,7 @@ function renderTable() {
     <td class="legal">${esc(LEGAL_LABELS[i.legal_stage] || i.legal_stage || "")}</td>
     <td class="src">${sourcesHtml(i)}</td>
   </tr>`).join("");
-  $("table-count").textContent = plural(rows.length, "incident");
+  $("table-count").textContent = plural(rows.length, "incident") + (tablePlace ? ` of ${filtered.length.toLocaleString()} under the filters` : "");
   $("pg-info").textContent = `Page ${page + 1} of ${pages}`;
   $("pg-prev").disabled = page === 0;
   $("pg-next").disabled = page >= pages - 1;
@@ -469,7 +495,7 @@ function setupTable() {
   }));
   $("pg-prev").addEventListener("click", () => { page--; renderTable(); });
   $("pg-next").addEventListener("click", () => { page++; renderTable(); });
-  $("dl-filtered").addEventListener("click", (e) => { e.preventDefault(); downloadCsv(filtered); });
+  $("dl-filtered").addEventListener("click", (e) => { e.preventDefault(); downloadCsv(tableRows()); });
   const body = $("tbl").querySelector("tbody");
   const openRow = (tr) => { const inc = BY_ID.get(tr.dataset.id); if (inc) openRecord(inc); };
   body.addEventListener("click", (e) => {

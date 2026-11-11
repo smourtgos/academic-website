@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracker Methods</title>
+<meta name="description" content="How the Drone Misuse Tracker collects, codes, and reviews media reports, and what the data can and cannot show.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap prose">
+  <header class="site">
+    <h1>Methods &amp; limitations</h1>
+    <nav class="top"><a href="index.html">← Back to the tracker</a></nav>
+  </header>
+  <p class="sub">This page describes the pipeline as of 11 November 2026.</p>
+
+  <h2>What this dataset is</h2>
+  <p>A record of <strong>news-reported</strong> incidents in which a non-state actor used a drone in a way that was criminal, malicious, or reckless, from January 2020 onward. It is updated daily. Each incident is linked to the news reports it was coded from.</p>
+  <p>It is <strong>not</strong> a count of how often drones are misused. It reflects which events reached the news, which outlets the collection sources index, and which events matched the search queries. Use it to describe <em>reported</em> patterns (types of misuse, reported counter-drone responses, legal outcomes), and treat trends over time with caution (see Limitations).</p>
+
+  <h2>Scope</h2>
+  <ul>
+    <li><strong>Included:</strong> contraband deliveries to prisons and jails; drug and cross-border smuggling; surveillance, stalking, and voyeurism; harassment and intimidation; weaponized attacks and plots by non-state actors, including cartel attacks; airport and aircraft disruption; interference with firefighting, police, or rescue operations; incursions over critical infrastructure; incursions over stadiums and events; criminal counter-surveillance of police; and burglary reconnaissance.</li>
+    <li><strong>Excluded:</strong> drone use inside active war theaters (currently Ukraine, Gaza and the West Bank, Lebanon, Syria, Yemen and the Red Sea, Sudan, Myanmar); attacks claimed by, or openly part of, a state's or a belligerent's military operations; attacks by organized armed groups in a sustained campaign against a state (Iran-aligned militias, the Houthis, Hezbollah, and similar), wherever they occur and whether or not claimed; lawful use by police and other agencies; crimes against drones; pure accidents; unconfirmed sightings with no consequence; and drills and hypotheticals.</li>
+    <li><strong>Included but flagged:</strong> incidents outside war theaters that nobody has claimed but that reporting links to a state or a war, such as unexplained drones over European airports and bases, or suspected sabotage. These carry a <code>conflict_linked</code> flag, and a filter lets you include, exclude, or isolate them.</li>
+  </ul>
+  <p><strong>Date scope:</strong> incidents that occurred on or after 1 January 2020. An event from before 2020 that was reported later (a sentencing, say) is left out, except for a multi-event case that continued into 2020.</p>
+  <p>The full coding rules are in the project codebook (<code>config/codebook.md</code>), which carries a change log.</p>
+
+  <h2>How records are produced</h2>
+  <ol>
+    <li><strong>Collection.</strong> Search queries (one per type of misuse, plus general criminal case queries) are sent to Google News RSS search in U.S. and U.K. English editions, in monthly date windows. A window that hits the roughly 100-result cap is split into weeks, then days. Each day since 19 October 2026, the pipeline also searches the last few days of Google News and checks U.S. Department of Justice press releases whose titles mention drones. From 19 October to 11 November 2026 the daily search also queried the GDELT DOC 2.0 news index (English-language sources). It was dropped on 11 November because the project's GitHub runners were rate-limited on 59% of GDELT queries and nothing that only GDELT found in its last two weeks became an incident; four incidents from October 2026 rest on GDELT-found reports alone.</li>
+    <li><strong>De-duplication of articles.</strong> Articles are matched on normalized headline plus outlet, and on cleaned URL.</li>
+    <li><strong>Screening.</strong> A language model (Claude Sonnet 5.5) reads each headline and drops items that clearly fall outside scope (policy pieces, product news, lawful police use, war reporting, light shows). The screen is set to favor recall: anything that might qualify is kept for full coding.</li>
+    <li><strong>Coding.</strong> For each kept article, the pipeline retrieves the article text where possible; when the publisher blocks retrieval, an archived copy from the Wayback Machine is used if one exists. A language model (Claude Sonnet 5.5) then codes it against the codebook into structured fields: event date, location, category, intent, actor and target type, payload, harm, how the drone was detected, any counter-drone response reported, the furthest legal stage reported, and a short paraphrased summary. It returns its output as schema-constrained JSON, with a confidence rating. When the article text could not be retrieved, coding uses the headline and snippet only, with low confidence, and the record is marked that way. Articles too thin to judge from the headline are listed for manual checking rather than silently dropped.</li>
+    <li><strong>Incident linking.</strong> Different reports of the same event (initial report, arrest, sentencing) are merged into one incident. Candidate pairs must match on country, region, overlapping category, and event dates within 10 days, adjusted for date precision. A model (Claude Haiku 5.5) then judges whether each candidate pair is the same incident. Merges it is unsure about are flagged.</li>
+    <li><strong>Geocoding.</strong> Place names are geocoded with OpenStreetMap Nominatim at the most specific level available. Map points placed at state or country level are shown faded.</li>
+    <li><strong>Review.</strong> Records with low coder confidence, an uncertain merge, or categories that disagree across reports go into a review queue. Headline-only records enter the queue through their low confidence but are left there by policy: nothing beyond the headline can be checked. Review decisions (accept, reject, correct a field, merge, split) are stored separately and re-applied on every update, so automated runs never overwrite them.
+    <br><strong>The queue has been worked by a second model, not by a person.</strong> Every queued record with article text was re-read by Claude Fable 5.2, a stronger model than the coder, which answered one question per flag from the full article texts and said whether it was certain. Its verdicts were applied by a fixed rule. Where it agreed with the coder, the record was accepted. Where it disagreed and was certain, its correction was applied: the record excluded as outside scope or not a specific incident, a field corrected, or a wrongly merged record split into its component incidents. Where it disagreed but was uncertain, the record stays flagged with no change. Every verdict and its stated basis is kept in the project repository. A smaller pilot with Claude Opus 5.5 preceded the full run. No flagged record has been checked by a person.
+    <br>The review status appears on each record: <code>auto</code> (no decision), <code>accepted</code>, or <code>edited</code> (a field was corrected). Rejected records are not shown. The public data do not distinguish an acceptance by this rule from one by a person; nearly all accepted records are the rule's.</li>
+  </ol>
+
+  <h2>Limitations</h2>
+  <ul>
+    <li><strong>Media attention is not incidence.</strong> Reporting depends on newsworthiness, local news capacity, and whether an arrest was made. Incidents with an arrest are probably over-represented relative to undetected or unsolved ones. So the share of incidents with a reported counter-drone response or legal action is a property of the <em>reported</em> cases.</li>
+    <li><strong>Language and geography.</strong> Collection is English-language and draws on U.S. and U.K. Google News editions. Coverage of non-English-speaking countries is thin, and cross-country comparisons should not be read as differences in prevalence.</li>
+    <li><strong>Changing source coverage.</strong> How much of the news Google News indexes changes over time, and the backfill (January 2020 to 18 October 2026) was collected retrospectively, while later months are collected as news appears. GDELT was part of the daily feed only from 19 October to 11 November 2026. A rise or fall over time may partly reflect collection, not events.</li>
+    <li><strong>Search recall.</strong> Incidents that match none of the search queries are missed. The query list is versioned in the project repository.</li>
+    <li><strong>Machine coding.</strong> Records are coded by a language model. Flagged records with article text were re-checked by a second, stronger model (see Review); headline-only records were not re-checked; no flagged record has been checked by a person. A blind audit of a random sample from the whole dataset, which would give a dataset-level error rate, has not been done. Treat field-level counts as provisional.</li>
+    <li><strong>Summaries.</strong> Summaries are machine-written paraphrases. The linked news reports are the source of record.</li>
+  </ul>
+
+  <h2>Fields</h2>
+  <table>
+    <tr><th>Field</th><th>Meaning</th></tr>
+    <tr><td><code>event_date</code>, <code>date_precision</code></td><td>When the drone incident happened (not the publication or court date), to the day, month, or year.</td></tr>
+    <tr><td><code>category</code></td><td>Primary type of misuse (codebook categories); <code>secondary_categories</code> lists any others.</td></tr>
+    <tr><td><code>intent</code></td><td>malicious, reckless (unauthorized or unsafe flight without evidence of intent to harm), or unknown.</td></tr>
+    <tr><td><code>counter_drone_response</code></td><td>Every response reported across the incident's sources (detection system, jamming, capture, drone recovered or seized, operator located or arrested, airspace closed). "None reported" means the reports mention none, not that none happened.</td></tr>
+    <tr><td><code>legal_stage</code></td><td>The furthest legal stage reported across sources (investigation → arrest → charged → convicted/plea → sentenced; or acquitted/dismissed).</td></tr>
+    <tr><td><code>review_status</code></td><td>auto (no decision), accepted (by the review rule above or by a person; the data do not say which), or edited (a field corrected).</td></tr>
+    <tr><td><code>review_flags</code></td><td>Why a record drew attention: low_confidence, merge_uncertain, category_disagreement (these three put it in the review queue), headline_only, date_from_publication (no event date in the reports, so the publication date stands in), intent_unknown.</td></tr>
+    <tr><td><code>text_basis</code></td><td>full_text (coded from the article text) or headline_snippet (coded from the headline only, low confidence).</td></tr>
+    <tr><td><code>split_from</code></td><td>Set when the record was separated from a wrongly merged record; gives that record's id.</td></tr>
+  </table>
+</div>
+<div class="wrap"><footer>Questions or corrections: contact the project author.</footer></div>
+</body>
+</html>

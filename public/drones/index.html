@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drone Misuse Tracker</title>
+<meta name="description" content="A dataset of media-reported non-state malicious, criminal, and reckless drone incidents since 2020, updated daily.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <h1>Drone Misuse Tracker</h1>
+    <p class="sub">Media-reported incidents of non-state malicious, criminal, and reckless drone use worldwide since January 2020. The data are built to inform research on counter-drone measures in criminology and criminal justice.</p>
+    <nav class="top">
+      <a href="#trend">Trend</a><a href="#categories">Categories</a><a href="#map-card">Map</a><a href="#table-card">Incidents</a>
+      <a href="methods.html">Methods &amp; limitations</a>
+      <span class="meta" id="meta"></span>
+    </nav>
+  </header>
+
+  <div class="caveat"><strong>Read before using:</strong> these counts are of <em>media-reported</em> incidents. They measure how often news outlets (mostly English-language) reported drone misuse, not how often it happened. A model coded each incident from news text, and not every record has been checked by a person (see each record's review status). <a href="methods.html">Methods &amp; limitations</a>.</div>
+
+  <div class="filters" role="search">
+    <label>Category <select id="f-category"><option value="">All categories</option></select></label>
+    <label>Where <select id="f-country"><option value="">All countries</option><option value="__US">United States</option><option value="__nonUS">Outside the U.S.</option></select></label>
+    <label>From <select id="f-from"></select></label>
+    <label>To <select id="f-to"></select></label>
+    <label>Intent <select id="f-intent"><option value="">Any</option><option value="malicious">Malicious</option><option value="reckless">Reckless</option><option value="unknown">Unknown</option></select></label>
+    <label>Counter-drone response <select id="f-cd"><option value="">Any</option><option value="__any">Any response reported</option></select></label>
+    <label>Legal stage <select id="f-legal"><option value="">Any</option></select></label>
+    <label>Suspected state/war link <select id="f-conflict"><option value="">Include</option><option value="exclude">Exclude</option><option value="only">Only these</option></select></label>
+    <label>Search <input type="search" id="f-q" placeholder="place, facility, text…"></label>
+    <button type="button" id="f-reset">Reset</button>
+  </div>
+
+  <section class="tiles" aria-label="Summary for current filters">
+    <div class="tile"><div class="label">Incidents</div><div class="value" id="t-n">–</div><div class="note" id="t-n-note"></div></div>
+    <div class="tile"><div class="label">Countries</div><div class="value" id="t-countries">–</div><div class="note">with at least one incident</div></div>
+    <div class="tile"><div class="label">Counter-drone response reported</div><div class="value" id="t-cd">–</div><div class="note">share of incidents</div></div>
+    <div class="tile"><div class="label">Arrest or further legal action</div><div class="value" id="t-legal">–</div><div class="note">share of incidents</div></div>
+  </section>
+
+  <section class="card" id="trend">
+    <h2>Incidents by month</h2>
+    <p class="desc">By event month, under the current filters. Months from Jan 2020 onward; the latest month is partial. The rise over time partly reflects how much older news the sources still index, so it is not a measure of change in incidence (see <a href="methods.html">Methods</a>).</p>
+    <div class="chart" id="chart-month"></div>
+  </section>
+
+  <section class="card" id="categories">
+    <h2>Incidents by year, per category</h2>
+    <p class="desc">Each panel has its own y-axis scale, so read the levels within a panel, not across panels. Click a panel to filter by that category.</p>
+    <div class="multiples" id="multiples"></div>
+  </section>
+
+  <section class="card" id="map-card">
+    <h2>Map</h2>
+    <p class="desc">Approximate locations, geocoded from the place names in news reports: city where given, otherwise state/province or country centroid (stated in each popup). Incidents with no usable location are left off.</p>
+    <div id="map"></div>
+  </section>
+
+  <section class="card" id="table-card">
+    <h2>Incidents</h2>
+    <div class="table-tools">
+      <span class="count" id="table-count"></span>
+      <span><a href="#" id="dl-filtered">Download filtered CSV</a> · <a href="data/incidents.json" download>Full dataset (JSON)</a></span>
+    </div>
+    <div class="table-scroll">
+      <table id="tbl">
+        <thead><tr>
+          <th data-k="event_date" aria-sort="descending">Date</th>
+          <th data-k="place">Place</th>
+          <th data-k="category">Category</th>
+          <th data-k="summary">Summary</th>
+          <th data-k="counter">Counter-drone response</th>
+          <th data-k="legal_stage">Legal stage</th>
+          <th data-k="n_sources">Sources</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="pager"><button type="button" id="pg-prev">Previous</button><span id="pg-info"></span><button type="button" id="pg-next">Next</button></div>
+  </section>
+
+  <footer>
+    Updated daily by an automated pipeline. Summaries are machine-written paraphrases; follow the source links for the original reporting. Basemap © OpenStreetMap contributors.
+  </footer>
+</div>
+<div class="tooltip" id="tooltip" role="status"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

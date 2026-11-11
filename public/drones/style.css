@@ -115,16 +115,8 @@ svg text { font-family: var(--sans); }
 svg.narrow .blabel { font-size: 11px; }
 svg.narrow .bump.lead .dot, svg.narrow .bump.hover .dot, svg.narrow .bump.hi .dot { r: 4; }
 
-/* flow as stacked bars (narrow screens) */
-.flowbars { font-size: 12px; }
-.fb-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 14px; color: var(--ink-2); }
-.fb-legend span { display: inline-flex; align-items: center; gap: 5px; }
-.fb-legend .pct, .fb-label .pct { color: var(--faint); font-weight: 400; font-variant-numeric: tabular-nums; }
-.fb-sw { display: inline-block; width: 10px; height: 10px; }
-.fb-row { margin: 0 0 10px; }
-.fb-label { margin-bottom: 3px; }
-.fb-bar { display: flex; height: 14px; gap: 1px; }
-.fb-bar i { display: block; height: 14px; min-width: 1px; }
+/* flow on narrow screens: labels inside the chart over a white halo */
+svg.narrow .node text { font-size: 11px; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 
 /* flow */
 .ribbon { fill: var(--ink); fill-opacity: 0.12; cursor: default; }

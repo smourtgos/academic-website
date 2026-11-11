@@ -289,15 +289,12 @@ function renderFlow() {
   }
   const right = LEGAL_ORDER.filter((s) => byStage[s]).map((s) => ({ key: s, label: LEGAL_LABELS[s], count: byStage[s] }));
   const links = Object.entries(linkMap).map(([k, n]) => { const [s, t] = k.split("|"); return { s, t, count: n }; });
-  const data = { left, right, links };
-  if (el.clientWidth && el.clientWidth < 560) {
-    Charts.flowBars(el, data);   // one stacked bar per category: readable on a phone
-    return;
-  }
-  Charts.flowChart(el, data, {
+  const SHORT_STAGES = { none_reported: "None reported", under_investigation: "Investigation", arrest: "Arrest", charged: "Charged", convicted_or_plea: "Convicted / plea", sentenced: "Sentenced", acquitted_or_dismissed: "Acquitted" };
+  Charts.flowChart(el, { left, right, links }, {
     label: "Incidents by category and the furthest legal stage their reports describe",
     emphasis: (t) => t === "convicted_or_plea" || t === "sentenced",
     pick: flowPick,
+    shortLabel: (k) => SHORT_LABELS[k] || SHORT_STAGES[k] || (k === "__other" ? `${fold.size} smaller` : null),
     onClick: (c) => { flowPick = flowPick === c ? null : c; renderFlow(); },
   });
 }

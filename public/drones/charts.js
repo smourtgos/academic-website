@@ -25,7 +25,7 @@ const Charts = (() => {
   }
   function hideTip() { if (tipEl) tipEl.style.display = "none"; }
   window.addEventListener("scroll", hideTip, { passive: true });
-  document.addEventListener("touchstart", (e) => { if (!e.target.closest || !e.target.closest("svg, .fb-bar")) hideTip(); }, { passive: true });
+  document.addEventListener("touchstart", (e) => { if (!e.target.closest || !e.target.closest("svg")) hideTip(); }, { passive: true });
 
   /* ---------- helpers ---------- */
   function niceMax(v) {
@@ -181,9 +181,13 @@ const Charts = (() => {
   }
 
   /* ---------- 3. flow: category (left) to legal stage (right) ---------- */
+  // On narrow screens the nodes sit at the chart edges and the labels are drawn inside the
+  // chart over a white halo, with short names, so nothing extends past the screen.
   function flowChart(el, { left, right, links }, opts = {}) {
-    const W = width(el, 600), H = opts.height || 400;
-    const m = { t: 8, b: 8 }, gap = 10, NW = 10, LX = 232, RX = W - 236;
+    const W = width(el), narrow = W < 560, H = opts.height || (narrow ? 440 : 400);
+    const m = { t: 8, b: 8 }, gap = narrow ? 8 : 10, NW = 10;
+    const LX = narrow ? 0 : 232, RX = narrow ? W - NW : W - 236;
+    const name = (nd) => (narrow && opts.shortLabel ? opts.shortLabel(nd.key) || nd.label : nd.label);
     const lt = left.reduce((p, q) => p + q.count, 0) || 1, rt = right.reduce((p, q) => p + q.count, 0) || 1;
     const scale = Math.min((H - m.t - m.b - gap * (left.length - 1)) / lt, (H - m.t - m.b - gap * (right.length - 1)) / rt);
     let yy = m.t; const ly = left.map((nd) => { const v = yy; yy += nd.count * scale + gap; return v; });
@@ -193,7 +197,7 @@ const Charts = (() => {
     const lo = ly.slice(), ro = ry.slice(), roff = new Map();
     [...ls].sort((a, b) => ri[a.t] - ri[b.t] || li[a.s] - li[b.s]).forEach((l) => { roff.set(l, ro[ri[l.t]]); ro[ri[l.t]] += l.count * scale; });
     const mx = (LX + NW + RX) / 2;
-    let s = open(W, H, opts.label || "Flow from category to legal stage");
+    let s = open(W, H, opts.label || "Flow from category to legal stage", narrow ? "narrow" : "");
     ls.forEach((l, idx) => {
       const h = l.count * scale, y0 = lo[li[l.s]], y1 = roff.get(l);
       lo[li[l.s]] += h;
@@ -201,15 +205,19 @@ const Charts = (() => {
       const pk = opts.pick ? (l.s === opts.pick ? " pick" : " dim") : "";
       s += `<path class="ribbon${em ? " em" : ""}${pk}" data-i="${idx}" d="M${LX + NW},${f1(y0)} C${f1(mx)},${f1(y0)} ${f1(mx)},${f1(y1)} ${RX},${f1(y1)} v${f1(h)} C${f1(mx)},${f1(y1 + h)} ${f1(mx)},${f1(y0 + h)} ${LX + NW},${f1(y0 + h)} Z"/>`;
     });
-    const lLab = spread(left.map((nd, i) => ly[i] + nd.count * scale / 2), 14, m.t + 6, H - m.b - 6);
-    const rLab = spread(right.map((nd, i) => ry[i] + nd.count * scale / 2), 14, m.t + 6, H - m.b - 6);
+    const lgap = narrow ? 13 : 14;
+    const lLab = spread(left.map((nd, i) => ly[i] + nd.count * scale / 2), lgap, m.t + 6, H - m.b - 6);
+    const rLab = spread(right.map((nd, i) => ry[i] + nd.count * scale / 2), lgap, m.t + 6, H - m.b - 6);
+    const pct = (c) => (c && Math.round(100 * c / rt) === 0 ? "<1" : Math.round(100 * c / rt));
     left.forEach((nd, i) => {
       const h = Math.max(1, nd.count * scale);
-      s += `<g class="node left${opts.pick === nd.key ? " pick" : ""}" data-key="${esc(nd.key)}" role="button" tabindex="0" aria-label="Isolate ${esc(nd.label)}"><rect x="${LX}" y="${f1(ly[i])}" width="${NW}" height="${f1(h)}"/><text x="${LX - 8}" y="${f1(lLab[i] + 4)}" text-anchor="end">${esc(nd.label)} <tspan class="pct">${fmt(nd.count)}</tspan></text></g>`;
+      const tx = narrow ? LX + NW + 6 : LX - 8, anchor = narrow ? "start" : "end";
+      s += `<g class="node left${opts.pick === nd.key ? " pick" : ""}" data-key="${esc(nd.key)}" role="button" tabindex="0" aria-label="Isolate ${esc(nd.label)}"><rect x="${LX}" y="${f1(ly[i])}" width="${NW}" height="${f1(h)}"/><text x="${tx}" y="${f1(lLab[i] + 4)}" text-anchor="${anchor}">${esc(name(nd))} <tspan class="pct">${fmt(nd.count)}</tspan></text></g>`;
     });
     right.forEach((nd, i) => {
       const h = Math.max(1, nd.count * scale), em = opts.emphasis && opts.emphasis(nd.key);
-      s += `<g class="node right${em ? " em" : ""}"><rect x="${RX}" y="${f1(ry[i])}" width="${NW}" height="${f1(h)}"/><text x="${RX + NW + 8}" y="${f1(rLab[i] + 4)}">${esc(nd.label)} <tspan class="pct">${nd.count && Math.round(100 * nd.count / rt) === 0 ? "<1" : Math.round(100 * nd.count / rt)}%</tspan></text></g>`;
+      const tx = narrow ? RX - 6 : RX + NW + 8, anchor = narrow ? "end" : "start";
+      s += `<g class="node right${em ? " em" : ""}"><rect x="${RX}" y="${f1(ry[i])}" width="${NW}" height="${f1(h)}"/><text x="${tx}" y="${f1(rLab[i] + 4)}" text-anchor="${anchor}">${esc(name(nd))} <tspan class="pct">${pct(nd.count)}%</tspan></text></g>`;
     });
     s += "</svg>";
     el.innerHTML = s;
@@ -221,27 +229,6 @@ const Charts = (() => {
     if (opts.onClick) el.querySelectorAll(".node.left").forEach((g) => {
       g.addEventListener("click", () => opts.onClick(g.dataset.key));
       g.addEventListener("keydown", onKey(() => opts.onClick(g.dataset.key)));
-    });
-  }
-
-  /* ---------- 3b. flow on narrow screens: one stacked bar per category ---------- */
-  const STAGE_SHADE = { none_reported: "#e6e6e6", under_investigation: "#cfcfcf", arrest: "#b0b0b0", charged: "#878787", convicted_or_plea: "#d9736c", sentenced: "#b3261e", acquitted_or_dismissed: "#454545" };
-  function flowBars(el, { left, right, links }, opts = {}) {
-    const count = Object.fromEntries(links.map((l) => [`${l.s}|${l.t}`, l.count]));
-    const sw = (k) => `<i class="fb-sw" style="background:${STAGE_SHADE[k] || "#999"}"></i>`;
-    const rt = Math.max(1, right.reduce((p, q) => p + q.count, 0));
-    const pct = (c) => (c && Math.round(100 * c / rt) === 0 ? "<1" : Math.round(100 * c / rt));
-    let h = `<div class="flowbars"><div class="fb-legend">${right.map((r) => `<span>${sw(r.key)}${esc(r.label)} <b class="pct">${pct(r.count)}%</b></span>`).join("")}</div>`;
-    left.forEach((nd) => {
-      const segs = right.map((r) => [r, count[`${nd.key}|${r.key}`] || 0]).filter(([, c]) => c > 0);
-      h += `<div class="fb-row"><div class="fb-label">${esc(nd.label)} <span class="pct">${fmt(nd.count)}</span></div><div class="fb-bar">${segs.map(([r, c]) => `<i style="width:${(100 * c / nd.count).toFixed(2)}%;background:${STAGE_SHADE[r.key] || "#999"}" data-tip="${esc(nd.label)} → ${esc(r.label)}: ${fmt(c)} (${Math.round(100 * c / nd.count)}%)"></i>`).join("")}</div></div>`;
-    });
-    el.innerHTML = `${h}</div>`;
-    el.querySelectorAll(".fb-bar i").forEach((seg) => {
-      const show = (e) => showTip(e, seg.dataset.tip);
-      seg.addEventListener("mousemove", show);
-      seg.addEventListener("click", show);
-      seg.addEventListener("mouseleave", hideTip);
     });
   }
 
@@ -314,5 +301,5 @@ const Charts = (() => {
     return { n: pts.length, scale: k };
   }
 
-  return { showTip, hideTip, niceMax, ledeChart, sparkline, bumpChart, flowChart, flowBars, coverageChart, fmtMonth };
+  return { showTip, hideTip, niceMax, ledeChart, sparkline, bumpChart, flowChart, coverageChart, fmtMonth };
 })();

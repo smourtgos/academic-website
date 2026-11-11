@@ -137,17 +137,32 @@ const Charts = (() => {
     s += "</svg>";
     el.innerHTML = s;
     const svg = el.querySelector("svg");
-    el.querySelectorAll("g.bump").forEach((g) => {
-      const sr = series.find((q) => q.key === g.dataset.key);
-      const nearest = (e) => {
-        const b = svg.getBoundingClientRect();
-        const px = (e.clientX - b.left) * (W / b.width);
-        return Math.max(0, Math.min(years.length - 1, Math.round((px - m.l) / cw)));
-      };
-      g.addEventListener("mouseenter", () => { g.classList.add("hover"); g.parentNode.appendChild(g); });
-      g.addEventListener("mousemove", (e) => { const i = nearest(e); showTip(e, `<b>${esc(sr.label)}</b>, ${years[i]}: rank ${sr.ranks[i]} of ${n}<br><span class="dim">${plural(sr.counts[i], "incident")}</span>`); });
-      g.addEventListener("mouseleave", () => { g.classList.remove("hover"); hideTip(); });
-      if (opts.onClick) { g.addEventListener("click", () => opts.onClick(sr.key)); g.addEventListener("keydown", onKey(() => opts.onClick(sr.key))); }
+    const byKey = Object.fromEntries(series.map((q) => [q.key, q]));
+    const nearest = (e) => {
+      const b = svg.getBoundingClientRect();
+      const px = (e.clientX - b.left) * (W / b.width);
+      return Math.max(0, Math.min(years.length - 1, Math.round((px - m.l) / cw)));
+    };
+    // One hovered line at a time, tracked here rather than per element: the hovered group is
+    // moved to the front of the drawing, and a moved element does not get a mouseleave event.
+    let cur = null;
+    const setHover = (g) => {
+      if (g === cur) return;
+      if (cur) cur.classList.remove("hover");
+      cur = g;
+      if (g) { g.classList.add("hover"); svg.appendChild(g); }
+    };
+    svg.addEventListener("mousemove", (e) => {
+      const g = e.target.closest ? e.target.closest("g.bump") : null;
+      setHover(g);
+      if (!g) { hideTip(); return; }
+      const sr = byKey[g.dataset.key], i = nearest(e);
+      showTip(e, `<b>${esc(sr.label)}</b>, ${years[i]}: rank ${sr.ranks[i]} of ${n}<br><span class="dim">${plural(sr.counts[i], "incident")}</span>`);
+    });
+    svg.addEventListener("mouseleave", () => { setHover(null); hideTip(); });
+    if (opts.onClick) el.querySelectorAll("g.bump").forEach((g) => {
+      g.addEventListener("click", () => opts.onClick(g.dataset.key));
+      g.addEventListener("keydown", onKey(() => opts.onClick(g.dataset.key)));
     });
   }
 

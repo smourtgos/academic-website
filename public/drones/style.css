@@ -53,6 +53,7 @@ nav.top a:hover { text-decoration: underline; }
 .filters input[type="search"] { width: 200px; }
 .filters button { font: 13px var(--sans); color: var(--muted); background: none; border: 0; border-bottom: 1px solid transparent; padding: 5px 0; cursor: pointer; }
 .filters button:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.filters .filters-toggle { display: none; }
 
 /* ---------- headline band ---------- */
 .headline { display: grid; grid-template-columns: 1.1fr 2fr; gap: 28px; padding: 28px 0 26px; border-bottom: 1px solid var(--rule); align-items: end; }
@@ -76,7 +77,6 @@ svg text { font-family: var(--sans); }
 .chart { width: 100%; position: relative; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .chart-scroll { overflow-x: auto; }
-.chart-scroll .chart { min-width: 600px; }
 .gridline { stroke: var(--grid); stroke-width: 1; }
 .baseline { stroke: var(--ink); stroke-width: 1; }
 .tick { fill: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
@@ -112,6 +112,19 @@ svg text { font-family: var(--sans); }
 .bump.hi .dot { fill: var(--accent); r: 5; }
 .bump.hi .blabel { fill: var(--accent); font-weight: 600; }
 .bump:focus-visible .bump-line { stroke: var(--ink); stroke-width: 3; }
+svg.narrow .blabel { font-size: 11px; }
+svg.narrow .bump.lead .dot, svg.narrow .bump.hover .dot, svg.narrow .bump.hi .dot { r: 4; }
+
+/* flow as stacked bars (narrow screens) */
+.flowbars { font-size: 12px; }
+.fb-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 14px; color: var(--ink-2); }
+.fb-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.fb-legend .pct, .fb-label .pct { color: var(--faint); font-weight: 400; font-variant-numeric: tabular-nums; }
+.fb-sw { display: inline-block; width: 10px; height: 10px; }
+.fb-row { margin: 0 0 10px; }
+.fb-label { margin-bottom: 3px; }
+.fb-bar { display: flex; height: 14px; gap: 1px; }
+.fb-bar i { display: block; height: 14px; min-width: 1px; }
 
 /* flow */
 .ribbon { fill: var(--ink); fill-opacity: 0.12; cursor: default; }
@@ -251,6 +264,10 @@ footer { color: var(--muted); font-size: 13px; padding: 22px 0 48px; max-width: 
   .multiples { grid-template-columns: 1fr; }
   .filters { position: static; }
   .filters label, .filters select, .filters input[type="search"] { width: 100%; }
+  .filters .filters-toggle { display: block; width: 100%; text-align: left; font: 14px var(--sans); color: var(--ink); border: 1px solid var(--rule-strong); padding: 8px 12px; }
+  .filters .filters-toggle::after { content: " ▾"; color: var(--muted); }
+  .filters.open .filters-toggle::after { content: " ▴"; }
+  .filters:not(.open) label, .filters:not(.open) #f-reset { display: none; }
   #map { height: 320px; }
   dialog.record dl { grid-template-columns: 1fr; gap: 2px; }
   dialog.record dt { margin-top: 8px; }

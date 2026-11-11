@@ -26,6 +26,7 @@
   <aside class="caveat"><strong>Read before using:</strong> these counts are of <em>media-reported</em> incidents. They measure how often news outlets (mostly English-language) reported such drone incidents, not how often they happened. A model coded each incident from news text, and not every record has been checked by a person (see each record's review status). <a href="methods.html">Methods &amp; limitations</a>.</aside>
 
   <div class="filters" role="search">
+    <button type="button" class="filters-toggle" id="filters-toggle" aria-expanded="false" aria-controls="filter-fields">Filters</button>
     <label>Category <select id="f-category"><option value="">All categories</option></select></label>
     <label>Where <select id="f-country"><option value="">All countries</option><option value="__US">United States</option><option value="__nonUS">Outside the U.S.</option></select></label>
     <label>From <select id="f-from"></select></label>
@@ -65,7 +66,7 @@
 
   <section class="graphic" id="flow">
     <h2>What the reports say happened next</h2>
-    <p class="desc">Each ribbon is a share of incidents, from the type of incident to the furthest legal stage its reports describe. Red marks a conviction, plea, or sentence. "None reported" means the reports mention no legal step, not that none happened; follow-up coverage is rarer than first reports. Hover a ribbon for the count; click a category to isolate its ribbons.</p>
+    <p class="desc">Each ribbon is a share of incidents, from the type of incident to the furthest legal stage its reports describe. Red marks a conviction, plea, or sentence. "None reported" means the reports mention no legal step, not that none happened; follow-up coverage is rarer than first reports. Hover a ribbon for the count; click a category to isolate its ribbons. On a narrow screen the flow is drawn as one bar per category.</p>
     <div class="chart-scroll"><div class="chart" id="chart-flow"></div></div>
     <p class="source">Source: Drone Crime and Incident Tracker. Categories beyond the eight largest are grouped.</p>
   </section>

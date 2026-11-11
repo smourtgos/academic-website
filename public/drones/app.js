@@ -14,6 +14,15 @@ const CATEGORY_LABELS = {
   burglary_theft_recon: "Burglary / theft reconnaissance",
   other: "Other",
 };
+// Shorter names for narrow screens (bump chart labels, timeline labels).
+const SHORT_LABELS = {
+  correctional_contraband: "Prison contraband", drug_border_smuggling: "Smuggling",
+  surveillance_stalking_voyeurism: "Stalking / voyeurism", harassment_intimidation: "Harassment",
+  weaponized_attack_or_plot: "Weaponized", aviation_disruption: "Airports / aircraft",
+  emergency_response_interference: "Emergency ops", critical_infrastructure: "Infrastructure",
+  mass_gathering: "Events / crowds", criminal_counter_surveillance: "Counter-surveillance",
+  burglary_theft_recon: "Burglary recon", other: "Other",
+};
 const CD_LABELS = {
   none_reported: "None reported", detected_by_system: "Detected by system", jammed_or_spoofed: "Jammed / spoofed",
   cyber_takeover: "Cyber takeover", netted_or_captured: "Netted / captured", shot_down_or_kinetic: "Shot down / kinetic",
@@ -78,7 +87,13 @@ function applyFilters() {
   filtered = f.category ? exceptCategory.filter((i) => i.category === f.category) : exceptCategory;
   page = 0;
   writeHash(f);
+  updateFilterToggle(f);
   render();
+}
+function updateFilterToggle(f) {
+  const n = Object.values(f).filter(Boolean).length;
+  const b = $("filters-toggle");
+  b.textContent = n ? `Filters (${n} active)` : "Filters";
 }
 function setCategory(cat) {
   pickCategory = pickCategory === cat ? null : cat;
@@ -127,6 +142,11 @@ function setupFilters() {
   $("f-reset").addEventListener("click", () => {
     document.querySelectorAll(".filters select, .filters input").forEach((e) => (e.value = ""));
     applyFilters();
+  });
+  $("filters-toggle").addEventListener("click", () => {
+    const bar = document.querySelector(".filters");
+    const open = bar.classList.toggle("open");
+    $("filters-toggle").setAttribute("aria-expanded", String(open));
   });
 }
 function matches(i, f) {
@@ -186,8 +206,7 @@ function renderTrend() {
     keys, values: keys.map((k) => counts[k]),
     annotate: (k, n) => {
       const top = Object.entries(cats[k]).sort((a, b) => b[1] - a[1])[0];
-      const what = top ? `, led by ${(CATEGORY_LABELS[top[0]] || top[0]).toLowerCase()} (${top[1]})` : "";
-      return `${fmtMonth(k)} · ${plural(n, "report")}${what}`;
+      return [`${fmtMonth(k)} · ${plural(n, "report")}`, top ? `led by ${(CATEGORY_LABELS[top[0]] || top[0]).toLowerCase()} (${top[1]})` : ""];
     },
   }, { label: "Reported incidents by month, with a trailing three-month mean and the two highest months labelled" });
   const notes = [];
@@ -211,7 +230,7 @@ function renderBump() {
   Charts.bumpChart($("chart-bump"), {
     years, highlight: pickCategory || f.category || null, lead,
     series: keys.map((c) => ({ key: c, label: CATEGORY_LABELS[c], ranks: ranks[c], counts: counts[c] })),
-  }, { label: "Each category's rank among the twelve, by year; click a line to pin its highlight", onClick: setCategory });
+  }, { label: "Each category's rank among the twelve, by year; click a line to pin its highlight", onClick: setCategory, shortLabel: (k) => SHORT_LABELS[k] || CATEGORY_LABELS[k] });
 }
 
 /* ---------- sparklines by quarter ---------- */
@@ -270,7 +289,12 @@ function renderFlow() {
   }
   const right = LEGAL_ORDER.filter((s) => byStage[s]).map((s) => ({ key: s, label: LEGAL_LABELS[s], count: byStage[s] }));
   const links = Object.entries(linkMap).map(([k, n]) => { const [s, t] = k.split("|"); return { s, t, count: n }; });
-  Charts.flowChart(el, { left, right, links }, {
+  const data = { left, right, links };
+  if (el.clientWidth && el.clientWidth < 560) {
+    Charts.flowBars(el, data);   // one stacked bar per category: readable on a phone
+    return;
+  }
+  Charts.flowChart(el, data, {
     label: "Incidents by category and the furthest legal stage their reports describe",
     emphasis: (t) => t === "convicted_or_plea" || t === "sentenced",
     pick: flowPick,
@@ -303,7 +327,7 @@ function renderCoverage() {
   if (!points.length) { el.innerHTML = `<p class="empty">No dated incidents match the current filters.</p>`; note.textContent = ""; return; }
   Charts.coverageChart(el, { points, t0, t1 }, {
     label: "One dot per incident by event date, sized by the number of reports; the three most-reported are named",
-    labelFor: (p) => `${shortPlace(p.i)} · ${CATEGORY_LABELS[p.i.category] || p.i.category} · ${plural(nSources(p.i), "report")}`,
+    labelFor: (p) => `${shortPlace(p.i)} · ${(el.clientWidth < 560 ? SHORT_LABELS : CATEGORY_LABELS)[p.i.category] || p.i.category} · ${plural(nSources(p.i), "report")}`,
     tip: (p) => `<b>${esc(p.i.event_date || "undated")}</b> · ${esc(shortPlace(p.i))}<br>${esc(trunc(p.i.summary, 150))}<br><span class="dim">${plural(nSources(p.i), "report")} · click for the record</span>`,
     onClick: (p) => openRecord(p.i),
   });

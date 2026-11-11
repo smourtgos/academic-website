@@ -24,6 +24,8 @@ const Charts = (() => {
     tipEl.style.top = `${y}px`;
   }
   function hideTip() { if (tipEl) tipEl.style.display = "none"; }
+  window.addEventListener("scroll", hideTip, { passive: true });
+  document.addEventListener("touchstart", (e) => { if (!e.target.closest || !e.target.closest("svg, .fb-bar")) hideTip(); }, { passive: true });
 
   /* ---------- helpers ---------- */
   function niceMax(v) {
@@ -50,8 +52,8 @@ const Charts = (() => {
 
   /* ---------- 1. lede: monthly columns, trailing three-month mean, two labelled peaks ---------- */
   function ledeChart(el, { keys, values, annotate }, opts = {}) {
-    const W = width(el), H = opts.height || 270;
-    const m = { t: 34, r: 12, b: 24, l: 34 };
+    const W = width(el), narrow = W < 560, H = opts.height || (narrow ? 300 : 280);
+    const m = { t: narrow ? 78 : 50, r: 12, b: 24, l: 34 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b, n = keys.length, step = iw / n;
     const smooth = values.map((_, i) => { const a = values.slice(Math.max(0, i - 2), i + 1); return a.reduce((p, q) => p + q, 0) / a.length; });
     const max = niceMax(Math.max(1, ...values));
@@ -65,22 +67,30 @@ const Charts = (() => {
     });
     const line = smooth.map((v, i) => `${i ? "L" : "M"}${f1(xc(i))},${f1(y(v))}`).join("");
     s += `<path class="area" d="${line}L${f1(xc(n - 1))},${m.t + ih}L${f1(xc(0))},${m.t + ih}Z"/><path class="line" d="${line}"/>`;
-    // The two highest months, at least six months apart.
+    // The two highest months, at least six months apart. Labels are one or two short lines.
     const order = values.map((v, i) => [v, i]).filter(([v]) => v > 0).sort((a, b) => b[0] - a[0] || b[1] - a[1]);
     const picks = [];
     for (const [, i] of order) { if (picks.every((j) => Math.abs(i - j) >= 6)) picks.push(i); if (picks.length === 2) break; }
     const placed = [];
     for (const i of picks.sort((a, b) => a - b)) {
-      const text = annotate ? annotate(keys[i], values[i]) : `${fmtMonth(keys[i])} · ${values[i]}`;
-      const px = xc(i), py = y(values[i]), tw = textW(text);
+      const raw = annotate ? annotate(keys[i], values[i]) : `${fmtMonth(keys[i])} · ${values[i]}`;
+      const lines = (Array.isArray(raw) ? raw : [raw]).filter(Boolean);
+      const tw = Math.max(...lines.map((t) => textW(t))), bh = 14 * lines.length;
+      const px = xc(i), py = y(values[i]);
+      const fitsLeft = px - 18 - tw >= 2, fitsRight = px + 18 + tw <= W - 2;
       let left = px > W / 2;
-      if (!left && px + 18 + tw > W - 2) left = true;
-      if (left && px - 18 - tw < 2) left = false;
-      let ly = Math.max(13, py - 28);
-      for (const q of placed) if (Math.abs(q.ly - ly) < 16 && Math.abs(q.px - px) < tw + 40) ly = Math.max(13, q.ly - 16) === q.ly ? q.ly + 16 : q.ly - 16;
-      placed.push({ px, ly });
-      const lx = left ? px - 14 : px + 14;
-      s += `<line class="leader" x1="${f1(px)}" y1="${f1(py - 6)}" x2="${f1(lx)}" y2="${ly + 3}"/><circle class="peak" cx="${f1(px)}" cy="${f1(py)}" r="4"/><text class="anno" x="${f1(lx + (left ? -4 : 4))}" y="${ly}" text-anchor="${left ? "end" : "start"}">${esc(text)}</text>`;
+      if (left && !fitsLeft && fitsRight) left = false;
+      if (!left && !fitsRight && fitsLeft) left = true;
+      let ly = Math.max(12, py - 10 - bh);
+      for (const q of placed) if (Math.abs(q.px - px) < tw + 40 && Math.abs(q.ly - ly) < q.bh + 6) ly = q.ly - bh - 8 >= 12 ? q.ly - bh - 8 : q.ly + q.bh + 8;
+      placed.push({ px, ly, bh });
+      // Beside the peak when there is room; otherwise pinned to the nearer edge of the chart.
+      const beside = left ? fitsLeft : fitsRight;
+      const tx = beside ? (left ? px - 18 : px + 18) : (left ? W - m.r : m.l);
+      const lab0 = left ? tx - tw : tx, lab1 = left ? tx : tx + tw;
+      const lx = beside ? (left ? px - 14 : px + 14) : Math.max(lab0 + 4, Math.min(lab1 - 4, px));
+      s += `<line class="leader" x1="${f1(px)}" y1="${f1(py - 6)}" x2="${f1(lx)}" y2="${ly + 3}"/><circle class="peak" cx="${f1(px)}" cy="${f1(py)}" r="4"/>`;
+      s += `<text class="anno" x="${f1(tx)}" y="${ly}" text-anchor="${left ? "end" : "start"}">${lines.map((t, j) => `<tspan x="${f1(tx)}" dy="${j ? 14 : 0}">${esc(t)}</tspan>`).join("")}</text>`;
     }
     keys.forEach((k, i) => { s += `<rect class="hit" data-i="${i}" x="${f1(m.l + i * step)}" y="${m.t}" width="${f1(step)}" height="${ih}"/>`; });
     s += "</svg>";
@@ -117,13 +127,17 @@ const Charts = (() => {
 
   /* ---------- 2. bump chart: rank per year ---------- */
   function bumpChart(el, { years, series, highlight, lead }, opts = {}) {
-    const n = series.length, W = width(el, 600), rowH = 26;
-    const m = { t: 16, r: 250, b: 28, l: 16 };
+    const n = series.length, W = width(el), narrow = W < 560, rowH = narrow ? 22 : 26;
+    const m = { t: 14, r: narrow ? 128 : 250, b: 28, l: narrow ? 8 : 16 };
     const H = m.t + Math.max(0, n - 1) * rowH + m.b + 8;
     const iw = W - m.l - m.r, cw = iw / Math.max(1, years.length - 1);
     const x = (i) => m.l + i * cw, y = (rank) => m.t + (rank - 1) * rowH;
-    let s = open(W, H, opts.label || "Category rank by year");
-    years.forEach((yr, i) => { s += `<text class="tick" x="${f1(x(i))}" y="${H - 8}" text-anchor="middle">${yr}</text>`; });
+    const label = (sr) => (narrow && opts.shortLabel ? opts.shortLabel(sr.key) : sr.label);
+    let s = open(W, H, opts.label || "Category rank by year", narrow ? "narrow" : "");
+    years.forEach((yr, i) => {
+      if (narrow && (years.length - 1 - i) % 2) return;   // every other year, keeping the last
+      s += `<text class="tick" x="${f1(i ? x(i) : Math.max(2, x(0) - 6))}" y="${H - 8}" text-anchor="${i ? "middle" : "start"}">${yr}</text>`;
+    });
     const order = [...series].sort((a, b) => (a.key === lead) - (b.key === lead) || (a.key === highlight) - (b.key === highlight));
     for (const sr of order) {
       const cls = sr.key === highlight ? "hi" : sr.key === lead ? "lead" : "";
@@ -131,8 +145,8 @@ const Charts = (() => {
       const last = sr.ranks[sr.ranks.length - 1], lastCount = sr.counts[sr.counts.length - 1];
       s += `<g class="bump ${cls}" data-key="${esc(sr.key)}" tabindex="0" role="button" aria-label="${esc(sr.label)}, rank ${last} in ${years[years.length - 1]}">`;
       s += `<path class="hit-line" d="${d}"/><path class="bump-line" d="${d}"/>`;
-      sr.ranks.forEach((r, i) => { s += `<circle class="dot" cx="${f1(x(i))}" cy="${y(r)}" r="4"/>`; });
-      s += `<text class="blabel" x="${f1(x(years.length - 1) + 12)}" y="${y(last) + 4}">${esc(sr.label)} <tspan class="bcount">${fmt(lastCount)}</tspan></text></g>`;
+      sr.ranks.forEach((r, i) => { s += `<circle class="dot" cx="${f1(x(i))}" cy="${y(r)}" r="${narrow ? 3 : 4}"/>`; });
+      s += `<text class="blabel" x="${f1(x(years.length - 1) + (narrow ? 8 : 12))}" y="${y(last) + 4}">${esc(label(sr))} <tspan class="bcount">${fmt(lastCount)}</tspan></text></g>`;
     }
     s += "</svg>";
     el.innerHTML = s;
@@ -210,6 +224,27 @@ const Charts = (() => {
     });
   }
 
+  /* ---------- 3b. flow on narrow screens: one stacked bar per category ---------- */
+  const STAGE_SHADE = { none_reported: "#e6e6e6", under_investigation: "#cfcfcf", arrest: "#b0b0b0", charged: "#878787", convicted_or_plea: "#d9736c", sentenced: "#b3261e", acquitted_or_dismissed: "#454545" };
+  function flowBars(el, { left, right, links }, opts = {}) {
+    const count = Object.fromEntries(links.map((l) => [`${l.s}|${l.t}`, l.count]));
+    const sw = (k) => `<i class="fb-sw" style="background:${STAGE_SHADE[k] || "#999"}"></i>`;
+    const rt = Math.max(1, right.reduce((p, q) => p + q.count, 0));
+    const pct = (c) => (c && Math.round(100 * c / rt) === 0 ? "<1" : Math.round(100 * c / rt));
+    let h = `<div class="flowbars"><div class="fb-legend">${right.map((r) => `<span>${sw(r.key)}${esc(r.label)} <b class="pct">${pct(r.count)}%</b></span>`).join("")}</div>`;
+    left.forEach((nd) => {
+      const segs = right.map((r) => [r, count[`${nd.key}|${r.key}`] || 0]).filter(([, c]) => c > 0);
+      h += `<div class="fb-row"><div class="fb-label">${esc(nd.label)} <span class="pct">${fmt(nd.count)}</span></div><div class="fb-bar">${segs.map(([r, c]) => `<i style="width:${(100 * c / nd.count).toFixed(2)}%;background:${STAGE_SHADE[r.key] || "#999"}" data-tip="${esc(nd.label)} → ${esc(r.label)}: ${fmt(c)} (${Math.round(100 * c / nd.count)}%)"></i>`).join("")}</div></div>`;
+    });
+    el.innerHTML = `${h}</div>`;
+    el.querySelectorAll(".fb-bar i").forEach((seg) => {
+      const show = (e) => showTip(e, seg.dataset.tip);
+      seg.addEventListener("mousemove", show);
+      seg.addEventListener("click", show);
+      seg.addEventListener("mouseleave", hideTip);
+    });
+  }
+
   /* ---------- 5. coverage timeline: one dot per incident, swarmed around a time axis ---------- */
   // Centred beeswarm: each circle takes the spot nearest the axis, above or below, that clears
   // every earlier circle within reach. Circles arrive sorted by x, so only a sliding window of
@@ -279,5 +314,5 @@ const Charts = (() => {
     return { n: pts.length, scale: k };
   }
 
-  return { showTip, hideTip, niceMax, ledeChart, sparkline, bumpChart, flowChart, coverageChart, fmtMonth };
+  return { showTip, hideTip, niceMax, ledeChart, sparkline, bumpChart, flowChart, flowBars, coverageChart, fmtMonth };
 })();

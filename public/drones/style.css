@@ -174,7 +174,7 @@ svg.narrow .node text { font-size: 11px; paint-order: stroke; stroke: #fff; stro
 .countries li.more { color: var(--faint); font-size: 12px; padding: 6px 0; }
 
 /* table */
-.table-tools { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; font-size: 13px; }
+.table-tools { display: flex; justify-content: flex-start; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; font-size: 13px; }
 .table-tools .count { color: var(--ink-2); }
 .table-tools .local:not(:empty) { color: var(--ink-2); border-left: 3px solid var(--accent); padding-left: 10px; }
 .table-tools .local button { font: 13px var(--sans); color: var(--accent); background: none; border: 0; padding: 0 0 0 6px; cursor: pointer; text-decoration: underline; }

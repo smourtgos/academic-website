@@ -516,7 +516,6 @@ function setupTable() {
   }));
   $("pg-prev").addEventListener("click", () => { page--; renderTable(); });
   $("pg-next").addEventListener("click", () => { page++; renderTable(); });
-  $("dl-filtered").addEventListener("click", (e) => { e.preventDefault(); downloadCsv(tableRows()); });
   const body = $("tbl").querySelector("tbody");
   const openRow = (tr) => { const inc = BY_ID.get(tr.dataset.id); if (inc) openRecord(inc); };
   body.addEventListener("click", (e) => {
@@ -529,26 +528,6 @@ function setupTable() {
     const tr = e.target.closest("tr[data-id]");
     if (tr) openRow(tr);
   });
-}
-
-const CSV_COLS = ["id", "event_date", "date_precision", "country", "admin1", "locality", "facility_or_site", "lat", "lon",
-  "geo_precision", "category", "secondary_categories", "intent", "actor_type", "target_type", "payload", "drone_count",
-  "deaths", "injuries", "operational_disruption", "detection_method", "counter_drone_response", "counter_drone_technology",
-  "legal_stage", "charges_or_statutes", "sentence", "conflict_linked", "conflict_link_basis", "summary", "confidence",
-  "review_status", "n_sources", "source_urls"];
-function downloadCsv(rows) {
-  const cell = (v) => {
-    const s = Array.isArray(v) ? v.join("; ") : v == null ? "" : String(v);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  const lines = [CSV_COLS.join(",")].concat(rows.map((i) => CSV_COLS.map((c) =>
-    cell(c === "source_urls" ? (i.sources || []).map((s) => s.url).join(" | ") : i[c])).join(",")));
-  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `drone_incidents_filtered_${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 /* ---------- main ---------- */
